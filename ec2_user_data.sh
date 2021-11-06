@@ -53,7 +53,7 @@ fi
 
 #----------get git packages
 token=$(aws secretsmanager get-secret-value \
-    --secret-id git_token_b4 \
+    --secret-id git_token_tenx \
     --query SecretString \
     --output text --region $region  | cut -d: -f2 | tr -d \"})
                                              
@@ -69,7 +69,12 @@ if [ -f $HOME/.bashrc ]; then
     cat $HOME/.bashrc >> $home/.bashrc || echo "not possible"
 fi
 
-
+homeuser=$(basename $home)
+echo "HOME_USER=$homeuser"
+dpath=/opt/miniconda
+if [ -d $dpath ]; then
+    sudo chown -R $homeuser:$homeuser $dpath || echo "$homeuser can not own $dpath"
+fi
 
 #---- install requirements -----
 
