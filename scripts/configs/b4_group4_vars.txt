@@ -1,0 +1,15 @@
+#List of users (usernames)
+USERS_FILE="b4_group4_users.txt"
+
+#root bucket
+BUCKET="10ac-batch-4"
+
+#credential root folder
+CRED_ROOT_FOLDER="$BUCKET/credentials"
+
+#credential folders to copy
+CRED_FOLDERS=""
+
+
+#jupyter notebook folder
+NOTEBOOK_FOLDER="$BUCKET/all-notebooks"

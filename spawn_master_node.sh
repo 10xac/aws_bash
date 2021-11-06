@@ -5,7 +5,7 @@
 if [ $# -gt 0 ]; then
     name=$1
 else
-    name="10x-trainees"
+    name="pjmatch"
 fi
 if [ $# -gt 1 ]; then
     profile=$2
@@ -15,7 +15,7 @@ fi
 
 
 echo "name=$name, profile=$profile"
-team="b4trainees"
+team="pjmatch"
 ec2="yes"
 
 # == often change ==

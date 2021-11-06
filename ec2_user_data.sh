@@ -59,20 +59,34 @@ token=$(aws secretsmanager get-secret-value \
                                              
 
 cd $home
-git clone https://$token@github.com/10xac/trainees_aws_cluster.git
+git clone https://$token@github.com/10xac/aws_bash.git
 
-cd trainees_aws_cluster/scripts
-bash setup_cluster.sh b4_group1_vars.txt
-
-#change approperiately 
-# reqfolder=satellite-lidar
-# envname=agritech
-# if [ -f $home/trainees_aws_cluster/$reqfolder/install_packages.sh ]; then
-#     cd $home/trainees_aws_cluster/$reqfolder
-#     bash install_packages.sh $envname
-# fi
+cd aws_bash/scripts
+bash setup_cluster.sh configs/volunteers.txt 
 
 #copy all root environment to user
 if [ -f $HOME/.bashrc ]; then
     cat $HOME/.bashrc >> $home/.bashrc || echo "not possible"
 fi
+
+
+
+#---- install requirements -----
+
+#change approperiately 
+# reqfolder=satellite-lidar
+# envname=agritech
+# if [ -f $home/aws_bash/$reqfolder/install_packages.sh ]; then
+#     cd $home/trainees_aws_cluster/$reqfolder
+#     bash install_packages.sh $envname
+# fi
+
+#
+source $home/.bashrc
+conda create -n pjmatch -y
+conda activate pjmatch
+
+cd $home
+git clone https://$token@github.com/10xac/JobModel.git
+cd JobModel
+pip3 install -r requirements.txt
