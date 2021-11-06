@@ -101,10 +101,15 @@ echo "c.ConfigurableHTTPProxy.pid_file = '/opt/jupyterhub/jupyter-proxy.pid'" >>
 echo "" >> $filename
 
 echo "try:" >> $filename
+echo "  import os" >> $filename
 echo "  from jupyterhub.spawner import LocalProcessSpawner" >> $filename
 echo "  class MySpawner(LocalProcessSpawner):" >> $filename
 echo "      def _notebook_dir_default(self):" >> $filename
-echo "        return c.NotebookApp.notebook_dir + '/' + self.user.name" >> $filename
+echo "        path = c.NotebookApp.notebook_dir + '/' + self.user.name" >> $filename
+echo "        if os.path.exists(c.NotebookApp.notebook_dir):" >> $filename
+echo "          os.makedirs(path,exist_ok=True)" >> $filename
+echo "                   " >> $filename
+echo "        return path" >> $filename
 echo "  c.JupyterHub.spawner_class = MySpawner" >> $filename 
 echo "except:" >> $filename
 echo "  print('jupyterhub module not found')" >> $filename

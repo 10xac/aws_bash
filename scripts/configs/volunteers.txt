@@ -15,4 +15,4 @@ CRED_FOLDERS=""
 
 
 ###jupyter notebook folder
-NOTEBOOK_FOLDER="$BUCKET/all-notenooks"
+NOTEBOOK_FOLDER="$BUCKET/notebooks"

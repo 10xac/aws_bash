@@ -33,8 +33,14 @@ bash new_conda_setup.sh
 bash install_emr_jupyterhub.sh
 
 #get submodules
+region="eu-west-1"
+git_token=$(aws secretsmanager get-secret-value \
+    --secret-id yabi_github_pat \
+    --query SecretString \
+    --output text --region $region  | cut -d: -f2 | tr -d \"})
+                                                              
 #bash git-submodule.sh
-git clone https://ab997a2a00f803611fd93a8de968932140572966@github.com/FutureAdLabs/algos-common.git ../algos-common
+git clone https://${git_token}@github.com/FutureAdLabs/algos-common.git ../algos-common
 
 
 #install algos-common requirement

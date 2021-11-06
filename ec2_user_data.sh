@@ -5,6 +5,13 @@ region="eu-west-1"
 
 home=$HOME
 
+#----------get git packages
+git_token=$(aws secretsmanager get-secret-value \
+    --secret-id git_token_tenx \
+    --query SecretString \
+    --output text --region $region  | cut -d: -f2 | tr -d \"})
+
+
 if command -v apt-get >/dev/null; then
     sudo apt-get update -y
     sudo apt-get install -y git emacs htop
@@ -50,16 +57,10 @@ function awscli_install(){
 if [[ $(aws --version) = aws-cli/1.* ]]; then
     awscli_install  || echo "unable to install cli"
 fi
-
-#----------get git packages
-token=$(aws secretsmanager get-secret-value \
-    --secret-id git_token_tenx \
-    --query SecretString \
-    --output text --region $region  | cut -d: -f2 | tr -d \"})
                                              
 
 cd $home
-git clone https://$token@github.com/10xac/aws_bash.git
+git clone https://${git_token}@github.com/10xac/aws_bash.git
 
 cd aws_bash/scripts
 bash setup_cluster.sh configs/volunteers.txt 
@@ -71,12 +72,13 @@ fi
 
 homeuser=$(basename $home)
 echo "HOME_USER=$homeuser"
-dpath=/opt/miniconda
-if [ -d $dpath ]; then
-    sudo chown -R $homeuser:$homeuser $dpath || echo "$homeuser can not own $dpath"
-fi
+for dpath in '/opt/miniconda' ; do
+    if [ -d $dpath ]; then
+        chown -R $homeuser:$homeuser $dpath || echo "$homeuser can not own $dpath"
+    fi
+done
 
-#---- install requirements -----
+#---- install apps -----
 
 #change approperiately 
 # reqfolder=satellite-lidar
@@ -87,11 +89,4 @@ fi
 # fi
 
 #
-source $home/.bashrc
-conda create -n pjmatch -y
-conda activate pjmatch
 
-cd $home
-git clone https://$token@github.com/10xac/JobModel.git
-cd JobModel
-pip3 install -r requirements.txt

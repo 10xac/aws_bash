@@ -2,7 +2,7 @@ set -e
 
 #where to install conda
 folder=${PYTHON_DIR:-/opt/miniconda}
-home=${ADMIN_HOME:-$(ls /home | awk 'NR==1{print $1}')}
+home=${ADMIN_HOME:-$(bash ../get_home.sh)}
 scriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 
 #get miniconda

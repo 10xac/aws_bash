@@ -5,7 +5,7 @@ USERS_FILE="users.txt"
 PYTHON_DIR=/opt/miniconda
 
 ####root bucket
-BUCKET="10ac-batch-4"
+BUCKET="10ac-team"
 
 ####credential root folder
 CRED_ROOT_FOLDER="$BUCKET/credentials"
@@ -15,4 +15,4 @@ CRED_FOLDERS=""
 
 
 ###jupyter notebook folder
-NOTEBOOK_FOLDER="$BUCKET/all-notenooks"
+NOTEBOOK_FOLDER="$BUCKET/notebooks"

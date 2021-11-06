@@ -3,7 +3,8 @@
 #reference for user_data script
 #https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/user-data.html
 
-home=${ADMIN_HOME:-$(ls /home | awk 'NR==1{print $1}')}
+home=${ADMIN_HOME:-$(bash get_home.sh)}
+
 if [ -d $home ]; then
     homeUser=$(basename $home)
 else
@@ -14,15 +15,16 @@ fi
 configfile="./variables.txt"
 [ $# -gt 0 ] && [ -r "$1" ] && configfile="$1"
 
-#copy of if userfule is in s3
+#copy userfile if it is in s3
 if [[ $configfile == s3://* ]]; then
     aws s3 cp $configfile ./
     configfile=$(basename $configfile)
 fi
 
 
-sudo sh -c "sed -i '/^PasswordAuthentication/s/no/yes/' /etc/ssh/sshd_config"
+#sudo sh -c "sed -i '/^PasswordAuthentication/s/no/yes/' /etc/ssh/sshd_config"
 
+#read config file
 sed -e 's/[[:space:]]*#.*// ; /^[[:space:]]*$/d' "$configfile" |
     while read line; do
         echo "export $line" >> ~/.bashrc           
@@ -81,6 +83,10 @@ run_script ${script}
 
 #--------install docker
 script=extras/install_docker.sh
+run_script ${script}
+
+#--------install apps
+script=apps/pjmatch/jobmodel.sh
 run_script ${script}
 
 
