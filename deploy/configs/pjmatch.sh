@@ -78,9 +78,9 @@ export AsgTemplateVersion=15
 
 
 ##Export region and account
-export AccountId="489880714178"
+export AccountId="070096167435"
 #AccountId=$(aws sts get-caller-identity --query Account --output text --profile ${profile_name})  
-export AWS_REGION=${ADLUDIO_AWS_REGION:-"eu-west-1"} # <- Your AWS Region
+export AWS_REGION=${TENX_AWS_REGION:-"eu-west-1"} # <- Your AWS Region
 export account=$AccountId
 export region=$AWS_REGION
 echo "account=$account"
