@@ -11,9 +11,9 @@ export s3bucket="s3://all-tenx-system"
 echo "profile=$profile_name"
 
 #application and proxy names
-export root_name="pjmatch" #name you give to your project in ecs env
-export dns_namespace="pjmatch.10academy.org"  ##This should be your domain 
-export repo_name="JobModel" #not used for now
+export root_name="tenx" #name you give to your project in ecs env
+export dns_namespace="tenx.10academy.org"  ##This should be your domain 
+export repo_name="tenx" #not used for now
 export app_name="${root_name}"  #-app
 export proxy_name="${root_name}-proxy"
 export log_group_name="/ecs/ecs-${root_name}-ssl"
