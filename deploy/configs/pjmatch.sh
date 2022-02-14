@@ -6,6 +6,8 @@ scriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 #aws cli profile 
 export profile_name="tenx"
 export email="yabebal@10academy.org"
+export s3bucket="s3://10ac-team"
+
 echo "profile=$profile_name"
 
 #application and proxy names
