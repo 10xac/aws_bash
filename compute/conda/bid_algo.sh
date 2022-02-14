@@ -1,0 +1,31 @@
+home=${ADMIN_HOME:-$(bash ../get_home.sh)}
+
+#reload bashrc
+source $home/.bashrc
+
+#check conda is installed
+if ! command -v conda >/dev/null; then
+    echo "Install first conda"
+    exit 0
+fi
+
+#activate conda
+conda init bash
+source $home/.bashrc
+
+#create venv
+conda create -n algos -y
+conda activate algos
+
+#install common packages
+conda install \
+      -c conda-forge \
+      -y \
+      -q \
+      boto3 mysqlclient
+
+
+#create venv
+conda activate algos
+
+pip3  install plotly mlflow slack_sdk python-decouple kaleido hyperopt mysqlclient pandas

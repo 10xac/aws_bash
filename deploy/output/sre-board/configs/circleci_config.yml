@@ -1,0 +1,139 @@
+version: 2.1
+orbs:
+  slack: circleci/slack@3.4.2
+  aws-ecr: circleci/aws-ecr@6.15.3
+  aws-ecs: circleci/aws-ecs@0.0.10
+
+parameters:
+  #ECS cluster name
+  clustername:
+    type: string
+    default: ecs-sre-board-cluster
+  #ECS service name used in clustername    
+  servicename:
+    type: string
+    default: ecs-sre-board-service
+  #ECS task name used in servicename    
+  taskname:
+    type: string
+    default: ecs-sre-board-task
+  #ECS container name in taskname     
+  containername:
+    type: string
+    default: sre-board-container
+  ecrreponame:
+    type: string
+    default: sre-board
+  tag:
+    type: string
+    default: latest
+    
+defaults: &defaults
+  docker:
+    - image: circleci/python:3.7.1
+      
+commands:
+  install_pip_packages:
+    description: "Pull submodule and Install pip packages"
+    parameters:
+      tag:
+        type: string
+        default: ""
+    steps:
+      - run:
+          command: git submodule update --init --recursive
+      # # **restores saved dependency cache if the
+      # #   Branch key template or requirements.txt
+      # #   files have not changed since the previous run**    
+      # - restore_cache: 
+      #     key: deps1-{{ .Branch }}-{{ checksum "requirements.txt" }}
+      # - run:
+      #     name: install pip packages
+      #     command: 
+      #       pip3 install --upgrade pip;
+      #       pip3 install -r requirements.txt ;
+      #       #pip3 install -r algos-commom/requirements.txt ;            
+      # - save_cache: # ** special step to save dependency cache **
+      #     key: deps1-{{ .Branch }}-{{ checksum "requirements.txt" }}  
+  docker_build_n_test:
+    description: "Reusable docker builds!"
+    parameters:
+      tag:
+        type: string
+        default: ""
+      node_env:
+        type: string
+        default: "development"
+    steps:
+      - run:
+          name: Login to Docker Hub
+          command: docker login -u  -p 
+      - run:
+          name: Build the image
+          command: docker build -t adludiodev/<< pipeline.parameters.containername >>:1 .
+      - run:
+          name: Test the build
+          command:
+            pip install --user --upgrade pip;
+            pip install --user -r requirements.txt ;            
+            python -m pytest --ignore=algos-common
+  docker_push:
+    description: "Push to docker"
+    parameters:
+      tag:
+        type: string
+        default: ""
+    steps: 
+      - run:
+          name: Push the image
+          command: docker push adludiodev/<< pipeline.parameters.containername >>:1
+jobs:
+  test:
+    <<: *defaults
+    steps:
+      - setup_remote_docker      
+      - checkout      
+      - install_pip_packages
+      - docker_build_n_test
+  build_master:
+    <<: *defaults
+    steps:
+      - slack/status: 
+          success_message: ':shipitparrot: << pipeline.parameters.image-tag >> was successfully deployed'
+workflows:
+  version: 2
+  # test:
+  #   jobs:
+  #     - test:
+  #         context: adludio-robots
+  #         filters:
+  #           tags:
+  #             ignore: /v[0-9]+\.[0-9]+\.[0-9]+/
+  #           branches:
+  #             ignore: master
+  build_deploy:
+    jobs:
+      - aws-ecr/build-and-push-image:
+          context: adludio-ds-team
+          account-url: AWS_ECR_ACCOUNT_URL
+          repo: << pipeline.parameters.ecrreponame >>
+          region: AWS_REGION
+          tag: << pipeline.parameters.tag >>
+          filters:
+            tags:
+              ignore: /.*/
+            branches:
+              only: main      
+      - aws-ecs/deploy-service-update:
+          context: adludio-ds-team
+          requires:
+            - aws-ecr/build-and-push-image
+          service-name: << pipeline.parameters.servicename >>
+          family: << pipeline.parameters.taskname >>
+          cluster-name: << pipeline.parameters.clustername >>
+          container-image-name-updates: 'container=<< pipeline.parameters.containername >>,tag=<< pipeline.parameters.tag >>'
+          filters:
+            tags:
+              ignore: /.*/
+            branches:
+              only: main

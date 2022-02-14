@@ -1,0 +1,49 @@
+#!/bin/bash
+echo ECS_CLUSTER=ecs-sre-board-cluster >> /etc/ecs/ecs.config;
+echo ECS_BACKEND_HOST= >> /etc/ecs/ecs.config;
+yum update -y
+
+
+home=$HOME
+if command -v apt-get >/dev/null; then
+    if [ -d /home/ubuntu ]; then
+        home=/home/ubuntu
+    fi
+else
+    if [ -d /home/centos ]; then
+        home=/home/centos
+    fi
+    if [ -d /home/ec2-user ]; then
+        home=/home/ec2-user
+    fi
+    if [ -d /home/hadoop ]; then
+        home=/home/hadoop
+    fi    
+fi
+
+echo PATH=/usr/bin:/usr/local/bin:$PATH >> $HOME/.bashrc
+echo PATH=/usr/bin:/usr/local/bin:$PATH >> $home/.bashrc
+source $HOME/.bashrc
+
+
+#--------update aws cli
+pip3 install botocore --upgrade || echo "unable to upgrade botocore"
+function awscli_install(){
+    yum install unzip -y 
+    curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+    unzip awscliv2.zip
+    ./aws/install --update
+    if [ -f /usr/bin/aws]; then
+        rm /usr/bin/aws || echo "unable to remove aws"
+    fi    
+    ln -s /usr/local/bin/aws /usr/bin/aws
+    rm -rf .aws
+}
+if command -v aws >/dev/null; then
+   if [[ $(aws --version) = aws-cli/1.* ]]; then
+       awscli_install  || echo "unable to install cli"
+   fi
+else
+   awscli_install  || echo "unable to install cli"     
+fi
+

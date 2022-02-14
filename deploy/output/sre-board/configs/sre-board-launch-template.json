@@ -1,0 +1,46 @@
+{
+     "LaunchTemplateName":"sre-board-launch-template", 
+    "VersionDescription": "test description",
+    "LaunchTemplateData": {
+        "EbsOptimized": false,
+        "IamInstanceProfile": {
+            "Arn": "arn:aws:iam::489880714178:instance-profile/ecsInstanceRole"
+        },
+        "ImageId": "ami-0c62045417a6d2199",
+        "InstanceType": "t3.medium",
+        "KeyName": "ml-box",
+        "Monitoring": {
+            "Enabled": true
+        },
+         "UserData":"IyEvYmluL2Jhc2gKZWNobyBFQ1NfQ0xVU1RFUj1lY3Mtc3JlLWJvYXJkLWNsdXN0ZXIgPj4gL2V0Yy9lY3MvZWNzLmNvbmZpZzsKZWNobyBFQ1NfQkFDS0VORF9IT1NUPSA+PiAvZXRjL2Vjcy9lY3MuY29uZmlnOwp5dW0gdXBkYXRlIC15CgoKaG9tZT0kSE9NRQppZiBjb21tYW5kIC12IGFwdC1nZXQgPi9kZXYvbnVsbDsgdGhlbgogICAgaWYgWyAtZCAvaG9tZS91YnVudHUgXTsgdGhlbgogICAgICAgIGhvbWU9L2hvbWUvdWJ1bnR1CiAgICBmaQplbHNlCiAgICBpZiBbIC1kIC9ob21lL2NlbnRvcyBdOyB0aGVuCiAgICAgICAgaG9tZT0vaG9tZS9jZW50b3MKICAgIGZpCiAgICBpZiBbIC1kIC9ob21lL2VjMi11c2VyIF07IHRoZW4KICAgICAgICBob21lPS9ob21lL2VjMi11c2VyCiAgICBmaQogICAgaWYgWyAtZCAvaG9tZS9oYWRvb3AgXTsgdGhlbgogICAgICAgIGhvbWU9L2hvbWUvaGFkb29wCiAgICBmaSAgICAKZmkKCmVjaG8gUEFUSD0vdXNyL2JpbjovdXNyL2xvY2FsL2JpbjokUEFUSCA+PiAkSE9NRS8uYmFzaHJjCmVjaG8gUEFUSD0vdXNyL2JpbjovdXNyL2xvY2FsL2JpbjokUEFUSCA+PiAkaG9tZS8uYmFzaHJjCnNvdXJjZSAkSE9NRS8uYmFzaHJjCgoKIy0tLS0tLS0tdXBkYXRlIGF3cyBjbGkKcGlwMyBpbnN0YWxsIGJvdG9jb3JlIC0tdXBncmFkZSB8fCBlY2hvICJ1bmFibGUgdG8gdXBncmFkZSBib3RvY29yZSIKZnVuY3Rpb24gYXdzY2xpX2luc3RhbGwoKXsKICAgIHl1bSBpbnN0YWxsIHVuemlwIC15IAogICAgY3VybCAiaHR0cHM6Ly9hd3NjbGkuYW1hem9uYXdzLmNvbS9hd3NjbGktZXhlLWxpbnV4LXg4Nl82NC56aXAiIC1vICJhd3NjbGl2Mi56aXAiCiAgICB1bnppcCBhd3NjbGl2Mi56aXAKICAgIC4vYXdzL2luc3RhbGwgLS11cGRhdGUKICAgIGlmIFsgLWYgL3Vzci9iaW4vYXdzXTsgdGhlbgogICAgICAgIHJtIC91c3IvYmluL2F3cyB8fCBlY2hvICJ1bmFibGUgdG8gcmVtb3ZlIGF3cyIKICAgIGZpICAgIAogICAgbG4gLXMgL3Vzci9sb2NhbC9iaW4vYXdzIC91c3IvYmluL2F3cwogICAgcm0gLXJmIC5hd3MKfQppZiBjb21tYW5kIC12IGF3cyA+L2Rldi9udWxsOyB0aGVuCiAgIGlmIFtbICQoYXdzIC0tdmVyc2lvbikgPSBhd3MtY2xpLzEuKiBdXTsgdGhlbgogICAgICAgYXdzY2xpX2luc3RhbGwgIHx8IGVjaG8gInVuYWJsZSB0byBpbnN0YWxsIGNsaSIKICAgZmkKZWxzZQogICBhd3NjbGlfaW5zdGFsbCAgfHwgZWNobyAidW5hYmxlIHRvIGluc3RhbGwgY2xpIiAgICAgCmZpCgo=", 
+        "TagSpecifications": [
+            {
+                "ResourceType": "instance",
+                "Tags": [
+                    {
+                        "Key": "team",
+                        "Value": "datascience"
+                    },
+                    {
+                        "Key": "name",
+"Value": "sre-board-host" 
+                    }                    
+                ]
+            }
+        ],
+        "SecurityGroupIds": [
+            "sg-04c5be8b8c1e6d6ea"
+        ],
+        "Placement": {
+            "Tenancy": "dedicated"
+        },
+        "CreditSpecification": {
+            "CpuCredits": "unlimited"
+        },
+        "MetadataOptions": {
+            "HttpTokens": "required",
+            "HttpPutResponseHopLimit": 1,
+            "HttpEndpoint": "enabled"
+        }        
+    }
+}

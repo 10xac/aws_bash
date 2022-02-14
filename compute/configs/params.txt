@@ -1,0 +1,26 @@
+####List of users (usernames)
+USERS_FILE="users.txt"
+
+####where conda is installed
+PYTHON_DIR=/opt/miniconda
+
+####root bucket
+BUCKET="10ac-team"
+
+####credential root folder
+CRED_ROOT_FOLDER="$BUCKET/credentials"
+
+####credential folders to copy
+CRED_FOLDERS=""
+
+
+###jupyter notebook folder
+NOTEBOOK_FOLDER="$BUCKET/notebooks"
+
+###features to install or setup
+mounts3=false
+addusers=false
+setupconda=false
+setupjhub=false
+setupjnb=false
+setupdocker=true
