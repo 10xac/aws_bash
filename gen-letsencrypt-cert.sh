@@ -29,7 +29,7 @@ source create_ssl_configs.sh
 # define key parameters for certbot
 domains=(${dns_namespace})
 rsa_key_size=4096
-email="yabebal.tadesse@adludio.org" # Adding a valid address is strongly recommended 
+email=(${email}) # Adding a valid address is strongly recommended 
 staging=0 # Set to 1 if you're testing your setup to avoid hitting request limits
 
 
@@ -76,8 +76,11 @@ echo "### Requesting Let's Encrypt certificate for $domains ..."
 #Join $domains to -d args
 domain_args=""
 for domain in "${domains[@]}"; do
-  domain_args="$domain_args -d $domain"
+  domain_args="$domain_args -d $domain -d dev-$domain -d staging-$domain"
 done
+echo "------creating ssl certificate for the following urls----"
+echo ${domain_args}
+echo "---------------------------"
 
 # Select appropriate email arg
 email_arg="--email $email"
