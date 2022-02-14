@@ -1,0 +1,52 @@
+version: "3"
+services:
+  test:
+    build:
+      context: .
+      dockerfile: ./Dockerfile-test
+    restart: unless-stopped      
+    expose:
+      - 8080
+    networks:
+       my-network:
+          aliases:
+            - app
+      
+  app:
+    build: .
+    expose:
+      - 8080
+    restart: unless-stopped
+    environment:
+      - RDS_CONFIG 
+    networks:
+       my-network:
+          aliases:
+            - app
+      
+  nginx:
+    image: nginx:1.15-alpine
+    depends_on:
+     - app
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./data/nginx/app:/etc/nginx/conf.d
+      - ./data/certbot/conf:/etc/letsencrypt
+    command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
+    networks:
+      - my-network
+      
+  certbot:
+    image: certbot/certbot
+    restart: unless-stopped
+    volumes:
+      - ./data/certbot/conf:/etc/letsencrypt
+      - ./data/certbot/www:/var/www/certbot
+    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 12h & wait $${!}; done;'"
+
+
+networks:
+  my-network:
