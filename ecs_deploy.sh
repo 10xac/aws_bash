@@ -42,12 +42,14 @@ else
 fi
 
 #write template
-if [ -f $template ]; then    
-    envsubst <${$template}>$fout
+if [ -f $template ]; then
+    echo "Creating and setting up CI/CD config file  ..."            
+    envsubst <${template}>$fout
     echo "$template variables replaced and saved as $fout"
 fi
 
 if $push_cicd_template ; then
+    echo "Pushing CI/CD config to repo ..."            
     source push_cicd_template.sh $repo_name #no variables returned
 fi
 
@@ -72,6 +74,7 @@ fi
 ##------------------------------------------------------#
 
 if $create_launch_template ; then
+    echo "Creating and setting up Launch Template  ..."      
     source create_launch_template.sh
 fi
 

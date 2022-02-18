@@ -1,4 +1,5 @@
-if [ $# -gt 0 ]; then
+
+if [ ! -z "$1" ]; then
     root_name=$1
 else
     echo "Need to pass root_name to create Log and Config Directories"

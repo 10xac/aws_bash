@@ -5,7 +5,7 @@ scriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 
 #---------------Basic Parameters------------------
 #aws cli profile 
-export profile_name="tenx"
+export profile_name="tenac"
 export email="yabebal@10academy.org"
 export s3bucket="s3://all-tenx-system"
 export s3_authorized_keys_path=""
@@ -22,10 +22,14 @@ export log_group_name="/ecs/ecs-${root_name}-ssl"
 echo "root_name=$root_name"
 
 #---------------Github Parameters------------------
-#use github actions or circleci
-github_actions=true
 ssmgittoken="git_token_tenx"
 gituname="10xac"
+
+#use github actions or circleci
+github_actions=false
+
+#copy generated CI/CD config file to git repo
+export push_cicd_template=false
 
 #---------------AWS VPC Parameters------------------
 ##Export region and account
@@ -38,7 +42,7 @@ sshKeyName="tech-ds-team"
 AmazonImageId="ami-0c62045417a6d2199"
 AwsInstanceType="t3.medium"
 
-#---------------CI/CD & SSL ------------------
+#---------------SSL Parameters------------------
 # When true it means you have generated a letsencrypt
 # or something similar ssl manually, and you have saved it in s3.
 # Moreover, the lanuch template generation code/template is modified accordingly 
@@ -47,8 +51,6 @@ AwsInstanceType="t3.medium"
 # can be accessed securely.
 export copy_ssl_cert_froms3=true
 
-#copy generated CI/CD config file to git repo
-export push_cicd_template=false
 
 #---------------Route53 Parameters------------------
 #Route53 record setting
@@ -59,6 +61,7 @@ export route53RecordTemplate=template/r53-record-set-template.json
 export ec2LaunchTemplate=template/ec2-launch-template.json
 
 if [ -f $logoutputdir/alb_output_params.sh ]; then
+    echo "ALB output file exists  ..."      
     source $logoutputdir/alb_output_params.sh
     export create_and_setup_alb=false
 else
@@ -66,6 +69,7 @@ else
 fi
 
 if [ -f $logoutputdir/clt_output_params.sh ]; then
+    echo "Launch template output file exists  ..."
     source $logoutputdir/clt_output_params.sh
     export create_launch_template=false
 else
@@ -73,6 +77,7 @@ else
 fi
 
 if [ -f $logoutputdir/output-create-auto-scaling-group.json ]; then
+    echo "ASG output file exists  ..."    
     export create_and_setup_asg=false
 else
     export create_and_setup_asg=true
@@ -103,6 +108,7 @@ export task_name="ecs-${root_name}-task"
 export service_name="ecs-${root_name}-service"
 export cluster="ecs-${root_name}-cluster"
 export ECSLaunchType="EC2"
+#"FARGATE"
 
 #cpu and memory limit for an ecs docker container
 #and template paths
@@ -110,8 +116,6 @@ export ecsTaskCpuUnit=1024
 export ecsTaskMemoryUnit=2048
 export ecsTaskTemplate=template/ecs-cms-task-template.json
 export ecsServiceTemplate=template/ecs-ec2-service-template.json
-
-#"FARGATE"
 
 #loadbalance and autoscale
 export alb="ecs-${root_name}-alb"
@@ -125,7 +129,6 @@ export AsgTemplateVersion=15
 ##Service name and domain to be used
 echo "dns=$dns_namespace"
 echo "ecs cluster=$cluster"
-
 
 #ECS task execution IAM role
 export ecsTaskExecutionRoleArn="arn:aws:iam::$account:role/ecsTaskExecutionRole"

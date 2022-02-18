@@ -1,4 +1,16 @@
 #--------------------------------------------------------#
+###-----Define necessary environment variables if passed -----##
+##------------------------------------------------------#
+if [ ! -z "$1" ]; then                
+    echo "Loading variables from $1"
+    source $1 #many key variables returned
+    source create_conflog_dir.sh $root_name
+    echo "confdir=$configoutputdir"
+    echo "logdir=$logoutputdir"    
+fi
+
+
+#--------------------------------------------------------#
 ###-------- Certificate setup -----##
 ##------------------------------------------------------#
 
