@@ -1,0 +1,34 @@
+{
+    "serviceName": "${service_name}",
+    "cluster": "arn:aws:ecs:$region:$account:cluster/${ecs_cluster_name}",
+    "taskDefinition": "arn:aws:ecs:$region:$account:task-definition/$task_name",
+    "loadBalancers": [
+                {
+                    "targetGroupArn": "$targetGroupArn",
+                    "containerName": "${ecr_repo_name}",
+                    "containerPort": 443
+                }
+            ],
+    "launchType": "$ECSLaunchType", 
+    "platformVersion": "LATEST",
+    "networkConfiguration": {
+                "awsvpcConfiguration": {
+                    "subnets": [
+                        "$private_subnet1", "$private_subnet2"
+                    ],
+                    "securityGroups": [
+                        "$sg"
+                    ],
+                    "assignPublicIp": "ENABLED"
+                }
+            },
+    "deploymentConfiguration": {
+                "maximumPercent": 200,
+                "minimumHealthyPercent": 0
+            },
+    "desiredCount": 1,
+    "healthCheckGracePeriodSeconds": 600,
+    "schedulingStrategy": "REPLICA",
+    "enableECSManagedTags": false,
+    "propagateTags": "TASK_DEFINITION"    
+}

@@ -10,7 +10,7 @@ if [ $# -gt 0 ]; then
 fi
 
 
-s3certpath=s3://ml-box-data/ssl-certs/${root_name}
+s3certpath=${s3bucket}/ssl-certs/${root_name}
 localcertdir=$configoutputdir/certs
 fnameuserdata=$configoutputdir/${root_name}_user_data.template
 
@@ -21,7 +21,6 @@ if [ -f ${localdir}/my-aws-private.key ]; then
     aws s3 cp ${localcertdir} $s3certpath --recursive --profile ${profile_name}
 fi
 
-s3_authorized_keys_path=s3://ml-box-data/creds/ssh/${authorized_key_holder}_authorized_keys
 
 #write modified user_data file
 cat <<EOF >  $fnameuserdata
@@ -92,7 +91,9 @@ aws s3 cp $s3certpath ./cert --recursive #| echo "ERROR: can not copy cert folde
 mkdir -p /etc/ssl
 
 #copy ssh key 
+if [ ! -z "s3_authorized_keys_path" ]; then
 aws s3 cp $s3_authorized_keys_path - >> ~/.ssh/authorized_keys #| echo "ERROR: can not copy authorization key from s3"
+fi
 
 if [ -d ./cert ]; then
    cp -r ./cert /etc/ssl/letsencrypt
@@ -169,8 +170,8 @@ ftemplate=$configoutputdir/${root_name}-launch-template.json
 #if [ ! -f $ftemplate ]; then
 if [ -f template/${root_name}-launch-template.json ]; then
     cp ./template/${root_name}-launch-template.json $ftemplate        
-else        
-    cp ./template/ec2-launch-template.json $ftemplate
+else
+    envsubst <${ec2LaunchTemplate}>$ftemplate    
 fi
 #fi
 
@@ -224,6 +225,10 @@ res=$(aws ec2 describe-launch-template-versions \
    )
 echo $res > $logoutputdir/output-describe-launch-template-latest.json
 
-
 export AsgTemplateId=$(echo $res | jq -r '.LaunchTemplateVersions[0].LaunchTemplateId')
+
+#to file
+echo "export AsgTemplateId=$AsgTemplateId" > $logoutputdir/clt_output_params.sh
+
+#info
 echo "ASG Launch template_name=$AsgTemplateName, template_id=$AsgTemplateId"

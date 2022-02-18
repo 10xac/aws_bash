@@ -28,73 +28,29 @@ cd $scriptDir/deploy
 source create_conflog_dir.sh $root_name
 
 
-#generate circleci
+#--------------------------------------------------------#
+##------- Generate and Push CI/CD Config to the repository --------#
+##------------------------------------------------------#
+
+#check which CI/CD config to write
 if $github_actions; then
-    if [ -f template/github_actions.template ]; then    
-        envsubst <template/github_actions.template>$configoutputdir/github_actions_config.yml
-        echo "template/github_actions.template variables replaced and saved as $configoutputdir/github_actions_config.yml"    
-    fi
+    template=template/github-actions-template.yml
+    fout=$configoutputdir/github_actions_config.yml    
 else
-    if [ -f template/circleci.template ]; then
-        envsubst <template/circleci.template>$configoutputdir/circleci_config.yml
-        echo "template/circleci.template variables replaced and saved as $configoutputdir/circleci_config.yml"
-        #echo "------------ circleci header -------------"
-        #head -n28 template/config.yml | tail -n+6
-        #echo "-----------------------------------------"
-    fi
+    template=template/circleci-template.yml
+    fout=$configoutputdir/circleci_config.yml
 fi
 
-exit
-
-#--------------------------------------------------------#
-##------- Push CircleCI Config to the repository --------#
-##------------------------------------------------------#
-
-if $push_circleci_template ; then
-    source push_circleci_template.sh $repo_name #no variables returned
+#write template
+if [ -f $template ]; then    
+    envsubst <${$template}>$fout
+    echo "$template variables replaced and saved as $fout"
 fi
 
-#--------------------------------------------------------#
-##------- Create two ECR repositories to store
-#-------- the application and Envoy container images.
-##------------------------------------------------------#
-
-
-if $create_ecr_repo ; then
-    source create_ecr_repos.sh #no variables returned
+if $push_cicd_template ; then
+    source push_cicd_template.sh $repo_name #no variables returned
 fi
 
-# push test image if requested
-if $docker_push_test_app; then
-    source push_test_images_to_ecr.sh
-fi
-
-#--------------------------------------------------------#
-###-------- Create cluster and task definition -----##
-##------------------------------------------------------#
-echo "current dir: `pwd`"
-if $create_ecs_cluster_and_task; then
-    #no variables returned
-    source create_ecs_cluster.sh 
-fi
-
-#--------------------------------------------------------#
-###************** returns needed variables *************#
-###-------- Certificate setup -----##
-##------------------------------------------------------#
-
-if $create_acm_certificate && [ -z $certificateArn ]; then
-    echo "Getting ACM certificate ..."
-    source acm_certificate_setup.sh  #returns needed variables
-fi
-
-
-
-#stop if variable is not set
-if [ -z $certificateArn ]; then
-    echo "certificateArn is not set"
-    exit 0
-fi
 #--------------------------------------------------------#
 ###-------- Create the Application Load Balancer -----##
 ##------------------------------------------------------#
@@ -125,6 +81,45 @@ if $create_and_setup_asg && [ $ECSLaunchType == "EC2" ]; then
 fi
 
 #--------------------------------------------------------#
+##------- Create two ECR repositories to store
+#-------- the application and Envoy container images.
+##------------------------------------------------------#
+
+if $create_ecr_repo ; then
+    source create_ecr_repos.sh #no variables returned
+fi
+
+# push test image if requested
+if $docker_push_test_app; then
+    source push_test_images_to_ecr.sh
+fi
+
+#--------------------------------------------------------#
+###-------- Create cluster and task definition -----##
+##------------------------------------------------------#
+echo "current dir: `pwd`"
+if $create_ecs_cluster_and_task; then
+    #no variables returned
+    source create_ecs_cluster.sh 
+fi
+
+#--------------------------------------------------------#
+###- Certificate setup: PLEASE SETUP WILD ACM CERTIFICATES --##
+##------------------------------------------------------#
+
+# if $create_acm_certificate && [ -z $certificateArn ]; then
+#     echo "Getting ACM certificate ..."
+#     source acm_certificate_setup.sh  #returns needed variables
+# fi
+
+# #stop if variable is not set
+# if [ -z $certificateArn ]; then
+#     echo "certificateArn is not set"
+#     exit 0
+# fi
+
+
+#--------------------------------------------------------#
 ###-------- Certificate ecs service -----##
 ##------------------------------------------------------#
 
@@ -138,9 +133,9 @@ fi
 ###-------- --------Route53 Setup ---------------------##
 ##------------------------------------------------------#
 
-if $create_record_set; then
+if $create_route53_record; then
     echo "Creating Route53 Record ..."
-    source create_route53_recordset.sh 
+    source create_route53_record.sh
 fi
 
 #--------------------------------------------------------#

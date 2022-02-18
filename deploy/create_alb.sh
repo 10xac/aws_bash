@@ -1,4 +1,15 @@
 #--------------------------------------------------------#
+###-----Define necessary environment variables if passed -----##
+##------------------------------------------------------#
+if [ $# -gt 0 ]; then
+    echo "Loading variables from $1"
+    source $1 #many key variables returned
+    source create_conflog_dir.sh $root_name
+    echo "confdir=$configoutputdir"
+    echo "logdir=$logoutputdir"    
+fi
+
+#--------------------------------------------------------#
 ###-------- Create the Application Load Balancer -----##
 ##------------------------------------------------------#
 if [ -z $loadbalancerArn ]; then
@@ -32,6 +43,8 @@ echo "loadbalancerArn=$loadbalancerArn"
 echo "targetGroupArn=$targetGroupArn"
 echo "-----------------------------------------------------"
 
+echo "export loadbalancerArn=$loadbalancerArn" > $logoutputdir/alb_output_params.sh
+echo "export targetGroupArn=$targetGroupArn" > $logoutputdir/alb_output_params.sh
 
 aws elbv2 create-listener --load-balancer-arn $loadbalancerArn \
     --protocol HTTPS --port 443  \

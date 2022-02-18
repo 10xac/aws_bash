@@ -1,13 +1,13 @@
 {
-  "taskRoleArn": "arn:aws:iam::489880714178:role/ECSTaskRole",  
-  "executionRoleArn": "arn:aws:iam::489880714178:role/ecsTaskExecutionRole",
+  "taskRoleArn": "$ecsTaskRoleArn",  
+  "executionRoleArn": "$ecsTaskExecutionRoleArn",
   "family": "$task_name",
   "requiresCompatibilities": [ 
        "$ECSLaunchType" 
     ],
   "networkMode": "bridge",
-  "cpu": "1024",
-  "memory": "2048",  
+  "cpu": "$ecsTaskCpuUnit",
+  "memory": "$ecsTaskMemoryUnit",  
   "containerDefinitions": [
     {
       "logConfiguration": {
@@ -26,6 +26,11 @@
           "containerPort": 3306
         },
         {
+          "hostPort": 5432,
+          "protocol": "tcp",
+          "containerPort": 5432
+        },        
+        {
           "hostPort": 80,
           "protocol": "tcp",
           "containerPort": 80
@@ -40,27 +45,9 @@
       "environment": [
         {
           "name": "GIT_TOKEN",
-          "value": "arn:aws:secretsmanager:eu-west-1:489880714178:secret:yabi-git-token-fHoG2T"
-        },
-        {
-          "name": "TTD_TOKEN",
-          "value": "arn:aws:secretsmanager:eu-west-1:489880714178:secret:ttdToken-52rewj"
+          "value": "arn:aws:secretsmanager:eu-west-1:$account:secret:$ssmgittoken"
         }
       ],
-      "secrets": [
-        {
-          "valueFrom": "arn:aws:secretsmanager:eu-west-1:489880714178:secret:google/service/sheet-mUSlzW",
-          "name": "GSHEET_CONFIG"
-        },
-        {
-          "valueFrom": "arn:aws:secretsmanager:eu-west-1:489880714178:secret:dsmetadata/rds/mysql-zvS0rW",
-          "name": "RDS_CONFIG"
-        },
-        {
-          "valueFrom": "arn:aws:secretsmanager:eu-west-1:489880714178:secret:TTDProdAPICred-JMH6Ej",
-          "name": "TTD_API_SECRET"
-        }
-      ],      
       "image": "$aws_ecr_repository_url_app",
       "name": "$app_container_name",
       "essential": true

@@ -4,11 +4,11 @@
     "LaunchTemplateData": {
         "EbsOptimized": false,
         "IamInstanceProfile": {
-            "Arn": "arn:aws:iam::489880714178:instance-profile/ecsInstanceRole"
+            "Arn": "$IamInstanceProfile"
         },
-        "ImageId": "ami-0c62045417a6d2199",
-        "InstanceType": "t3.medium",
-        "KeyName": "ml-box",
+        "ImageId": "$AwsImageId",
+        "InstanceType": "$AwsInstanceType",
+        "KeyName": "$sshKeyName",
         "Monitoring": {
             "Enabled": true
         },
@@ -29,7 +29,7 @@
             }
         ],
         "SecurityGroupIds": [
-            "sg-04c5be8b8c1e6d6ea"
+            "$sg"
         ],
         "Placement": {
             "Tenancy": "dedicated"

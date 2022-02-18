@@ -2,6 +2,18 @@
 ### https://docs.aws.amazon.com/cli/latest/reference/autoscaling/create-auto-scaling-group.html
 ######
 
+##------------------------------------------------------#
+###-----Define necessary environment variables if passed -----##
+##------------------------------------------------------#
+if [ $# -gt 0 ]; then
+    echo "Loading variables from $1"
+    source $1 #many key variables returned
+    source create_conflog_dir.sh $root_name
+    echo "confdir=$configoutputdir"
+    echo "logdir=$logoutputdir"    
+fi
+
+
 res=$(aws autoscaling describe-auto-scaling-groups \
           --auto-scaling-group-names $AsgName \
           --region $region --profile ${profile_name})

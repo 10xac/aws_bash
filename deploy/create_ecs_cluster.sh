@@ -1,13 +1,25 @@
+##------------------------------------------------------#
+###-----Define necessary environment variables if passed -----##
+##------------------------------------------------------#
+if [ $# -gt 0 ]; then
+    echo "Loading variables from $1"
+    source $1 #many key variables returned
+    source create_conflog_dir.sh $root_name
+    echo "confdir=$configoutputdir"
+    echo "logdir=$logoutputdir"    
+fi
+
+
 #--------------------------------------------------------#
 ###-------- Create cluster and task definition -----##
 ##------------------------------------------------------#
 set -e
 
-mkdir -p output/ecs
-
-#Create a task definition with both the container definitions.
-#Substitute the environment variables, create a log group, an ECS cluster, and register the task definition.
-envsubst <template/ecs_task_single_docker.template>ecs_task_def.json
+#Create a task definition with container definitions.
+#Substitute the environment variables, create a log group,
+#an ECS cluster, and register the task definition.
+fout=$configoutputdir/ecs_task_def.json
+envsubst <${ecsTaskTemplate}>$fout
 
 res=$(aws logs describe-log-groups --log-group-name-prefix $log_group_name)
 lgempty=$(echo $res | if jq -e 'keys_unsorted as $keys
@@ -33,8 +45,7 @@ fi
 
 #Register the task definition.
 aws ecs register-task-definition \
-    --cli-input-json file://ecs_task_def.json \
+    --cli-input-json file://$fout \
     --region $region --profile ${profile_name}
 
 
-mv ecs_task_def.* output/ecs/

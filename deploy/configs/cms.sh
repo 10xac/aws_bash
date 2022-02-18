@@ -3,61 +3,98 @@
 ##------------------------------------------------------#
 scriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 
+#---------------Basic Parameters------------------
 #aws cli profile 
 export profile_name="tenx"
 export email="yabebal@10academy.org"
 export s3bucket="s3://all-tenx-system"
+export s3_authorized_keys_path=""
 
 echo "profile=$profile_name"
 
 #application and proxy names
 export root_name="cms" #name you give to your project in ecs env
 export dns_namespace="cms.10academy.org"  ##This should be your domain 
-export repo_name="tenx" #not used for now
+export repo_name="JobModel" #not used for now
 export app_name="${root_name}"  #-app
 export proxy_name="${root_name}-proxy"
 export log_group_name="/ecs/ecs-${root_name}-ssl"
 echo "root_name=$root_name"
 
+#---------------Github Parameters------------------
 #use github actions or circleci
 github_actions=true
 ssmgittoken="git_token_tenx"
 gituname="10xac"
 
+#---------------AWS VPC Parameters------------------
+##Export region and account
+##Export key networking constructs
+source ${scriptDir}/vpc_10academy.sh
 
-# make this false to generate letsencrypt ssl manually
-# once ssl cert is generate, copy it to s3, and set
-# the value here to true and update launch template
-# to enable nginx ssl configration when an ec2 instance
-# is launched
+#instance profile
+IamInstanceProfile="arn:aws:iam::070096167435:instance-profile/Ec2InstanceWithFullAdminAccess"
+sshKeyName="tech-ds-team"
+AmazonImageId="ami-0c62045417a6d2199"
+AwsInstanceType="t3.medium"
+
+#---------------CI/CD & SSL ------------------
+# When true it means you have generated a letsencrypt
+# or something similar ssl manually, and you have saved it in s3.
+# Moreover, the lanuch template generation code/template is modified accordingly 
+# such that the SSL certificate will be copied when an instance starts.
+# The nginx will be enabled with the ssl configration and the ec2 instance
+# can be accessed securely.
 export copy_ssl_cert_froms3=true
 
+#copy generated CI/CD config file to git repo
+export push_cicd_template=false
+
+#---------------Route53 Parameters------------------
+#Route53 record setting
+export create_route53_record=False
+export route53RecordTemplate=template/r53-record-set-template.json
+
+#---------------EC2 Parameters------------------
+export ec2LaunchTemplate=template/ec2-launch-template.json
+
+if [ -f $logoutputdir/alb_output_params.sh ]; then
+    source $logoutputdir/alb_output_params.sh
+    export create_and_setup_alb=false
+else
+    export create_and_setup_alb=true
+fi
+
+if [ -f $logoutputdir/clt_output_params.sh ]; then
+    source $logoutputdir/clt_output_params.sh
+    export create_launch_template=false
+else
+    export create_launch_template=true
+fi
+
+if [ -f $logoutputdir/output-create-auto-scaling-group.json ]; then
+    export create_and_setup_asg=false
+else
+    export create_and_setup_asg=true
+fi
+
+#-----------------ECS Parameters---------------
 #create docker images locally and push them to ECR
 export docker_push_proxy=false
 export docker_push_test_app=false
 
-#EC2
-export create_and_setup_alb=true
-export create_launch_template=true
-export create_and_setup_asg=true
-
-export loadbalancerArn=
-export targetGroupArn=
-
-#ECR images
-export aws_ecr_repository_url_app=070096167435.dkr.ecr.eu-west-1.amazonaws.com/tenx:latest
-
-#ECS
 export create_ecr_repo=false
+if [ -f $logoutputdir/ecr_output_params.sh ]; then
+    source $logoutputdir/ecr_output_params.sh
+    if [ -z $aws_ecr_repository_url_app ]; then
+        export create_ecr_repo=true
+    fi
+else
+    export create_ecr_repo=true
+fi
+
 export create_ecs_cluster_and_task=false
 export create_ecs_service=false
-
-
-#---! DO NOT CHANGE THIS UNLESS YOU KNOW WHAT YOU ARE DOING !---------
-export create_acm_certificate=false
-#this is for *.adludio.com
-certificateArn=arn:aws:acm:eu-west-1:489880714178:certificate/5d1753e6-51a1-4363-9bc5-5203daa91872
-
 
 #ECS parameters
 export app_container_name="${root_name}-container"  #-app
@@ -66,6 +103,14 @@ export task_name="ecs-${root_name}-task"
 export service_name="ecs-${root_name}-service"
 export cluster="ecs-${root_name}-cluster"
 export ECSLaunchType="EC2"
+
+#cpu and memory limit for an ecs docker container
+#and template paths
+export ecsTaskCpuUnit=1024
+export ecsTaskMemoryUnit=2048
+export ecsTaskTemplate=template/ecs-cms-task-template.json
+export ecsServiceTemplate=template/ecs-ec2-service-template.json
+
 #"FARGATE"
 
 #loadbalance and autoscale
@@ -74,29 +119,8 @@ export AsgName="ecs-${root_name}-asg"
 export AsgMinSize=1
 export AsgMaxSize=1
 export AsgDesiredSize=1
-export AsgTemplateId="lt-05a9b012ef8d06e13"
 export AsgTemplateName="${root_name}-launch-template"
 export AsgTemplateVersion=15
-
-
-##Export region and account
-export AccountId="070096167435"
-#AccountId=$(aws sts get-caller-identity --query Account --output text --profile ${profile_name})  
-export AWS_REGION=${TENX_AWS_REGION:-"eu-west-1"} # <- Your AWS Region
-export account=$AccountId
-export region=$AWS_REGION
-echo "account=$account"
-echo "region=$region"
-
-##Export key networking constructs
-#Subsitute these values with your VPC subnet ids
-export private_subnet1="subnet-df5a8197" #private-data-subnet-a 
-export private_subnet2="subnet-f8e1f6a3" #private-data-subnet-b 
-export public_subnet1="subnet-ff24ffb7" #public-data-subnet-a
-export public_subnet2="subnet-92e0f7c9" #public-data-subnet-b
-export sg="sg-152edb69"   ##open access SG for ALB ssh/http/https All 0.0.0.0/0
-export vpcId="vpc-92fd7af4" # (data-vpc) <- Change this to your VPC id
-echo "vpcid=$vpcId"
 
 ##Service name and domain to be used
 echo "dns=$dns_namespace"
@@ -105,7 +129,7 @@ echo "ecs cluster=$cluster"
 
 #ECS task execution IAM role
 export ecsTaskExecutionRoleArn="arn:aws:iam::$account:role/ecsTaskExecutionRole"
-
+export ecsTaskRoleArn="arn:aws:iam::$account:role/ECSTaskRole"
 
 export params_file="$scriptDir/$0"
 
