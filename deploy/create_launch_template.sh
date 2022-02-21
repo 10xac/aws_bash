@@ -49,6 +49,8 @@ output = json
 EOFF
 
 EOF
+
+#--------
 cat <<'EOF' >>  $fnameuserdata
 
 home=$HOME
@@ -102,6 +104,11 @@ else
    awscli_install  || echo "unable to install cli"     
 fi
 
+EOF
+
+if ${ec2launch_install_docker:-true} ; then
+cat <<'EOF' >>  $fnameuserdata
+
 #install docker
 if command -v docker >/dev/null; then
 	echo "docker is already installed"
@@ -114,23 +121,22 @@ else
     else    
 	echo "installing docker .."
 	if command -v apt-get >/dev/null; then
-	    sudo apt-get update -y
-	    sudo apt-get install -y docker.io
-	    sudo service docker start
-	    sudo usermod -a -G docker ${homeUser}
+	    apt-get update -y
+	    apt-get install -y docker.io
+	    service docker start
+	    usermod -a -G docker ${homeUser}
 	    
 	elif command -v yum >/dev/null; then
-	    sudo yum update -y
-	    sudo yum install -y docker
-	    sudo service docker start
-	    sudo usermod -a -G docker ${homeUser}
+	    yum update -y
+	    yum install -y docker
+	    service docker start
+	    usermod -a -G docker ${homeUser}
 	else
 	    echo "unknown os system.."
-	    exit
+	    #exit
 	fi
     fi
 fi
-
 
 #install docker-compose
 if command -v docker-compose >/dev/null; then
@@ -143,13 +149,31 @@ else
 	source ~/.bashrc
     else
 	echo "installing docker-compose .."	
-	sudo curl -L https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m) -o /usr/local/bin/docker-compose
-	sudo chmod +x /usr/local/bin/docker-compose
+	curl -L https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m) -o /usr/local/bin/docker-compose
+	chmod +x /usr/local/bin/docker-compose
     fi
 fi
 
 docker --version
 docker-compose --version
+
+## Amazon ECR Docker Credential Helper
+if command -v apt-get >/dev/null; then
+   apt install amazon-ecr-credential-helper
+else
+   if command -v amazon-linux-extras >/dev/null; then
+      amazon-linux-extras enable docker 
+   fi    
+   yum install amazon-ecr-credential-helper
+fi
+
+cat <<EOFF > config.json
+{
+	"credsStore": "ecr-login"
+}
+EOFF
+cp config.json $HOME/.aws 
+cp config.json $home/.aws
 
 EOF
 
@@ -169,7 +193,7 @@ aws s3 cp $s3certpath ./cert --recursive #| echo "ERROR: can not copy cert folde
 mkdir -p /etc/ssl
 
 #copy ssh key 
-if [ ! -z "s3_authorized_keys_path" ]; then
+if [ ! -z "$s3_authorized_keys_path" ]; then
 aws s3 cp $s3_authorized_keys_path - >> ~/.ssh/authorized_keys #| echo "ERROR: can not copy authorization key from s3"
 fi
 
@@ -184,6 +208,8 @@ server {
        server_tokens off;
 
 EOF
+
+#---------
 cat <<'EOF' >>  $fnameuserdata
 
        location / {
@@ -268,7 +294,7 @@ fi
 
 #now replace userdata
 if [ -f $ftemplate ] ; then
-    echo "current dir: `pwd`"
+    #echo "current dir: `pwd`"
     echo "writing launch template file: $ftemplate"
     sed -i '' "s|\"LaunchTemplateName.*|\"LaunchTemplateName\":\"$AsgTemplateName\",|" "$ftemplate"
     sed -i '' "s|.*ds-team-instance.*|\"Value\": \"${root_name}-host\"|" "$ftemplate"

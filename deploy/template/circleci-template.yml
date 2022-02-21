@@ -8,7 +8,7 @@ parameters:
   #ECS cluster name
   clustername:
     type: string
-    default: $cluster
+    default: $ecs_cluster_name
   #ECS service name used in clustername    
   servicename:
     type: string
@@ -23,7 +23,7 @@ parameters:
     default: $app_container_name
   ecrreponame:
     type: string
-    default: $app_name
+    default: $ecr_repo_name
   tag:
     type: string
     default: latest

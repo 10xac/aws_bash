@@ -4,7 +4,7 @@
 if [ ! -z "$1" ]; then                
     echo "Loading variables from $1"
     source $1 #many key variables returned
-    source create_conflog_dir.sh $root_name
+    source create_conflog_dir.sh ""
     echo "confdir=$configoutputdir"
     echo "logdir=$logoutputdir"    
 fi
@@ -30,6 +30,6 @@ aws ecr get-login-password --region $region --profile ${profile_name} \
 # fi
 
 #create test app
-echo "current dir: `pwd`"
+#echo "current dir: `pwd`"
 source test_app_docker.sh  #no variable returned
 docker push ${aws_ecr_repository_url_app}

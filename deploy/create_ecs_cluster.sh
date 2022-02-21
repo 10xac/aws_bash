@@ -4,7 +4,7 @@
 if [ ! -z "$1" ]; then
     echo "Loading variables from $1"
     source $1 #many key variables returned
-    source create_conflog_dir.sh $root_name
+    source create_conflog_dir.sh ""
     echo "confdir=$configoutputdir"
     echo "logdir=$logoutputdir"    
 fi
@@ -38,14 +38,18 @@ res=$(aws ecs describe-clusters --clusters ${ecs_cluster_name} \
           --region $region --profile ${profile_name})
 
 if $(echo $res | jq '.clusters | length==0') ; then
-    aws ecs create-cluster --cluster-name ${ecs_cluster_name} \
-        --region $region --profile ${profile_name}
+    res=$(aws ecs create-cluster \
+              --cluster-name ${ecs_cluster_name} \
+              --region $region \
+              --profile ${profile_name})
+    
+    echo $res > $logoutputdir/output-create-ecs-cluster.json
 fi
 
 
 #Register the task definition.
-aws ecs register-task-definition \
+res=$(aws ecs register-task-definition \
     --cli-input-json file://$fout \
-    --region $region --profile ${profile_name}
+    --region $region --profile ${profile_name})
 
-
+echo $res > $logoutputdir/output-register-ecs-task.json

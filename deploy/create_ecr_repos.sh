@@ -3,7 +3,7 @@
 if [ ! -z "$1" ]; then    
     echo "Loading variables from $1"
     source $1 #many key variables returned
-    source create_conflog_dir.sh $root_name
+    source create_conflog_dir.sh ""
     echo "confdir=$configoutputdir"
     echo "logdir=$logoutputdir"    
 fi
@@ -17,8 +17,8 @@ echo "creating ECR repository with the following name and region: app_name=${app
 #Repository 1:
 
 res=$(aws ecr describe-repositories \
-          --repository-names ${app_name} \
-          --region $region \          
+          --repository-names ${ecr_repo_name} \
+          --region $region \
           --profile ${profile_name})
 
 repoexist=$(echo $res | jq -r '.repositories | length>0')
@@ -28,12 +28,12 @@ if $repoexist ; then
    ecrRepoArn=$(echo $res | jq -r '.repositories[0].repositoryArn') 
 else
     res=$(aws ecr create-repository \
-              --repository-name ${app_name} \
+              --repository-name ${ecr_repo_name} \
               --region $region \
               --profile ${profile_name})
     
     res=$(aws ecr describe-repositories \
-              --repository-names ${app_name} \
+              --repository-names ${ecr_repo_name} \
               --region $region \              
               --profile ${profile_name})
 

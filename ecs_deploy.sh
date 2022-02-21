@@ -5,10 +5,14 @@
 #   https://aws.amazon.com/blogs/containers/maintaining-transport-layer-security-all-the-way-to-your-container-using-the-application-load-balancer-with-amazon-ecs-and-envoy/
 #
 
+scriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+
+echo "Starting from `pwd` dir .."
+
 #--------------------------------------------------------#
 ###--------Define necessary environment variables-----##
 ##------------------------------------------------------#
-if [ $# -gt 0 ]; then
+if [ ! -z "$1" ]; then
     echo "Loading variables from $1"    
     source $1
 else
@@ -20,23 +24,17 @@ fi
 #---------------------------------------------------------#
 ### ----------- Change dir to deploy folder----------##
 ##-------------------------------------------------------#
-scriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
-cd $scriptDir/deploy
+cd $deployDir
+echo "Current working dir: $deployDir"
 
-#create log and config saving dirs
-source create_conflog_dir.sh ""
-if [ -z $configoutputdir ]; then
-    echo "ERROR: The necessary variable configoutputdir is not defined!"
-    echo "check create_conflog_dir.sh"
-    exit 0
-fi
+
 
 #--------------------------------------------------------#
 ##------- Generate and Push CI/CD Config to the repository --------#
 ##------------------------------------------------------#
 
 #check which CI/CD config to write
-if $github_actions; then
+if $github_actions ; then
     template=template/github-actions-template.yml
     fout=$configoutputdir/github_actions_config.yml    
 else
@@ -60,12 +58,13 @@ fi
 ###-------- Create the Application Load Balancer -----##
 ##------------------------------------------------------#
 
-if $create_and_setup_alb; then
+if $create_and_setup_alb ; then
     if [ -z $loadbalancerArn ] || [ -z $targetGroupArn ]; then
         echo "Creating and setting up ALB  ..."        
         source create_alb.sh ""  #returns needed variables
     fi
 fi
+
 
 #stop if variables are not set
 if [ -z $loadbalancerArn ] || [ -z $targetGroupArn ]; then
@@ -92,19 +91,21 @@ fi
 ##------------------------------------------------------#
 
 if $create_ecr_repo ; then
+    echo "Creating ECR repo .."    
     source create_ecr_repos.sh "" #no variables returned
 fi
 
 # push test image if requested
 if $docker_push_test_app; then
+    echo "Pushing docker to ECS cluster .."
     source push_test_images_to_ecr.sh ""
 fi
 
 #--------------------------------------------------------#
 ###-------- Create cluster and task definition -----##
 ##------------------------------------------------------#
-echo "current dir: `pwd`"
 if $create_ecs_cluster_and_task; then
+    echo "Creating ECS cluster .."
     #no variables returned
     source create_ecs_cluster.sh ""
 fi

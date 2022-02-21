@@ -29,12 +29,7 @@
           "hostPort": 5432,
           "protocol": "tcp",
           "containerPort": 5432
-        },
-        {
-          "hostPort": 1337,
-          "protocol": "tcp",
-          "containerPort": 1337
-        },                    
+        },        
         {
           "hostPort": 80,
           "protocol": "tcp",
