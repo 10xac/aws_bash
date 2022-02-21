@@ -13,7 +13,7 @@ fi
 #---------------------------------------------------------#
 ### ----------- Change dir to output of the project------##
 ##-------------------------------------------------------#
-cd output/${root_name}
+
 
 echo ${git_token}
 region="eu-west-1"
@@ -21,8 +21,11 @@ git_token=$(aws secretsmanager get-secret-value \
     --secret-id ${ssmgittoken} \
     --query SecretString \
     --output text --region $region  | cut -d: -f2 | tr -d \"})
+                                                              
+                                                              
+#echo ${git_token}
 
-echo ${git_token}
+cd $logoutputdir
 
 #---------------------------------------------------------#
 ### ----------- Clone the repository---------------------##

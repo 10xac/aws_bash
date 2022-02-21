@@ -16,7 +16,7 @@ if [ -z $loadbalancerArn ]; then
     res=$(aws elbv2 create-load-balancer --name $alb \
               --scheme internet-facing \
               --subnets $public_subnet1 $public_subnet2 \
-              --security-groups $sg --region $region --profile ${profile_name})
+              --security-groups $sgalb --region $region --profile ${profile_name})
     
     export loadbalancerArn=$(echo $res | jq -r '.LoadBalancers[0].LoadBalancerArn')
 fi

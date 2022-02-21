@@ -1,7 +1,7 @@
 #--------------------------------------------------------#
 ###--------Define necessary environment variables-----##
 ##------------------------------------------------------#
-scriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+export scriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 
 #---------------Basic Parameters------------------
 #aws cli profile 
@@ -9,8 +9,10 @@ export profile_name="tenac"
 export email="yabebal@10academy.org"
 export s3bucket="s3://all-tenx-system"
 export s3_authorized_keys_path=""
-
 echo "profile=$profile_name"
+
+#extra user_data for ec2
+export extrauserdata=user_data/cms.sh
 
 #application and proxy names
 export root_name="cms" #name you give to your project in ecs env
@@ -22,11 +24,11 @@ export log_group_name="/ecs/ecs-${root_name}-ssl"
 echo "root_name=$root_name"
 
 #---------------Github Parameters------------------
-ssmgittoken="git_token_tenx"
-gituname="10xac"
+export ssmgittoken="git_token_tenx"
+export gituname="10xac"
 
 #use github actions or circleci
-github_actions=false
+export github_actions=true
 
 #copy generated CI/CD config file to git repo
 export push_cicd_template=false
@@ -37,10 +39,13 @@ export push_cicd_template=false
 source ${scriptDir}/vpc_10academy.sh
 
 #instance profile
-IamInstanceProfile="arn:aws:iam::070096167435:instance-profile/Ec2InstanceWithFullAdminAccess"
-sshKeyName="tech-ds-team"
-AmazonImageId="ami-0c62045417a6d2199"
-AwsInstanceType="t3.medium"
+export IamInstanceProfile="arn:aws:iam::070096167435:instance-profile/Ec2InstanceWithFullAdminAccess"
+export sshKeyName="tech-ds-team"
+
+#check this for diff TLS 1.2 vs TLS 1.3 https://bidhankhatri.com.np/system/enable-tls-1.3/
+export AwsImageId="ami-0258eeb71ddf238b3"  #Ubuntu 21.10 sup[p
+#export AwsImageId="ami-0c62045417a6d2199"  #amazon linux - does not support TLS V1.3
+export AwsInstanceType="t3.medium"
 
 #---------------SSL Parameters------------------
 # When true it means you have generated a letsencrypt

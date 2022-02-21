@@ -6,7 +6,7 @@
         "IamInstanceProfile": {
             "Arn": "$IamInstanceProfile"
         },
-        "ImageId": "$AwsImageId",
+        "ImageId": "$AwsImageId", 
         "InstanceType": "$AwsInstanceType",
         "KeyName": "$sshKeyName",
         "Monitoring": {
@@ -29,7 +29,7 @@
             }
         ],
         "SecurityGroupIds": [
-            "$sg"
+            "$sgserver"
         ],
         "Placement": {
             "Tenancy": "dedicated"

@@ -4,7 +4,7 @@
 if [ ! -z "$1" ]; then        
     echo "Loading variables from $1"
     source $1 #many key variables returned
-    source create_conflog_dir.sh $root_name
+    source create_conflog_dir.sh ""
     echo "confdir=$configoutputdir"
     echo "logdir=$logoutputdir"    
 fi
@@ -12,7 +12,7 @@ fi
 
 s3certpath=${s3bucket}/ssl-certs/${root_name}
 localcertdir=$configoutputdir/certs
-fnameuserdata=$configoutputdir/${root_name}_user_data.template
+fnameuserdata=$configoutputdir/${root_name}_user_data.json
 
 #copy cert to s3 
 if [ -f ${localdir}/my-aws-private.key ]; then
@@ -27,7 +27,26 @@ cat <<EOF >  $fnameuserdata
 #!/bin/bash
 echo ECS_CLUSTER=ecs-${ecs_cluster_name} >> /etc/ecs/ecs.config;
 echo ECS_BACKEND_HOST= >> /etc/ecs/ecs.config;
-yum update -y
+
+if command -v apt-get >/dev/null; then
+   apt-get update -y
+   apt-get install git jq unzip amazon-cloudwatch-agent -y 
+else
+   yum update -y
+   yum install git jq unzip amazon-cloudwatch-agent -y 
+fi
+
+#write aws config file
+cat <<EOFF >>  config
+[default]
+s3 =
+   signature_version = s3v4
+region = $region
+
+[profile $profile_name]
+region = $region
+output = json
+EOFF
 
 EOF
 cat <<'EOF' >>  $fnameuserdata
@@ -49,15 +68,23 @@ else
     fi    
 fi
 
+#copy aws config file 
+mkdir -p $HOME/.aws $home/.aws
+cp config $HOME/.aws 
+cp config $home/.aws
+
+#set path
 echo PATH=/usr/bin:/usr/local/bin:$PATH >> $HOME/.bashrc
 echo PATH=/usr/bin:/usr/local/bin:$PATH >> $home/.bashrc
-source $HOME/.bashrc
 
+echo 'alias emacs="emacs -nw"' >> $HOME/.bashrc
+echo 'alias emacs="emacs -nw"' >> $home/.bashrc
+
+source $HOME/.bashrc
 
 #--------update aws cli
 pip3 install botocore --upgrade || echo "unable to upgrade botocore"
-function awscli_install(){
-    yum install unzip -y 
+function awscli_install(){    
     curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
     unzip awscliv2.zip
     ./aws/install --update
@@ -75,6 +102,55 @@ else
    awscli_install  || echo "unable to install cli"     
 fi
 
+#install docker
+if command -v docker >/dev/null; then
+	echo "docker is already installed"
+else
+    if [ -f /usr/local/bin/docker ]; then
+	echo "adding /usr/local/bin in PATH as docker is already installed there"
+	echo "Consider sourcing ~/.bashrc in your shell"
+	echo "export PATH=/usr/local/bin:$PATH" >> ~/.bashrc
+	source ~/.bashrc
+    else    
+	echo "installing docker .."
+	if command -v apt-get >/dev/null; then
+	    sudo apt-get update -y
+	    sudo apt-get install -y docker.io
+	    sudo service docker start
+	    sudo usermod -a -G docker ${homeUser}
+	    
+	elif command -v yum >/dev/null; then
+	    sudo yum update -y
+	    sudo yum install -y docker
+	    sudo service docker start
+	    sudo usermod -a -G docker ${homeUser}
+	else
+	    echo "unknown os system.."
+	    exit
+	fi
+    fi
+fi
+
+
+#install docker-compose
+if command -v docker-compose >/dev/null; then
+	echo "docker-compose is already installed"
+else
+    if [ -f /usr/local/bin/docker-compose ]; then
+	echo "adding /usr/local/bin in PATH as docker-compose is already installed there"
+	echo "Consider sourcing ~/.bashrc in your shell"
+	echo "export PATH=/usr/local/bin:$PATH" >> ~/.bashrc
+	source ~/.bashrc
+    else
+	echo "installing docker-compose .."	
+	sudo curl -L https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m) -o /usr/local/bin/docker-compose
+	sudo chmod +x /usr/local/bin/docker-compose
+    fi
+fi
+
+docker --version
+docker-compose --version
+
 EOF
 
 
@@ -82,9 +158,11 @@ if $copy_ssl_cert_froms3 ; then
 cat <<EOF >>  $fnameuserdata
 
 #install nginx
-yum install nginx -y 
-
-#|| echo "cant install nginx with yum"
+if command -v apt-get >/dev/null; then
+   apt-get install nginx -y 
+else
+   yum install nginx -y 
+fi
 
 #copy cert  
 aws s3 cp $s3certpath ./cert --recursive #| echo "ERROR: can not copy cert folder from s3"
@@ -113,9 +191,11 @@ cat <<'EOF' >>  $fnameuserdata
     		 }
 }
 
-EOF
-cat <<EOF >>  $fnameuserdata
 
+EOF
+
+
+cat <<EOF >>  $fnameuserdata
 server {
     listen 443 ssl;
     server_name ${dns_namespace};
@@ -131,6 +211,8 @@ server {
     ssl_dhparam /etc/ssl/letsencrypt/ssl-dhparams.pem;
 
 EOF
+
+
 cat <<'EOF' >>  $fnameuserdata
 
     # Redirect non-https traffic to https
@@ -139,7 +221,7 @@ cat <<'EOF' >>  $fnameuserdata
     } # managed by Certbot
     
     location / {
-        proxy_pass http://localhost:80;
+        proxy_pass http://0.0.0.0:80;
         #proxy_set_header Host $host;
         proxy_set_header    Host                $http_host;
         proxy_set_header    X-Real-IP           $remote_addr;
@@ -152,15 +234,24 @@ EndOF
 
 mkdir -p /etc/nginx/conf.d/
 cp app.conf /etc/nginx/conf.d/  #| echo "can not copy nginx conf to /etc/nginx/conf.d/"
-amazon-linux-extras install nginx1.12 -y || echo "cant install nginx with amazon-linux-extras"
 service nginx start
 
 EOF
 
 fi
 
+#add extra userdata from file
+if [ ! -z $extrauserdata ]; then
+    echo "$extrauserdata is passed to add to user_data .."
+    if [ -f $extrauserdata ]; then
+        cat $extrauserdata >> $fnameuserdata
+        echo "ec2 user data $extrauserdata appended to $fnameuserdata "        
+    fi
+fi
+
+
 #convert user data to base64
-userdata=$(base64 -w 0 $fnameuserdata )
+userdata=$(base64 $fnameuserdata)
 #echo "----UserData base64 hash----"
 #echo $userdata
 
@@ -179,15 +270,15 @@ fi
 if [ -f $ftemplate ] ; then
     echo "current dir: `pwd`"
     echo "writing launch template file: $ftemplate"
-    sed -i'' "s|\"LaunchTemplateName.*|\"LaunchTemplateName\":\"$AsgTemplateName\",|" "$ftemplate"
-    sed -i'' "s|.*ds-team-instance.*|\"Value\": \"${root_name}-host\"|" "$ftemplate"
-    sed -i'' "s|\"UserData.*|\"UserData\":\"$userdata\",|" "$ftemplate"
+    sed -i '' "s|\"LaunchTemplateName.*|\"LaunchTemplateName\":\"$AsgTemplateName\",|" "$ftemplate"
+    sed -i '' "s|.*ds-team-instance.*|\"Value\": \"${root_name}-host\"|" "$ftemplate"
+    sed -i '' "s|\"UserData.*|\"UserData\":\"$userdata\",|" "$ftemplate"
 else
     echo "ERROR: $ftemplate does not exist!"
 fi
 
 
-if [ $# > 0 ]; then
+if [ "$1" == "norun" ]; then
     exit 0
 fi
 
@@ -197,7 +288,10 @@ res=$(aws ec2 describe-launch-template-versions \
           --region $region --profile ${profile_name}
    )
 
-tnexist=$(echo $res | jq -r '.LaunchTemplateVersions | length>0') | false
+tnexist=$(echo $res | jq -r '.LaunchTemplateVersions | length>0')
+
+if [ -z $tnexist ]; then tnexist=false; fi
+
 echo "Does EC2 Launch Template Name: $AsgTemplateName exist?  $tnexist"
 
 if $tnexist; then
@@ -213,7 +307,8 @@ fi
 echo "creating launch template .."
 res=$(aws ec2 create-launch-template \
           --cli-input-json file://$ftemplate \
-          --region $region --profile ${profile_name})
+          --region $region \
+          --profile ${profile_name})
 
 echo $res > $logoutputdir/output-create-launch-template.json     
 

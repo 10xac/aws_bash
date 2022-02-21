@@ -19,9 +19,10 @@ echo "creating ECR repository with the following name and region: app_name=${app
 res=$(aws ecr describe-repositories \
           --repository-names ${app_name} \
           --region $region \          
-          --profile ${profile})
+          --profile ${profile_name})
 
 repoexist=$(echo $res | jq -r '.repositories | length>0')
+repoexist=${repoexist:-false}
 
 if $repoexist ; then
    ecrRepoArn=$(echo $res | jq -r '.repositories[0].repositoryArn') 
@@ -34,7 +35,7 @@ else
     res=$(aws ecr describe-repositories \
               --repository-names ${app_name} \
               --region $region \              
-              --profile ${profile})
+              --profile ${profile_name})
 
     ecrRepoArn=$(echo $res | jq -r '.repositories[0].repositoryArn')
 fi

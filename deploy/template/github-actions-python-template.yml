@@ -67,19 +67,19 @@ jobs:
         id: build-image
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ECR_REPOSITORY: ${{ ecrreponame }}
-          IMAGE_TAG: ${{ tag }}
+          ECR_REPOSITORY: ${{ env.ecrreponame }}
+          IMAGE_TAG: ${{ env.tag }}
         run: |
-          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
-          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-          echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
+          docker build -t $${q}ECR_REGISTRY/$${q}ECR_REPOSITORY:$${q}IMAGE_TAG .
+          docker push $${q}ECR_REGISTRY/$${q}ECR_REPOSITORY:$${q}IMAGE_TAG
+          echo "::set-output name=image::$${q}ECR_REGISTRY/$${q}ECR_REPOSITORY:$${q}IMAGE_TAG"
 
       - name: Fill in the new image ID in the Amazon ECS task definition
         id: task-def
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
           task-definition: task-definition.json
-          container-name: ${{ containername }}
+          container-name: ${{ env.containername }}
           image: ${{ steps.build-image.outputs.image }}
 
       - name: Deploy Amazon ECS task definition
@@ -87,6 +87,6 @@ jobs:
         uses: aws-actions/amazon-ecs-deploy-task-definition@v1
         with:
           task-definition: ${{ steps.task-def.outputs.task-definition }}
-          service: ${{ servicename }}
-          cluster: ${{ clustername }}
+          service: ${{ env.servicename }}
+          cluster: ${{ env.clustername }}
           wait-for-service-stability: false

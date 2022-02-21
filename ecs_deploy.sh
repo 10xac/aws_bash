@@ -9,13 +9,12 @@
 ###--------Define necessary environment variables-----##
 ##------------------------------------------------------#
 if [ $# -gt 0 ]; then
+    echo "Loading variables from $1"    
     source $1
 else
     echo "Usage: ecs_deploy <path to params file>"
     exit 0
 fi
-echo "Loading variables from $1"
-source $1 #many key variables returned
 
 
 #---------------------------------------------------------#
@@ -25,8 +24,12 @@ scriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 cd $scriptDir/deploy
 
 #create log and config saving dirs
-source create_conflog_dir.sh $root_name
-
+source create_conflog_dir.sh ""
+if [ -z $configoutputdir ]; then
+    echo "ERROR: The necessary variable configoutputdir is not defined!"
+    echo "check create_conflog_dir.sh"
+    exit 0
+fi
 
 #--------------------------------------------------------#
 ##------- Generate and Push CI/CD Config to the repository --------#
@@ -50,7 +53,7 @@ fi
 
 if $push_cicd_template ; then
     echo "Pushing CI/CD config to repo ..."            
-    source push_cicd_template.sh $repo_name #no variables returned
+    source push_cicd_template.sh ""
 fi
 
 #--------------------------------------------------------#
@@ -60,7 +63,7 @@ fi
 if $create_and_setup_alb; then
     if [ -z $loadbalancerArn ] || [ -z $targetGroupArn ]; then
         echo "Creating and setting up ALB  ..."        
-        source create_alb.sh #returns needed variables
+        source create_alb.sh ""  #returns needed variables
     fi
 fi
 
@@ -75,12 +78,12 @@ fi
 
 if $create_launch_template ; then
     echo "Creating and setting up Launch Template  ..."      
-    source create_launch_template.sh
+    source create_launch_template.sh "" #returns AsgId variables
 fi
 
 if $create_and_setup_asg && [ $ECSLaunchType == "EC2" ]; then
     echo "Creating and setting up ASG  ..."        
-    source create_asg.sh #no variable returned
+    source create_asg.sh "" #no variable returned
 fi
 
 #--------------------------------------------------------#
@@ -89,12 +92,12 @@ fi
 ##------------------------------------------------------#
 
 if $create_ecr_repo ; then
-    source create_ecr_repos.sh #no variables returned
+    source create_ecr_repos.sh "" #no variables returned
 fi
 
 # push test image if requested
 if $docker_push_test_app; then
-    source push_test_images_to_ecr.sh
+    source push_test_images_to_ecr.sh ""
 fi
 
 #--------------------------------------------------------#
@@ -103,7 +106,7 @@ fi
 echo "current dir: `pwd`"
 if $create_ecs_cluster_and_task; then
     #no variables returned
-    source create_ecs_cluster.sh 
+    source create_ecs_cluster.sh ""
 fi
 
 #--------------------------------------------------------#
@@ -112,7 +115,7 @@ fi
 
 # if $create_acm_certificate && [ -z $certificateArn ]; then
 #     echo "Getting ACM certificate ..."
-#     source acm_certificate_setup.sh  #returns needed variables
+#     source acm_certificate_setup.sh  "" #returns needed variables
 # fi
 
 # #stop if variable is not set
@@ -128,7 +131,7 @@ fi
 
 if $create_ecs_service; then
     echo "Creating ECS service .."
-    source create_ecs_service.sh 
+    source create_ecs_service.sh ""
 fi
 
 
@@ -138,7 +141,7 @@ fi
 
 if $create_route53_record; then
     echo "Creating Route53 Record ..."
-    source create_route53_record.sh
+    source create_route53_record.sh ""
 fi
 
 #--------------------------------------------------------#
