@@ -19,12 +19,20 @@ echo "creating ECR repository with the following name and region: app_name=${app
 res=$(aws ecr describe-repositories \
           --repository-names ${ecr_repo_name} \
           --region $region \
-          --profile ${profile_name})
+          --profile ${profile_name} \
+          || echo "None")
 
-repoexist=$(echo $res | jq -r '.repositories | length>0')
+if [ $res == "None" ]; then
+    echo "ECR repo does not exist .. creating one"
+    repoexist=false
+else
+    repoexist=$(echo $res | jq -r '.repositories | length>0')    
+fi
+
 repoexist=${repoexist:-false}
 
 if $repoexist ; then
+    echo "ECR repo exists"    
    ecrRepoArn=$(echo $res | jq -r '.repositories[0].repositoryArn') 
 else
     res=$(aws ecr create-repository \
@@ -42,7 +50,7 @@ fi
 
 echo $res > $logoutputdir/output-create-repository.json
 echo "export aws_ecr_repository_url_app=$ecrRepoArn" > $logoutputdir/ecr_output_params.sh
-
+source $logoutputdir/ecr_output_params.sh
 
 
 # *************** Repository 2: this feature is depreciated *******

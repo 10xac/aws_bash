@@ -85,7 +85,6 @@ echo 'alias emacs="emacs -nw"' >> $home/.bashrc
 source $HOME/.bashrc
 
 #--------update aws cli
-pip3 install botocore --upgrade || echo "unable to upgrade botocore"
 function awscli_install(){    
     curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
     unzip awscliv2.zip
@@ -106,7 +105,11 @@ fi
 
 EOF
 
+
 if ${ec2launch_install_docker:-true} ; then
+
+    echo "appending docker install in $fnameuserdata"
+    
 cat <<'EOF' >>  $fnameuserdata
 
 #install docker
@@ -176,7 +179,7 @@ cp config.json $HOME/.aws
 cp config.json $home/.aws
 
 EOF
-
+fi
 
 if $copy_ssl_cert_froms3 ; then
 cat <<EOF >>  $fnameuserdata
@@ -219,8 +222,7 @@ cat <<'EOF' >>  $fnameuserdata
 
 
 EOF
-
-
+#---------
 cat <<EOF >>  $fnameuserdata
 server {
     listen 443 ssl;
@@ -237,8 +239,7 @@ server {
     ssl_dhparam /etc/ssl/letsencrypt/ssl-dhparams.pem;
 
 EOF
-
-
+#-------
 cat <<'EOF' >>  $fnameuserdata
 
     # Redirect non-https traffic to https
@@ -247,7 +248,11 @@ cat <<'EOF' >>  $fnameuserdata
     } # managed by Certbot
     
     location / {
-        proxy_pass http://0.0.0.0:80;
+EOF
+cat <<EOF >>  $fnameuserdata
+        proxy_pass http://0.0.0.0:${ecsContainerPort:-80};
+EOF
+cat <<'EOF' >>  $fnameuserdata
         #proxy_set_header Host $host;
         proxy_set_header    Host                $http_host;
         proxy_set_header    X-Real-IP           $remote_addr;
@@ -273,6 +278,8 @@ if [ ! -z $extrauserdata ]; then
         cat $extrauserdata >> $fnameuserdata
         echo "ec2 user data $extrauserdata appended to $fnameuserdata "        
     fi
+else
+    echo "extrauserdata param is empty - not adding extra userdata from file"
 fi
 
 
@@ -311,10 +318,14 @@ fi
 ## get current ASG template if exists
 res=$(aws ec2 describe-launch-template-versions \
           --launch-template-name $AsgTemplateName \
-          --region $region --profile ${profile_name}
-   )
+          --region $region --profile ${profile_name} \
+          || echo "None")
 
-tnexist=$(echo $res | jq -r '.LaunchTemplateVersions | length>0')
+if [ $res == "None" ]; then
+    tnexist=false
+else
+    tnexist=$(echo $res | jq -r '.LaunchTemplateVersions | length>0')
+fi
 
 if [ -z $tnexist ]; then tnexist=false; fi
 
@@ -346,10 +357,11 @@ res=$(aws ec2 describe-launch-template-versions \
    )
 echo $res > $logoutputdir/output-describe-launch-template-latest.json
 
-export AsgTemplateId=$(echo $res | jq -r '.LaunchTemplateVersions[0].LaunchTemplateId')
+AsgTemplateId=$(echo $res | jq -r '.LaunchTemplateVersions[0].LaunchTemplateId')
 
 #to file
 echo "export AsgTemplateId=$AsgTemplateId" > $logoutputdir/clt_output_params.sh
+source $logoutputdir/clt_output_params.sh
 
 #info
 echo "ASG Launch template_name=$AsgTemplateName, template_id=$AsgTemplateId"

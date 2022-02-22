@@ -20,12 +20,23 @@ export extrauserdata=user_data/cms.sh
 #application and proxy names
 export root_name="cms" #name you give to your project in ecs env
 export dns_namespace="cms.10academy.org"  ##This should be your domain 
-export repo_name="JobModel" #not used for now
+export repo_name="tenx-cms" #not used for now
 export app_name="${root_name}"  #-app
 export proxy_name="${root_name}-proxy"
 export log_group_name="/ecs/ecs-${root_name}-ssl"
 echo "root_name=$root_name"
 echo "dns=$dns_namespace"
+
+#ecs service params
+export ecsContainerPort=1337 #The port on the container to associate with the load balancer
+export ecsDesiredCount=0
+export ecsServiceTemplate=template/ecs-ec2-service-template.json
+#ecs task params
+export ecsTaskCpuUnit=1024
+export ecsTaskMemoryUnit=2048
+export ecsTaskPortMapList=1337
+export ecsTaskFromTemplate=False
+export ecsTaskTemplate=
 
 #---------------Create output folder------------------
 #create log and config saving dirs
@@ -52,7 +63,8 @@ export push_cicd_template=false
 source ${scriptDir}/vpc_10academy.sh
 
 #instance profile
-export IamInstanceProfile="arn:aws:iam::070096167435:instance-profile/Ec2InstanceWithFullAdminAccess"
+export IamInstanceProfile="arn:aws:iam::070096167435:instance-profile/EC2DockerS3Role"
+#arn:aws:iam::070096167435:instance-profile/Ec2InstanceWithFullAdminAccess"
 export sshKeyName="tech-ds-team"
 
 #check this for diff TLS 1.2 vs TLS 1.3 https://bidhankhatri.com.np/system/enable-tls-1.3/
@@ -162,21 +174,6 @@ export app_container_name="${root_name}-container"  #-app
 export task_name="ecs-${root_name}-task"
 export service_name="ecs-${root_name}-service"
 export ECSLaunchType="EC2"  #"FARGATE"
-
-#ecs service params
-export ecsContainerPort=1337 #The port on the container to associate with the load balancer
-export ecsDesiredCount=0
-export ecsServiceTemplate=template/ecs-ec2-service-template.json
-#ecs task params
-export ecsTaskCpuUnit=1024
-export ecsTaskMemoryUnit=2048
-export ecsTaskTemplate=template/ecs-cms-task-template.json
-
-
-
-##Service name and domain to be used
-
-
 
 #ECS task execution IAM role
 export ecsTaskExecutionRoleArn="arn:aws:iam::$account:role/ecsTaskExecutionRole"

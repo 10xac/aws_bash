@@ -20,6 +20,10 @@ export sgalb="sg-0dce493bb5001e95a"   ##allow connection from  ssh/http/https Al
 export vpcId="vpc-0e670b1bc65c6423e" # (tenx-system-vpc) <- Change this to your VPC id
 echo "vpcid=$vpcId"
 
+#instance profile
+export IamInstanceProfile="arn:aws:iam::070096167435:instance-profile/EC2DockerS3Role"
+#"arn:aws:iam::070096167435:instance-profile/Ec2InstanceWithFullAdminAccess"
+
 #--------------------------------------------------------------------##
 #---! DO NOT CHANGE THIS UNLESS YOU KNOW WHAT YOU ARE DOING !---------
 export create_acm_certificate=false

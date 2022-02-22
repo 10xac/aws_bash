@@ -19,7 +19,82 @@ set -e
 #Substitute the environment variables, create a log group,
 #an ECS cluster, and register the task definition.
 fout=$configoutputdir/ecs_task_def.json
-envsubst <${ecsTaskTemplate}>$fout
+
+
+cat <<EOF > $fout
+{
+  "taskRoleArn": "$ecsTaskRoleArn",  
+  "executionRoleArn": "$ecsTaskExecutionRoleArn",
+  "family": "$task_name",
+  "requiresCompatibilities": [ 
+       "$ECSLaunchType" 
+    ],
+  "networkMode": "bridge",
+  "cpu": "$ecsTaskCpuUnit",
+  "memory": "$ecsTaskMemoryUnit",  
+  "containerDefinitions": [
+    {
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "${root_name}-app",
+          "awslogs-region": "$region",
+          "awslogs-create-group": "true",
+          "awslogs-stream-prefix": "$log_group_name"
+        }
+      },
+      "portMappings": [
+        {
+          "hostPort": 3306,
+          "protocol": "tcp",
+          "containerPort": 3306
+        },
+        {
+          "hostPort": 5432,
+          "protocol": "tcp",
+          "containerPort": 5432
+        },
+EOF
+for port in $ecsTaskPortMapList; do 
+cat <<EOF >> $fout
+        {
+          "hostPort": $port,
+          "protocol": "tcp",
+          "containerPort": $port
+        },                    
+EOF
+done
+cat <<EOF >> $fout
+        {
+          "hostPort": 80,
+          "protocol": "tcp",
+          "containerPort": 80
+        },
+        {
+          "hostPort": 443,
+          "protocol": "tcp",
+          "containerPort": 443
+        }        
+      ],
+      "cpu": 0,
+      "environment": [
+        {
+          "name": "GIT_TOKEN",
+          "value": "arn:aws:secretsmanager:eu-west-1:$account:secret:$ssmgittoken"
+        }
+      ],
+      "image": "$aws_ecr_repository_url_app",
+      "name": "$app_container_name",
+      "essential": true
+    }
+  ]
+}
+EOF
+
+## force generate from template
+if ${ecsTaskFromTemplate:-false} && [ ! -z $ecsTaskTemplate ] ; then
+    envsubst <${ecsTaskTemplate}>$fout
+fi
 
 res=$(aws logs describe-log-groups --log-group-name-prefix $log_group_name)
 lgempty=$(echo $res | if jq -e 'keys_unsorted as $keys
