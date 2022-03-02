@@ -12,7 +12,7 @@ fi
 
 s3certpath=${s3bucket}/ssl-certs/${root_name}
 localcertdir=$configoutputdir/certs
-fnameuserdata=$configoutputdir/${root_name}_user_data.json
+fnameuserdata=$configoutputdir/${root_name}_user_data.sh
 
 #copy cert to s3 
 if [ -f ${localdir}/my-aws-private.key ]; then
@@ -30,10 +30,16 @@ echo ECS_BACKEND_HOST= >> /etc/ecs/ecs.config;
 
 if command -v apt-get >/dev/null; then
    apt-get update -y
-   apt-get install git jq unzip amazon-cloudwatch-agent -y 
+   apt-get install git -y
+   apt-get jq -y 
+   apt-get unzip -y
+   apt-get amazon-cloudwatch-agent -y 
 else
    yum update -y
-   yum install git jq unzip amazon-cloudwatch-agent -y 
+   yum install git -y
+   yum jq -y 
+   yum unzip -y
+   yum amazon-cloudwatch-agent -y 
 fi
 
 #write aws config file
@@ -272,12 +278,14 @@ EOF
 fi
 
 #add extra userdata from file
-if [ ! -z $extrauserdata ]; then
+if (( ${#extrauserdata[@]} )); then
     echo "$extrauserdata is passed to add to user_data .."
-    if [ -f $extrauserdata ]; then
-        cat $extrauserdata >> $fnameuserdata
-        echo "ec2 user data $extrauserdata appended to $fnameuserdata "        
-    fi
+    for eud in $extrauserdata; do
+        if [ -f $eud ]; then        
+            bash $eud $fnameuserdata
+            echo "ec2 user data $eud appended to $fnameuserdata "        
+        fi
+    done
 else
     echo "extrauserdata param is empty - not adding extra userdata from file"
 fi
@@ -320,12 +328,12 @@ fi
 res=$(aws ec2 describe-launch-template-versions \
           --launch-template-name $AsgTemplateName \
           --region $region --profile ${profile_name} \
-          || echo "None")
+          || echo "")
 
-if [ $res == "None" ]; then
-    tnexist=false
-else
+if (( ${#res[@]} )); then #not empty
     tnexist=$(echo $res | jq -r '.LaunchTemplateVersions | length>0')
+else
+    tnexist=false    
 fi
 
 if [ -z $tnexist ]; then tnexist=false; fi
@@ -366,3 +374,7 @@ source $logoutputdir/clt_output_params.sh
 
 #info
 echo "ASG Launch template_name=$AsgTemplateName, template_id=$AsgTemplateId"
+
+if $tnexist; then #update asg if template has been updated
+    source create_asg.sh ""
+fi

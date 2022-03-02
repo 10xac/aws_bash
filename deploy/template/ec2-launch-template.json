@@ -3,13 +3,6 @@
     "VersionDescription": "test description",
     "LaunchTemplateData": {
         "EbsOptimized": false,
-         "BlockDeviceMappings": [
-            {
-              "Ebs": {
-                  "VolumeSize": ${EbsVolumeSize:-20},
-              }
-            }
-         ],
         "IamInstanceProfile": {
             "Arn": "$IamInstanceProfile"
         },

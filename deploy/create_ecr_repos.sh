@@ -22,11 +22,11 @@ res=$(aws ecr describe-repositories \
           --profile ${profile_name} \
           || echo "None")
 
-if [ $res == "None" ]; then
-    echo "ECR repo does not exist .. creating one"
-    repoexist=false
+if (( ${#res[@]} )); then #not empty
+    repoexist=$(echo $res | jq -r '.repositories | length>0')
 else
-    repoexist=$(echo $res | jq -r '.repositories | length>0')    
+    echo "ECR repo does not exist .. creating one"
+    repoexist=false    
 fi
 
 repoexist=${repoexist:-false}

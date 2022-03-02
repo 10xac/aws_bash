@@ -1,9 +1,22 @@
 #Reference
 #https://cloud.ibm.com/docs/cloud-object-storage?topic=cloud-object-storage-s3fs
 
+if [ -z "$1" ]; then
+    echo "user_data: path to file to append user data must be passed!"
+    exit 1
+else
+    fout=$1
+fi
 
+cat <<EOF >>  $fout
 BUCKET="${s3bucket:-all-tenx-system}"
 
+EOF
+
+#write the code that needs to be expanded in remote env here
+cat <<'EOF' >>  $fout
+
+#------------START: code to mount s3 folder------------
 home=$HOME
 if command -v apt-get >/dev/null; then
     if [ -d /home/ubuntu ]; then
@@ -128,3 +141,5 @@ fi
 
 #sudo chmod 777 -R /mnt || echo "unable to change /mnt permission"
 #sudo chown $homeUser:$homeUser -R /mnt || echo "unable to change /mnt ownership"
+
+EOF
