@@ -29,17 +29,17 @@ echo ECS_CLUSTER=ecs-${ecs_cluster_name} >> /etc/ecs/ecs.config;
 echo ECS_BACKEND_HOST= >> /etc/ecs/ecs.config;
 
 if command -v apt-get >/dev/null; then
-   apt-get update -y
-   apt-get install git -y
-   apt-get jq -y 
-   apt-get unzip -y
-   apt-get amazon-cloudwatch-agent -y 
+   apt update -y
+   apt install git -y
+   apt install jq -y
+   apt install unzip -y
+   apt-get install amazon-cloudwatch-agent -y
 else
    yum update -y
    yum install git -y
-   yum jq -y 
-   yum unzip -y
-   yum amazon-cloudwatch-agent -y 
+   yum install jq -y 
+   yum install unzip -y
+   yum install amazon-cloudwatch-agent -y 
 fi
 
 #write aws config file
@@ -95,9 +95,9 @@ function awscli_install(){
     curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
     unzip awscliv2.zip
     ./aws/install --update
-    if [ -f /usr/bin/aws ]; then
-        rm /usr/bin/aws || echo "unable to remove aws"
-    fi    
+    #
+    rm /usr/bin/aws || echo "unable to remove aws"
+    #
     ln -s /usr/local/bin/aws /usr/bin/aws
     rm -rf .aws
 }
