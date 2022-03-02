@@ -7,34 +7,52 @@ deployDir=$(dirname $scriptDir)
 cd $deployDir
 
 #---------------Basic Parameters------------------
-#aws cli profile 
+#load the right vpc parameters 
+source ${scriptDir}/vpc_10academy.sh
+
+#aws cli profile
 export profile_name="tenac"
 export email="yabebal@10academy.org"
 export s3bucket="s3://all-tenx-system"
 export s3_authorized_keys_path=""
 echo "profile=$profile_name"
 
+export sshKeyName="tech-ds-team"
+export s3bucket="s3://all-tenx-system"
+export s3_authorized_keys_path=""
+echo "profile=$profile_name"
+
 #extra user_data for ec2
-export extrauserdata=user_data/cms.sh
+export extrauserdata=user_data/run_build.sh
+export ec2launch_install_docker=true
 
 #application and proxy names
-export root_name="cms" #name you give to your project in ecs env
-export dns_namespace="cms.10academy.org"  ##This should be your domain 
-export repo_name="JobModel" #not used for now
+export root_name="pjmatch" #name you give to your project in ecs env
+export dns_namespace="pjmatch.10academy.org"  ##This should be your domain 
+export repo_name="api.job-engine" #not used for now
 export app_name="${root_name}"  #-app
 export proxy_name="${root_name}-proxy"
 export log_group_name="/ecs/ecs-${root_name}-ssl"
 echo "root_name=$root_name"
 echo "dns=$dns_namespace"
 
-#---------------Create output folder------------------
-#create log and config saving dirs
-source create_conflog_dir.sh ""
-if [ -z $configoutputdir ]; then
-    echo "ERROR: The necessary variable configoutputdir is not defined!"
-    echo "check create_conflog_dir.sh"
-    exit 0
-fi
+
+#check this for diff TLS 1.2 vs TLS 1.3 https://bidhankhatri.com.np/system/enable-tls-1.3/
+export AwsImageId="ami-0258eeb71ddf238b3"  #Ubuntu 21.10 sup[p
+#export AwsImageId="ami-0c62045417a6d2199"  #amazon linux - does not support TLS V1.3
+export AwsInstanceType="t3.medium"
+
+#ecs task params
+export ecsTaskCpuUnit=1024
+export ecsTaskMemoryUnit=2048
+export ecsTaskPortMapList=5000
+export ecsTaskFromTemplate=False
+export ecsTaskTemplate=
+
+#ecs service params
+export ecsContainerPort=5000 #The port on the container to associate with the load balancer
+export ecsDesiredCount=0
+export ecsServiceTemplate=template/ecs-ec2-service-template.json
 
 #---------------Github Parameters------------------
 export ssmgittoken="git_token_tenx"
@@ -46,19 +64,14 @@ export github_actions=true
 #copy generated CI/CD config file to git repo
 export push_cicd_template=false
 
-#---------------AWS VPC Parameters------------------
-##Export region and account
-##Export key networking constructs
-source ${scriptDir}/vpc_10academy.sh
-
-#instance profile
-export IamInstanceProfile="arn:aws:iam::070096167435:instance-profile/Ec2InstanceWithFullAdminAccess"
-export sshKeyName="tech-ds-team"
-
-#check this for diff TLS 1.2 vs TLS 1.3 https://bidhankhatri.com.np/system/enable-tls-1.3/
-export AwsImageId="ami-0258eeb71ddf238b3"  #Ubuntu 21.10 sup[p
-#export AwsImageId="ami-0c62045417a6d2199"  #amazon linux - does not support TLS V1.3
-export AwsInstanceType="t3.medium"
+#---------------Create output folder------------------
+#create log and config saving dirs
+source create_conflog_dir.sh ""
+if [ -z $configoutputdir ]; then
+    echo "ERROR: The necessary variable configoutputdir is not defined!"
+    echo "check create_conflog_dir.sh"
+    exit 0
+fi
 
 #---------------SSL Parameters------------------
 # When true it means you have generated a letsencrypt
@@ -162,20 +175,6 @@ export app_container_name="${root_name}-container"  #-app
 export task_name="ecs-${root_name}-task"
 export service_name="ecs-${root_name}-service"
 export ECSLaunchType="EC2"  #"FARGATE"
-
-#ecs service params
-export ecsContainerPort=1337 #The port on the container to associate with the load balancer
-export ecsDesiredCount=0
-export ecsServiceTemplate=template/ecs-ec2-service-template.json
-#ecs task params
-export ecsTaskCpuUnit=1024
-export ecsTaskMemoryUnit=2048
-export ecsTaskTemplate=template/ecs-cms-task-template.json
-
-
-
-##Service name and domain to be used
-
 
 
 #ECS task execution IAM role

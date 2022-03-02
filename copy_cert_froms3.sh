@@ -1,3 +1,5 @@
+curdir=`pwd`
+
 #--------------------------------------------------------#
 ###--------Define necessary environment variables-----##
 ##------------------------------------------------------#
@@ -7,6 +9,8 @@ if [ $# -eq 0 ]; then
 fi
 echo "Loading variables from $1"
 source $1 #many key variables returned
+
+cd $curdir
 
 if [ -z "$s3bucket" ]; then
     echo "ERROR: s3bucket is empty - you must set it to S3 bucket path!"

@@ -41,6 +41,7 @@ echo "dns=$dns_namespace"
 export AwsImageId="ami-0258eeb71ddf238b3"  #Ubuntu 21.10 sup[p
 #export AwsImageId="ami-0c62045417a6d2199"  #amazon linux - does not support TLS V1.3
 export AwsInstanceType="t3.medium"
+export EbsVolumeSize=20
 
 #ecs task params
 export ecsTaskCpuUnit=1024

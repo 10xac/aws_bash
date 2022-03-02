@@ -292,6 +292,7 @@ userdata=$(base64 $fnameuserdata)
 ftemplate=$configoutputdir/${root_name}-launch-template.json
 
 #if [ ! -f $ftemplate ]; then
+#check https://docs.aws.amazon.com/cli/latest/reference/ec2/create-launch-template.html
 if [ -f template/${root_name}-launch-template.json ]; then
     cp ./template/${root_name}-launch-template.json $ftemplate        
 else

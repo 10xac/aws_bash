@@ -1,3 +1,4 @@
+curdir=`pwd`
 if [ $# -eq 0 ]; then
     echo "Usage: ecs_deploy <path to params file>"
     exit 0
@@ -10,14 +11,19 @@ fi
 echo "Loading variables from $1"
 source $1 #many key variables returned
 
-domain=(${dns_namespace})
+cd $curdir
 
+domain=(${dns_namespace})
+echo "********** root_name = ${root_name} ******"
 cert_path="./data/${root_name}/certbot"
 nginx_path="./data/${root_name}/nginx"
 docker_path="./data/${root_name}/docker"
+
+echo "creating folders .."
 mkdir -p $nginx_path/{cert,app}
 mkdir -p $cert_path/{www,conf}
 mkdir -p $docker_path/{cert,app}
+
 
 #copy files with new names
 cp -r data/nginx/snippets ${nginx_path}/

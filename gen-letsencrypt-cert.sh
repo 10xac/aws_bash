@@ -1,4 +1,5 @@
 #!/bin/bash
+curdir=`pwd`
 
 home=${ADMIN_HOME:-$(bash compute/get_home.sh)}
 
@@ -22,9 +23,11 @@ fi
 echo "Loading variables from $1"
 source $1 #many key variables returned
 
+cd $curdir
+
 # create docker-compose and nginx configs
 # setup also certbot and nginx folders
-source create_ssl_configs.sh
+source create_ssl_configs.sh ""
 
 # define key parameters for certbot
 domains=(${dns_namespace})
@@ -76,7 +79,7 @@ echo "### Requesting Let's Encrypt certificate for $domains ..."
 #Join $domains to -d args
 domain_args=""
 for domain in "${domains[@]}"; do
-  domain_args="$domain_args -d $domain -d dev-$domain -d staging-$domain"
+  domain_args="$domain_args -d $domain" #-d dev-$domain -d staging-$domain
 done
 echo "------creating ssl certificate for the following urls----"
 echo ${domain_args}
