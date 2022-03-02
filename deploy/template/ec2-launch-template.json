@@ -6,6 +6,13 @@
         "IamInstanceProfile": {
             "Arn": "$IamInstanceProfile"
         },
+        "BlockDeviceMappings": [
+            {
+                "Ebs": {
+                    "VolumeSize": $EbsVolumeSize
+                }
+            }    
+        ],               
         "ImageId": "$AwsImageId", 
         "InstanceType": "$AwsInstanceType",
         "KeyName": "$sshKeyName",

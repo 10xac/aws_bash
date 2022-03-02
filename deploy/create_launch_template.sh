@@ -30,12 +30,14 @@ echo ECS_BACKEND_HOST= >> /etc/ecs/ecs.config;
 
 if command -v apt-get >/dev/null; then
    apt update -y
+   apt-get install fuse -y 
    apt install git -y
    apt install jq -y
    apt install unzip -y
    apt-get install amazon-cloudwatch-agent -y
 else
    yum update -y
+   yum install fuse -y
    yum install git -y
    yum install jq -y 
    yum install unzip -y
@@ -43,7 +45,7 @@ else
 fi
 
 #write aws config file
-cat <<EOFF >>  config
+cat <<EOFF >  config
 [default]
 s3 =
    signature_version = s3v4
@@ -132,13 +134,13 @@ else
 	if command -v apt-get >/dev/null; then
 	    apt-get update -y
 	    apt-get install -y docker.io
-	    service docker start
+	    systemctl docker start
 	    usermod -a -G docker ${homeUser}
 	    
 	elif command -v yum >/dev/null; then
 	    yum update -y
 	    yum install -y docker
-	    service docker start
+	    systemctl docker start
 	    usermod -a -G docker ${homeUser}
 	else
 	    echo "unknown os system.."
@@ -190,13 +192,6 @@ fi
 if $copy_ssl_cert_froms3 ; then
 cat <<EOF >>  $fnameuserdata
 
-#install nginx
-if command -v apt-get >/dev/null; then
-   apt-get install nginx -y 
-else
-   yum install nginx -y 
-fi
-
 #copy cert  
 aws s3 cp $s3certpath ./cert --recursive #| echo "ERROR: can not copy cert folder from s3"
 mkdir -p /etc/ssl
@@ -208,6 +203,19 @@ fi
 
 if [ -d ./cert ]; then
    cp -r ./cert /etc/ssl/letsencrypt
+fi
+
+EOF
+fi
+
+if ${setup_nginx:-copy_ssl_cert_froms3} ; then
+cat <<EOF >>  $fnameuserdata
+
+#install nginx
+if command -v apt-get >/dev/null; then
+   apt-get install nginx -y 
+else
+   yum install nginx -y 
 fi
 
 cat <<'EndOF' > app.conf
@@ -271,7 +279,8 @@ EndOF
 
 mkdir -p /etc/nginx/conf.d/
 cp app.conf /etc/nginx/conf.d/  #| echo "can not copy nginx conf to /etc/nginx/conf.d/"
-service nginx start
+
+systemctl restart nginx
 
 EOF
 
@@ -290,6 +299,11 @@ else
     echo "extrauserdata param is empty - not adding extra userdata from file"
 fi
 
+if $copy_ssl_cert_froms3 ; then
+cat <<EOF >>  $fnameuserdata
+systemctl restart nginx
+
+EOF
 
 #convert user data to base64
 userdata=$(base64 $fnameuserdata)
