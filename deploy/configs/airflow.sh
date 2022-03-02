@@ -26,7 +26,7 @@ export s3_authorized_keys_path="s3://10ac-team/credentials/mahlet/authorized_key
 echo "profile=$profile_name"
 
 #extra user_data for ec2
-export extrauserdata=user_data/run_build.sh user_data/mounts3.sh user_data/fix_redis.sh
+export extrauserdata='user_data/run_build.sh user_data/mounts3.sh user_data/fix_redis.sh'
 export ec2launch_install_docker=true
 
 #application and proxy names

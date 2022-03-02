@@ -1,19 +1,22 @@
 curdir=`pwd`
-if [ $# -eq 0 ]; then
-    echo "Usage: ecs_deploy <path to params file>"
-    exit 0
-fi
 if [ $# -gt 1 ]; then
     apporcert=$2
 else
     apporcert='cert'    
 fi
-echo "Loading variables from $1"
-source $1 #many key variables returned
+if [ ! -z "$1" ]; then
+    echo "Loading variables from $1"
+    source $1 #many key variables returned
+fi
 
 cd $curdir
 
 domain=(${dns_namespace})
+if [ -z $domain ]; then
+    echo "$domain is not passed!"
+    exit 1
+fi
+
 echo "********** root_name = ${root_name} ******"
 cert_path="./data/${root_name}/certbot"
 nginx_path="./data/${root_name}/nginx"

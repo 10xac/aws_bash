@@ -26,6 +26,7 @@ if [ -d $home ]; then
 else
     homeUser=`whoami`
 fi
+
 echo "BUCKET=$BUCKET"
 
 
