@@ -208,7 +208,7 @@ fi
 EOF
 fi
 
-if ${setup_nginx:-copy_ssl_cert_froms3} ; then
+if ${setup_nginx:-$copy_ssl_cert_froms3} ; then
 cat <<EOF >>  $fnameuserdata
 
 #install nginx
@@ -299,11 +299,12 @@ else
     echo "extrauserdata param is empty - not adding extra userdata from file"
 fi
 
-if $copy_ssl_cert_froms3 ; then
+if ${setup_nginx:-$copy_ssl_cert_froms3} ; then    
 cat <<EOF >>  $fnameuserdata
 systemctl restart nginx
 
 EOF
+fi
 
 #convert user data to base64
 userdata=$(base64 $fnameuserdata)

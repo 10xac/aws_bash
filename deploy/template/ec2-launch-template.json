@@ -8,6 +8,7 @@
         },
         "BlockDeviceMappings": [
             {
+                "DeviceName": "/dev/sda1",
                 "Ebs": {
                     "VolumeSize": $EbsVolumeSize
                 }
