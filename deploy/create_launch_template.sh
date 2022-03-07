@@ -25,7 +25,8 @@ fi
 #write modified user_data file
 cat <<EOF >  $fnameuserdata
 #!/bin/bash
-echo ECS_CLUSTER=ecs-${ecs_cluster_name} >> /etc/ecs/ecs.config;
+mkdir -p /etc/ecs
+echo ECS_CLUSTER=${ecs_cluster_name} >> /etc/ecs/ecs.config;
 echo ECS_BACKEND_HOST= >> /etc/ecs/ecs.config;
 
 if command -v apt-get >/dev/null; then
@@ -76,6 +77,12 @@ else
     if [ -d /home/hadoop ]; then
         home=/home/hadoop
     fi    
+fi
+
+if [ -d $home ]; then
+    homeUser=$(basename $home)
+else
+    homeUser=`whoami`
 fi
 
 #copy aws config file 
@@ -167,6 +174,9 @@ fi
 
 docker --version
 docker-compose --version
+if [ -f /var/run/docker.sock ]; then
+    chmod 777 /var/run/docker.sock
+fi
 
 ## Amazon ECR Docker Credential Helper
 if command -v apt-get >/dev/null; then
@@ -295,9 +305,6 @@ if (( ${#extrauserdata[@]} )); then
             echo "ec2 user data $eud appended to $fnameuserdata "        
         fi
     done
-else
-    echo "extrauserdata param is empty - not adding extra userdata from file"
-fi
 
 if ${setup_nginx:-$copy_ssl_cert_froms3} ; then    
 cat <<EOF >>  $fnameuserdata
@@ -305,6 +312,11 @@ systemctl restart nginx
 
 EOF
 fi
+    
+else
+    echo "extrauserdata param is empty - not adding extra userdata from file"
+fi
+
 
 #convert user data to base64
 userdata=$(base64 $fnameuserdata)
