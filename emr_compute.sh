@@ -13,8 +13,13 @@ fi
 fname="instance_user_data/${name}_user_data.sh"
 
 echo "sed replacing config file and writing: emr_user_data.sh ->  $fname"
+if [[ "$OSTYPE" == "darwin"* ]]; then
+    SEDOPTION="-i ''"
+else
+    SEDOPTION="-i "
+fi
 sed 's|specfile=.*|specfile='"$udcfile"'|g' user_data.sh > $fname
-sed  -i "" "s|pub_key_basename=|pub_key_basename="${iam_users}"_authorized_keys|g" $fname
+sed  $SEDOPTION "s|pub_key_basename=|pub_key_basename="${iam_users}"_authorized_keys|g" $fname
 
 s3root=${s3root:-"s3://ml-box-data"}
 LOG_URI="${s3root}/emr-cluster-logs/"

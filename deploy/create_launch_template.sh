@@ -335,13 +335,19 @@ else
 fi
 #fi
 
+if [[ "$OSTYPE" == "darwin"* ]]; then
+    SEDOPTION="-i ''"
+else
+    SEDOPTION="-i "
+fi
+
 #now replace userdata
 if [ -f $ftemplate ] ; then
     #echo "current dir: `pwd`"
     echo "writing launch template file: $ftemplate"
-    sed -i '' "s|\"LaunchTemplateName.*|\"LaunchTemplateName\":\"$AsgTemplateName\",|" "$ftemplate"
-    sed -i '' "s|.*ds-team-instance.*|\"Value\": \"${root_name}-host\"|" "$ftemplate"
-    sed -i '' "s|\"UserData.*|\"UserData\":\"$userdata\",|" "$ftemplate"
+    sed $SEDOPTION "s|\"LaunchTemplateName.*|\"LaunchTemplateName\":\"$AsgTemplateName\",|" "$ftemplate"
+    sed $SEDOPTION "s|.*ds-team-instance.*|\"Value\": \"${root_name}-host\"|" "$ftemplate"
+    sed $SEDOPTION "s|\"UserData.*|\"UserData\":\"$userdata\",|" "$ftemplate"
 else
     echo "ERROR: $ftemplate does not exist!"
 fi
@@ -363,7 +369,11 @@ else
     tnexist=false    
 fi
 
-if [ -z $tnexist ]; then tnexist=false; fi
+if [ -z $tnexist ]; then
+    echo "--- describe-launch-template result: -------"
+    echo $res
+    tnexist=false;
+fi
 
 echo "Does EC2 Launch Template Name: $AsgTemplateName exist?  $tnexist"
 
@@ -402,6 +412,6 @@ source $logoutputdir/clt_output_params.sh
 #info
 echo "ASG Launch template_name=$AsgTemplateName, template_id=$AsgTemplateId"
 
-if $tnexist; then #update asg if template has been updated
-    source create_asg.sh ""
-fi
+#update asg if template has been updated
+source create_asg.sh ""
+

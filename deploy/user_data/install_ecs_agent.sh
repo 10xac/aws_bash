@@ -90,11 +90,10 @@ cat <<'EOFF' >> /opt/aws/amazon-cloudwatch-agent/bin/config.json
                 }
         }
 }
-'EOFF'
+EOFF
 
 #Add cwagent User to adm group
 #usermod -aG adm cwagent
-
 
 systemctl enable amazon-cloudwatch-agent.service
 service amazon-cloudwatch-agent start
