@@ -1,3 +1,7 @@
+if [ -z $setup_ec2 ]; then
+    setup_ec2=${setupec2-true}
+fi
+
 export ec2LaunchTemplate=template/ec2-launch-template.json
 
 if [ -f $logoutputdir/alb_output_params.sh ]; then
@@ -5,13 +9,13 @@ if [ -f $logoutputdir/alb_output_params.sh ]; then
     source $logoutputdir/alb_output_params.sh
     if [ -z $loadbalancerArn ] || [ -z $targetGroupArn ]; then
         echo "***Either ALB ARN or Target group ARN is missing."
-        export create_and_setup_alb=$setupec2
+        export create_and_setup_alb=$setup_ec2
     else
         export create_and_setup_alb=false
     fi
 else
     echo "$logoutputdir/alb_output_params.sh does not exist"
-    export create_and_setup_alb=$setupec2
+    export create_and_setup_alb=$setup_ec2
 fi
 
 if [ -f $logoutputdir/clt_output_params.sh ]; then
@@ -20,16 +24,18 @@ if [ -f $logoutputdir/clt_output_params.sh ]; then
     export create_launch_template=false
 else
     echo "$logoutputdir/clt_output_params.sh file does not exist"    
-    export create_launch_template=$setupec2
+    export create_launch_template=$setup_ec2
 fi
 
-if [ -f $logoutputdir/output-create-auto-scaling-group.json ]; then
-    echo "ASG output file exists  ..."    
-    export create_and_setup_asg=false
-else
-    echo "$logoutputdir/output-create-auto-scaling-group.json does not exist"
-    export create_and_setup_asg=$setupec2
-fi
+export create_and_setup_asg=false
+
+# if [ -f $logoutputdir/output-create-auto-scaling-group.json ]; then
+#     echo "ASG output file exists  ..."    
+#     export create_and_setup_asg=false
+# else
+#     echo "$logoutputdir/output-create-auto-scaling-group.json does not exist"
+#     export create_and_setup_asg=$setup_ec2
+# fi
 
 #loadbalance and autoscale
 export alb="ecs-${root_name}-alb"

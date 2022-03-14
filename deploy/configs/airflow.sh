@@ -44,22 +44,6 @@ export AwsImageId="ami-0258eeb71ddf238b3"  #Ubuntu 21.10 sup[p
 #export AwsImageId="ami-0c62045417a6d2199"  #amazon linux - does not support TLS V1.3
 export AwsInstanceType="t3.medium"
 export EbsVolumeSize=30
-
-
-#ecs task params
-if [ $AwsInstanceType == "t3.micro" ]; then
-   export ecsTaskCpuUnit=512
-   export ecsTaskMemoryUnit=1024
-elif [ $AwsInstanceType == "t3.small" ]; then
-   export ecsTaskCpuUnit=1024
-   export ecsTaskMemoryUnit=2048   
-elif [ $AwsInstanceType == "t3.medium" ]; then
-    export ecsTaskCpuUnit=2048
-    export ecsTaskMemoryUnit=4096
-else
-    export ecsTaskCpuUnit=2048
-    export ecsTaskMemoryUnit=4096
-fi
      
 export ecsTaskPortMapList=8080
 export ecsTaskFromTemplate=False
@@ -107,36 +91,8 @@ setupec2=true
 
 export ec2LaunchTemplate=template/ec2-launch-template.json
 
-if [ -f $logoutputdir/alb_output_params.sh ]; then
-    echo "ALB output file exists  ..."      
-    source $logoutputdir/alb_output_params.sh
-    if [ -z $loadbalancerArn ] || [ -z $targetGroupArn ]; then
-        echo "***Either ALB ARN or Target group ARN is missing."
-        export create_and_setup_alb=$setupec2
-    else
-        export create_and_setup_alb=false
-    fi
-else
-    echo "$logoutputdir/alb_output_params.sh does not exist"
-    export create_and_setup_alb=$setupec2
-fi
-
-if [ -f $logoutputdir/clt_output_params.sh ]; then
-    echo "Launch template output file exists  ..."
-    source $logoutputdir/clt_output_params.sh
-    export create_launch_template=false
-else
-    echo "$logoutputdir/clt_output_params.sh file does not exist"    
-    export create_launch_template=$setupec2
-fi
-
-if [ -f $logoutputdir/output-create-auto-scaling-group.json ]; then
-    echo "ASG output file exists  ..."    
-    export create_and_setup_asg=false
-else
-    echo "$logoutputdir/output-create-auto-scaling-group.json does not exist"
-    export create_and_setup_asg=$setupec2
-fi
+#now load the common ec2 params
+source ${scriptDir}/ec2_params.sh
 
 #loadbalance and autoscale
 export alb="ecs-${root_name}-alb"
@@ -150,43 +106,11 @@ export AsgTemplateVersion=1
 #-----------------ECS Parameters---------------
 setup_ecs=false
 
-
-#create docker images locally and push them to ECR
-export docker_push_proxy=false
-export docker_push_test_app=false
+#now load the common ec2 params
+source ${scriptDir}/ecs_params.sh
 
 #create ECR repo
 export create_ecr_repo=false
-
-if [ -f $logoutputdir/ecr_output_params.sh ]; then
-    echo "ECR repo output file exists  ..."    
-    source $logoutputdir/ecr_output_params.sh
-    if [ -z $aws_ecr_repository_url_app ]; then
-        echo "** empty aws_ecr_repository_url_app=$aws_ecr_repository_url_app"
-        export create_ecr_repo=$setup_ecs
-    fi
-else
-    echo "$logoutputdir/ecr_output_params.sh file does not exist"
-    export create_ecr_repo=$setup_ecs
-fi
-
-#create ECS cluster and register task
-if [ -f $logoutputdir/output-register-ecs-task.json ]; then
-    echo "ECS task register output file exists  ..."    
-    export create_ecs_cluster_and_task=false
-else
-    echo "$logoutputdir/output-register-ecs-task.json does not exist"
-    export create_ecs_cluster_and_task=$setup_ecs
-fi
-
-
-if [ -f $logoutputdir/output-create-service.json ]; then
-    echo "ECS service create  output file exists  ..."    
-    export create_ecs_service=false
-else
-    echo "$logoutputdir/output-create-service.json does not exist"
-    export create_ecs_service=$setup_ecs
-fi
 
 #ECS parameters
 export ecr_repo_name=${root_name}

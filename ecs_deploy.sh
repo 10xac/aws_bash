@@ -154,3 +154,10 @@ fi
 # #Hit the service 
 # curl --cacert cacert.pem https://ecs-encryption.awsblogs.info/service
 
+#--------------------------------------------------------#
+##-------- sync output folder to s3 -----##
+#------------------------------------------------------#
+
+outputdir=$(dirname $logoutputdir)
+aws s3 cp $outputdir $s3bucket/aws_bash_output/ --recursive \
+    --region $region --profile $profile_name

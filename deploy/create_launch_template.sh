@@ -9,8 +9,15 @@ if [ ! -z "$1" ]; then
     echo "logdir=$logoutputdir"    
 fi
 
+#---- use 
+certpath=${s3bucket}/ssl-certs/${root_name}    
+if [ "${ENV:-prod}" == "dev" ]; then
+    certpath=${s3bucket}/ssl-certs/dev-${root_name}
+elif [ "${ENV:-prod}" == "stag" ]; then
+    certpath=${s3bucket}/ssl-certs/stagin-${root_name}
+fi
+s3certpath=${s3certpath:-$certpath}
 
-s3certpath=${s3bucket}/ssl-certs/${root_name}
 localcertdir=$configoutputdir/certs
 fnameuserdata=$configoutputdir/${root_name}_user_data.sh
 
@@ -133,9 +140,9 @@ if command -v docker >/dev/null; then
 else
     if [ -f /usr/local/bin/docker ]; then
 	echo "adding /usr/local/bin in PATH as docker is already installed there"
-	echo "Consider sourcing ~/.bashrc in your shell"
-	echo "export PATH=/usr/local/bin:$PATH" >> ~/.bashrc
-	source ~/.bashrc
+	echo "Consider sourcing $home/.bashrc in your shell"
+	echo "export PATH=/usr/local/bin:$PATH" >> $home/.bashrc
+	source $home/.bashrc
     else    
 	echo "installing docker .."
 	if command -v apt-get >/dev/null; then
@@ -162,9 +169,9 @@ if command -v docker-compose >/dev/null; then
 else
     if [ -f /usr/local/bin/docker-compose ]; then
 	echo "adding /usr/local/bin in PATH as docker-compose is already installed there"
-	echo "Consider sourcing ~/.bashrc in your shell"
-	echo "export PATH=/usr/local/bin:$PATH" >> ~/.bashrc
-	source ~/.bashrc
+	echo "Consider sourcing $home/.bashrc in your shell"
+	echo "export PATH=/usr/local/bin:$PATH" >> $home/.bashrc
+	source $home/.bashrc
     else
 	echo "installing docker-compose .."	
 	curl -L https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m) -o /usr/local/bin/docker-compose
@@ -206,14 +213,19 @@ cat <<EOF >>  $fnameuserdata
 aws s3 cp $s3certpath ./cert --recursive #| echo "ERROR: can not copy cert folder from s3"
 mkdir -p /etc/ssl
 
-#copy ssh key 
-if [ ! -z "$s3_authorized_keys_path" ]; then
-aws s3 cp $s3_authorized_keys_path - >> ~/.ssh/authorized_keys #| echo "ERROR: can not copy authorization key from s3"
-fi
-
 if [ -d ./cert ]; then
    cp -r ./cert /etc/ssl/letsencrypt
 fi
+
+#copy ssh key 
+for s3akp in $s3_authorized_keys_path; do
+EOF
+cat <<'EOF' >>  $fnameuserdata
+   if [ ! -z $s3akp ]; then
+      aws s3 cp $s3akp - >> $home/.ssh/authorized_keys #| echo "ERROR: can not copy authorization key from s3"
+   fi
+done
+
 
 EOF
 fi

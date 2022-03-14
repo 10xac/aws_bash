@@ -38,6 +38,7 @@ if [ ! -f $configfile ]; then
     echo "ERROR: $configfile not found!"
 fi
 
+
 #sudo sh -c "sed -i '/^PasswordAuthentication/s/no/yes/' /etc/ssh/sshd_config"
 
 #read config file
@@ -131,6 +132,13 @@ fi
 if ${setupdocker:-true}; then
     script=extras/install_docker.sh
     run_script ${script}
+fi
+
+#-------------mount s3 folder---------
+#copy scripts
+if ${unmounts3:-false}; then
+    script=s3mount/mount-s3fs.sh
+    run_script ${script} unmount 
 fi
 
 #--------install apps

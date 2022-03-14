@@ -4,6 +4,11 @@ scriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 cdir=$(dirname $scriptDir)
 home=${ADMIN_HOME:-$(bash $cdir/get_home.sh)}
 
+if [[ "$OSTYPE" == "darwin"* ]]; then
+    SEDOPTION="-i ''"
+else
+    SEDOPTION="-i "
+fi
 
 #get git secret
 # GIT_SECRET=$(aws secretsmanager get-secret-value \
@@ -62,23 +67,23 @@ else
     touch ls $filename
 fi
 
-sed -i '/c.NotebookApp.open_browser/d' $filename
+sed $SEDOPTION '/c.NotebookApp.open_browser/d' $filename
 echo "c.NotebookApp.open_browser = False" >> $filename
 
 if [ ! "$JUPYTER_LOCALHOST_ONLY" = true ]; then
-sed -i '/c.NotebookApp.ip/d' $filename
+sed $SEDOPTION '/c.NotebookApp.ip/d' $filename
 echo "c.NotebookApp.ip='0.0.0.0'" >> $filename
 fi
 
-sed -i '/c.NotebookApp.port/d' $filename
+sed $SEDOPTION '/c.NotebookApp.port/d' $filename
 echo "c.NotebookApp.port = $JUPYTER_PORT" >> $filename
 
 if [ ! "$JUPYTER_PASSWORD" = "" ]; then
-  sed -i '/c.NotebookApp.password/d' $filename
+  sed $SEDOPTION '/c.NotebookApp.password/d' $filename
   HASHED_PASSWORD=$(python3 -c "from notebook.auth import passwd; print(passwd('$JUPYTER_PASSWORD'))")
   echo "c.NotebookApp.password = u'$HASHED_PASSWORD'" >> $filename
 else
-  sed -i '/c.NotebookApp.token/d' $filename
+  sed $SEDOPTION '/c.NotebookApp.token/d' $filename
   echo "c.NotebookApp.token = u''" >> $filename
 fi
 echo "c.Authenticator.admin_users = {'$JUPYTER_HUB_DEFAULT_USER'}" >> $filename

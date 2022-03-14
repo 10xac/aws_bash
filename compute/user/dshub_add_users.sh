@@ -53,17 +53,22 @@ function copy_user_creds(){
 
     if [ -f /mnt/$CREDROOTFOLDER/ssh/${n}_authorized_keys ]; then
         sudo cp /mnt/$CREDROOTFOLDER/ssh/${n}_authorized_keys $HOME/.ssh/authorized_keys
-    else    
-	if [ -f /mnt/$CREDROOTFOLDER/${n}/authorized_keys ]; then
+    elif [ -f /mnt/$CREDROOTFOLDER/${n}/authorized_keys ]; then
             sudo cp /mnt/$CREDROOTFOLDER/${n}/authorized_keys $HOME/.ssh/authorized_keys
-	fi
+    else
+        if [ -f /mnt/$CREDROOTFOLDER/ssh/authorized_keys ]; then
+            sudo cp /mnt/$CREDROOTFOLDER/ssh/authorized_keys $HOME/.ssh/authorized_keys
+        elif [ -f /mnt/$CREDROOTFOLDER/authorized_keys ]; then
+            sudo cp /mnt/$CREDROOTFOLDER/authorized_keys $HOME/.ssh/authorized_keys
+        fi
     fi
 }
 
+sed -i "" 's/PasswordAuthentication no/PasswordAuthentication yes/y' /etc/ssh/sshd_config
 
-if [ -f users.txt ]; then
-    cat users.txt >> $userfile
-fi
+# if [ -f users.txt ]; then
+#     cat users.txt >> $userfile
+# fi
 
 for n in `cat $userfile`; do
     if [ ! -d "/home/$n" ]; then

@@ -94,6 +94,11 @@ else
     echo ""
 fi
 
+if [ $1 == "unmount" ]; then
+    if [ $2 != "mount" ]; then
+        exit 0
+    fi
+fi
 
 #mount s3 bucket
 /usr/local/bin/s3fs $BUCKET /mnt/$BUCKET -o allow_other -o iam_role=auto \

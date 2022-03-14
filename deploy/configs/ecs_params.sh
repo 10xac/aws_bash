@@ -1,7 +1,26 @@
+#ecs task params
+if [ $AwsInstanceType == "t3.micro" ]; then
+   export ecsTaskCpuUnit=512
+   export ecsTaskMemoryUnit=512
+elif [ $AwsInstanceType == "t3.small" ]; then
+   export ecsTaskCpuUnit=1024
+   export ecsTaskMemoryUnit=1024   
+elif [ $AwsInstanceType == "t3.medium" ]; then
+    export ecsTaskCpuUnit=2048
+    export ecsTaskMemoryUnit=2048
+else
+    export ecsTaskCpuUnit=2048
+    export ecsTaskMemoryUnit=2048
+fi
+
 #create docker images locally and push them to ECR
 export docker_push_proxy=false
 export docker_push_test_app=false
 
+#create ECR repo
+export create_ecr_repo=false
+
+#ecs task and service
 if [ -f $logoutputdir/ecr_output_params.sh ]; then
     echo "ECR repo output file exists  ..."    
     source $logoutputdir/ecr_output_params.sh
