@@ -68,21 +68,21 @@ function install_s3fs()
 {
 
     if command -v apt-get >/dev/null; then
-        apt-get remove -y fuse
-	apt-get install -y gcc gcc-c++
-	apt-get install -y openssl-devel libcurl libssl1.0.0 libssl-dev libxml-2.0 fuse automake
-        apt-get install -y build-essential libcurl4-openssl-dev libxml2-dev mime-support        
-	apt-get install -y memcached
+        apt-get -qq remove -y fuse
+	apt-get -qq install -y gcc gcc-c++
+	apt-get -qq install -y openssl-devel libcurl libssl1.0.0 libssl-dev libxml-2.0 fuse automake
+        apt-get -qq install -y build-essential libcurl4-openssl-dev libxml2-dev mime-support        
+	apt-get -qq install -y memcached
 	service memcached start
         
     elif command -v yum >/dev/null; then
         # yum remove -y fuse
         # yum install -y gcc libstdc++-devel gcc-c++ curl-devel libxml2-devel openssl-devel mailcap
-	yum install -y gcc gcc-c++	
-	yum install -y openssl-devel libcurl libcrypto.so.10 libxml-2.0 fuse automake	
-	yum install -y libcurl libcurl-devel graphviz cyrus-sasl cyrus-sasl-devel readline readline-devel gnuplot
-	yum install -y automake fuse fuse-devel libxml2-devel
-	yum install -y memcached
+	yum -qq install -y gcc gcc-c++	
+	yum -qq install -y openssl-devel libcurl libcrypto.so.10 libxml-2.0 fuse automake	
+	yum -qq install -y libcurl libcurl-devel graphviz cyrus-sasl cyrus-sasl-devel readline readline-devel gnuplot
+	yum -qq install -y automake fuse fuse-devel libxml2-devel
+	yum -qq install -y memcached
 	service memcached start
     else
 	echo "unknown os system.."
@@ -103,11 +103,14 @@ function install_s3fs()
 
     # install s3fs
     if command -v apt-get >/dev/null; then
-        apt install -y s3fs
+        echo "Installing s3fs using apt..."
+        apt -qq install -y s3fs
     elif command -v yum >/dev/null; then
+        echo "Installing s3fs using yum..."
         amazon-linux-extras install epel || echo "not in aws linux"
-        yum install -y s3fs-fuse
+        yum -qq install -y s3fs-fuse
     else
+        echo "Installing s3fs from source..."
         git clone https://github.com/s3fs-fuse/s3fs-fuse.git
         cd s3fs-fuse/
         ls -alrt
@@ -122,7 +125,7 @@ function install_s3fs()
     fi
 }
 
-if [ $# -gt 0 ]; then
+if command -v s3fs >/dev/null; then
     if [ $1 == "unmount" ]; then	
 	#https://stackoverflow.com/questions/24966676/transport-endpoint-is-not-connected
 	#https://dausruddin.com/fusermount-failed-to-unmount-path-device-or-resource-busy/
@@ -158,6 +161,10 @@ s3fs $BUCKET /mnt/$BUCKET -o allow_other -o iam_role=auto \
 
 EOFF
 
+echo "Mounting $BUCKET to /mnt/$BUCKET"
 source $home/s3mount.sh install
+
+echo "Files in /mnt/$BUCKET : "
+ls /mnt/$BUCKET
 
 EOF

@@ -37,19 +37,17 @@ echo ECS_CLUSTER=${ecs_cluster_name} >> /etc/ecs/ecs.config;
 echo ECS_BACKEND_HOST= >> /etc/ecs/ecs.config;
 
 if command -v apt-get >/dev/null; then
-   apt update -y
-   apt-get install fuse -y 
-   apt install git -y
-   apt install jq -y
-   apt install unzip -y
-   apt-get install amazon-cloudwatch-agent -y
+   apt -qq update -y
+   apt -qq install fuse -y 
+   apt -qq install git -y
+   apt -qq install jq -y
+   apt -qq install unzip -y
 else
-   yum update -y
-   yum install fuse -y
-   yum install git -y
-   yum install jq -y 
-   yum install unzip -y
-   yum install amazon-cloudwatch-agent -y 
+   yum -qq update -y
+   yum -qq install fuse -y
+   yum -qq install git -y
+   yum -qq install jq -y 
+   yum -qq install unzip -y
 fi
 
 #write aws config file
@@ -112,7 +110,9 @@ function awscli_install(){
     unzip -qq awscliv2.zip
     ./aws/install --update
     #
-    rm /usr/bin/aws || echo "unable to remove aws"
+    if [ -f /usr/bin/aws ]; then
+        rm /usr/bin/aws || echo ""
+    fi
     #
     ln -s /usr/local/bin/aws /usr/bin/aws
     rm -rf .aws
@@ -146,16 +146,16 @@ else
     else    
 	echo "installing docker .."
 	if command -v apt-get >/dev/null; then
-	    apt-get update -y
-	    apt-get install -y docker.io
+	    apt-get -qq update -y
+	    apt-get -qq install -y docker.io
 	    systemctl docker start
-	    usermod -a -G docker ${homeUser}
+	    usermod -aG docker ${homeUser}
 	    
 	elif command -v yum >/dev/null; then
-	    yum update -y
-	    yum install -y docker
+	    yum -qq update -y
+	    yum -qq install -y docker
 	    systemctl docker start
-	    usermod -a -G docker ${homeUser}
+	    usermod -aG docker ${homeUser}
 	else
 	    echo "unknown os system.."
 	    #exit
@@ -187,12 +187,12 @@ fi
 
 ## Amazon ECR Docker Credential Helper
 if command -v apt-get >/dev/null; then
-   apt install amazon-ecr-credential-helper
+   apt -q install amazon-ecr-credential-helper
 else
    if command -v amazon-linux-extras >/dev/null; then
       amazon-linux-extras enable docker 
    fi    
-   yum install amazon-ecr-credential-helper
+   yum -q install amazon-ecr-credential-helper
 fi
 
 cat <<EOFF > config.json
@@ -235,9 +235,9 @@ cat <<EOF >>  $fnameuserdata
 
 #install nginx
 if command -v apt-get >/dev/null; then
-   apt-get install nginx -y 
+   apt-get -q install nginx -y 
 else
-   yum install nginx -y 
+   yum -q install nginx -y 
 fi
 
 cat <<'EndOF' > app.conf
@@ -269,8 +269,8 @@ server {
     #ssl_certificate_key /etc/ssl/my-aws-private.key;
     #ssl_dhparam /etc/ssl/dhparam.pem;
 
-    ssl_certificate /etc/ssl/letsencrypt/live/${dns_namespace}/fullchain.pem;
-    ssl_certificate_key /etc/ssl/letsencrypt/live/${dns_namespace}/privkey.pem;
+    ssl_certificate /etc/ssl/letsencrypt/live/${certdnsname:-dns_namespace}/fullchain.pem;
+    ssl_certificate_key /etc/ssl/letsencrypt/live/${certdnsname:-dns_namespace}/privkey.pem;
     include /etc/ssl/letsencrypt/options-ssl-nginx.conf;
     ssl_dhparam /etc/ssl/letsencrypt/ssl-dhparams.pem;
 
