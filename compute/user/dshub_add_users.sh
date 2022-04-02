@@ -10,7 +10,8 @@ fi
 if [ $# -gt 0 ]; then
     userfile=$1
 else
-    userfile=${USERS_FILE:-"users.txt"}
+    echo "no user file is provided!"
+    exit 0
 fi
 
 #copy of if userfule is in s3
@@ -81,6 +82,10 @@ for n in `cat $userfile`; do
         sudo touch /home/$n/.ssh/authorized_keys
         
         sudo usermod -aG ${homeUser} $n
+        #add to docker group
+        if command -v docker >/dev/null; then
+	    usermod -a -G docker $n
+        fi
         
         #cat root bashrc to user bashrc
         sudo cat /root/.bashrc >> /home/$n/.bashrc

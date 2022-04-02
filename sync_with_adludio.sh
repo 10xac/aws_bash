@@ -5,6 +5,7 @@ opt=${2:-''}
 if [ -z $opt ]; then
     optTxt='Non-Dry-Run (actual sync) '
 else
+    #-n, --dry-run               show what would have been transferred
     optTxt='Dry-Run (no sync)'
 fi
 
@@ -45,6 +46,9 @@ if [[ "$curdir" == *"10academy"* ]]; then
               --exclude="configs" \
               --exclude="output" \
               --exclude="apps" \
+              --exclude=".DS_Store" \
+              --exclude="*~" \
+              --exclude="#*" \
               deploy/ ~/My-Works/Adludio/aws_bash/deploy
     fi
     #
@@ -54,6 +58,9 @@ if [[ "$curdir" == *"10academy"* ]]; then
               --exclude="output" \
               --exclude="apps" \
               --exclude="w?/" \
+              --exclude=".DS_Store" \
+              --exclude="*~" \
+              --exclude="#*" \
               compute/ ~/My-Works/Adludio/aws_bash/compute    
     fi
     #rsync deploy/*.sh ~/My-Works/Adludio/aws_bash/deploy/

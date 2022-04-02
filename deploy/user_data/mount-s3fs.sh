@@ -44,6 +44,9 @@ else
     homeUser=`whoami`
 fi
 
+# write mount unmount script 
+cat <<EOFF >>  $home/s3mount.sh
+
 echo "BUCKET=$BUCKET"
 
 
@@ -100,10 +103,10 @@ function install_s3fs()
 
     # install s3fs
     if command -v apt-get >/dev/null; then
-        apt install s3fs
+        apt install -y s3fs
     elif command -v yum >/dev/null; then
         amazon-linux-extras install epel || echo "not in aws linux"
-        yum install s3fs-fuse
+        yum install -y s3fs-fuse
     else
         git clone https://github.com/s3fs-fuse/s3fs-fuse.git
         cd s3fs-fuse/
@@ -152,5 +155,9 @@ s3fs $BUCKET /mnt/$BUCKET -o allow_other -o iam_role=auto \
 
 #chmod 777 -R /mnt || echo "unable to change /mnt permission"
 #chown $homeUser:$homeUser -R /mnt || echo "unable to change /mnt ownership"
+
+EOFF
+
+source $home/s3mount.sh install
 
 EOF

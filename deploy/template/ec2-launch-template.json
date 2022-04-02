@@ -38,17 +38,6 @@
         ],
         "SecurityGroupIds": [
             "$sgserver"
-        ],
-        "Placement": {
-            "Tenancy": "dedicated"
-        },
-        "CreditSpecification": {
-            "CpuCredits": "unlimited"
-        },
-        "MetadataOptions": {
-            "HttpTokens": "required",
-            "HttpPutResponseHopLimit": 1,
-            "HttpEndpoint": "enabled"
-        }        
+        ]
     }
 }

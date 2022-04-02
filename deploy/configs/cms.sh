@@ -35,17 +35,19 @@ export ENV=${ENV:-prod}
 export root_name="cms" #name you give to your project in ecs env
 export rootdns=10academy.org
 export s3certpath=${s3bucket}/ssl-certs/${root_name}
+export repo_name="tenx-cms" #used to check out git repo
 #
 export dnsprefix=cms
 if [ "$ENV" == "dev" ]; then
     export dnsprefix="dev-${dnsprefix}"
     export root_name="dev-$root_name"
+    export repo_name="dev-tenx-cms" #used to check out git repo    
 elif [ "$ENV" == "stag" ]; then
     export dnsprefix="staging-${dnsprefix}"
-    export root_name="staging-$root_name"    
+    export root_name="staging-$root_name"
+    export repo_name="dev-tenx-cms" #used to check out git repo    
 fi
 export dns_namespace="${dnsprefix}.${rootdns}"  ##This should be your domain 
-export repo_name="tenx-cms" #used to check out git repo
 export app_name="${root_name}"  #-app
 export proxy_name="${root_name}-proxy"
 export log_group_name="/ecs/ecs-${root_name}-ssl"
