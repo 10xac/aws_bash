@@ -26,7 +26,7 @@ if [ ! -z ${root_name} ]; then
         echo "ConfLogDirs: $logoutputdir exist"
     fi
 
-    if [ ! -d $confoutputdir ]; then
+    if [ ! -d $configoutputdir ]; then
         echo "ConfLogDirs: creating $configoutputdir directory"
         mkdir -p $configoutputdir                
     else

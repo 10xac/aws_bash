@@ -18,8 +18,7 @@ echo "creating ECR repository with the following name and region: app_name=${app
 
 res=$(aws ecr describe-repositories \
           --repository-names ${ecr_repo_name} \
-          --region $region \
-          --profile ${profile_name} \
+          --region $region  \
           || echo "None")
 
 if (( ${#res[@]} )); then #not empty
@@ -42,12 +41,12 @@ else
     
     res=$(aws ecr describe-repositories \
               --repository-names ${ecr_repo_name} \
-              --region $region \              
-              --profile ${profile_name})
+              --region $region )
 
     ecrRepoArn=$(echo $res | jq -r '.repositories[0].repositoryArn')
 fi
 
+echo "export aws_ecr_repository_url_app=$ecrRepoArn"
 echo $res > $logoutputdir/output-create-repository.json
 echo "export aws_ecr_repository_url_app=$ecrRepoArn" > $logoutputdir/ecr_output_params.sh
 source $logoutputdir/ecr_output_params.sh

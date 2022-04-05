@@ -37,17 +37,21 @@ export rootdns=10academy.org
 export certdnsname="${root_name}.${rootdns}"
 export s3certpath=${s3bucket}/ssl-certs/${root_name}
 export repo_name="tenx-app" #used to check out git repo
+export repo_branch="main"
 #
-export dnsprefix=cms
+export dnsprefix=tenx
 if [ "$ENV" == "dev" ]; then
     export dnsprefix="dev-${dnsprefix}"
     export root_name="dev-$root_name"
-    export repo_name="dev-tenx-cms" #used to check out git repo    
+    export repo_name="tenx-app" #used to check out git repo
+    export repo_branch="dev"    
 elif [ "$ENV" == "stag" ]; then
     export dnsprefix="staging-${dnsprefix}"
     export root_name="staging-$root_name"
-    export repo_name="dev-tenx-cms" #used to check out git repo    
+    export repo_name="tenx-app" #used to check out git repo
+    export repo_branch="staging"
 fi
+
 export dns_namespace="${dnsprefix}.${rootdns}"  ##This should be your domain 
 export app_name="${root_name}"  #-app
 export proxy_name="${root_name}-proxy"
@@ -120,14 +124,13 @@ export create_route53_record=False
 export route53RecordTemplate=template/r53-record-set-template.json
 
 #-----------------ECS Parameters---------------
-setup_ecs=false
+setup_ecs=true
 
 #now load the common ec2 params
 source ${scriptDir}/ecs_params.sh
 
-
 #create ECR repo
-export create_ecr_repo=false
+export create_ecr_repo=true
 
 #ECS parameters
 export ecr_repo_name=${root_name}

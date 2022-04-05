@@ -126,7 +126,10 @@ function install_s3fs()
 }
 
 if command -v s3fs >/dev/null; then
-    if [ $1 == "unmount" ]; then	
+    echo "s3fs and other necessary files are installed already .."
+    echo ""
+else
+    if [ "$1" == "unmount" ]; then	
 	#https://stackoverflow.com/questions/24966676/transport-endpoint-is-not-connected
 	#https://dausruddin.com/fusermount-failed-to-unmount-path-device-or-resource-busy/
 	fusermount -uz /mnt/$BUCKET
@@ -136,8 +139,7 @@ if command -v s3fs >/dev/null; then
 	install_s3fs
     fi
 else
-    echo "assuming s3fs and other necessary files installed already .."
-    echo ""
+
 fi
 
 mkdir -p /mnt/s3fs-cache

@@ -13,6 +13,7 @@ region=${region:-"eu-west-1"}
 ssmgittoken=${ssmgittoken:-"git_token_tenx"}
 gituname=${gituname:-"10xac"}
 repo_name=${repo_name:-""}
+repo_branch=${repo_branch:-""}
 
 EOF
 
@@ -32,6 +33,9 @@ if [ ! -z $repo_name ]; then
   git clone https://${git_token}@github.com/${gituname}/${repo_name}
 
   cd $repo_name
+  if [ ! -z $repo_branch ]; then
+     git checkout $repo_branch | echo "Can not checkout branch=$repo_branch"
+  fi   
   if [ -f build.sh ]; then
       bash build.sh
   fi
