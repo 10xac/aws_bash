@@ -20,30 +20,6 @@ cat <<'EOF' >>  $fout
 BUCKET=${BUCKET#"s3://"}
 
 
-#------------START: code to mount s3 folder------------
-home=$HOME
-if command -v apt-get >/dev/null; then
-    if [ -d /home/ubuntu ]; then
-        home=/home/ubuntu
-    fi
-else
-    if [ -d /home/centos ]; then
-        home=/home/centos
-    fi
-    if [ -d /home/ec2-user ]; then
-        home=/home/ec2-user
-    fi
-    if [ -d /home/hadoop ]; then
-        home=/home/hadoop
-    fi    
-fi
-
-if [ -d $home ]; then
-    homeUser=$(basename $home)
-else
-    homeUser=`whoami`
-fi
-
 # write mount unmount script 
 cat <<EOFF >>  $home/s3mount.sh
 
@@ -138,8 +114,6 @@ else
     else
 	install_s3fs
     fi
-else
-
 fi
 
 mkdir -p /mnt/s3fs-cache

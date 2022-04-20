@@ -27,7 +27,7 @@ export s3_authorized_keys_path="s3://10ac-team/credentials/zelalem/authorized_ke
 echo "profile=$profile_name"
 
 #extra user_data for ec2
-export extrauserdata="user_data/install_ecs_agent.sh user_data/run_build.sh"
+export extrauserdata="user_data/mount-s3fs.sh user_data/install_ecs_agent.sh user_data/run_build.sh"
 export ec2launch_install_docker=true
 
 #application and proxy names
@@ -103,7 +103,7 @@ export copy_ssl_cert_froms3=true
 export setup_nginx=true
 
 #---------------EC2 Parameters------------------
-setup_ec2=true
+setup_ec2=false
 
 #now load the common ec2 params
 source ${scriptDir}/ec2_params.sh
@@ -124,13 +124,13 @@ export create_route53_record=False
 export route53RecordTemplate=template/r53-record-set-template.json
 
 #-----------------ECS Parameters---------------
-setup_ecs=true
+setup_ecs=false
 
 #now load the common ec2 params
 source ${scriptDir}/ecs_params.sh
 
 #create ECR repo
-export create_ecr_repo=true
+export create_ecr_repo=false
 
 #ECS parameters
 export ecr_repo_name=${root_name}
