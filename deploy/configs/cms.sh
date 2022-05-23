@@ -27,7 +27,7 @@ export s3_authorized_keys_path="s3://10ac-team/credentials/zelalem/authorized_ke
 echo "profile=$profile_name"
 
 #extra user_data for ec2
-export extrauserdata="user_data/run_build.sh"
+export extrauserdata="user_data/mount-s3fs.sh user_data/install_ecs_agent.sh user_data/run_build.sh"
 export ec2launch_install_docker=true
 
 #application and proxy names
@@ -44,11 +44,13 @@ export dnsprefix=cms
 if [ "$ENV" == "dev" ]; then
     export dnsprefix="dev-${dnsprefix}"
     export root_name="dev-$root_name"
-    export repo_name="dev-tenx-cms" #used to check out git repo    
-elif [ "$ENV" == "stag" ]; then
-    export dnsprefix="staging-${dnsprefix}"
-    export root_name="staging-$root_name"
-    export repo_name="dev-tenx-cms" #used to check out git repo    
+    export repo_name="dev-tenx-cms" #used to check out git repo
+    export repo_branch="main"
+elif [ "$ENV" == "stage" ]; then
+    export dnsprefix="stage-${dnsprefix}"
+    export root_name="stage-$root_name"
+    export repo_name="tenx-cms" #used to check out git repo
+    export repo_branch="staging"
 fi
 export dns_namespace="${dnsprefix}.${rootdns}"  ##This should be your domain 
 export app_name="${root_name}"  #-app
