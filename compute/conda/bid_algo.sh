@@ -1,4 +1,7 @@
-home=${ADMIN_HOME:-$(bash ../get_home.sh)}
+scriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+cdir=$(dirname $scriptDir)
+home=${ADMIN_HOME:-$(bash $cdir/get_home.sh)}
+
 
 #reload bashrc
 source $home/.bashrc

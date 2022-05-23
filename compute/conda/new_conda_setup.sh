@@ -1,9 +1,12 @@
 set -e
 
+scriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+cdir=$(dirname $scriptDir)
+home=${ADMIN_HOME:-$(bash $cdir/get_home.sh)}
+
 #where to install conda
 folder=${PYTHON_DIR:-/opt/miniconda}
-home=${ADMIN_HOME:-$(bash ../get_home.sh)}
-scriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+
 
 #get miniconda
 curl https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -o /tmp/miniconda.sh

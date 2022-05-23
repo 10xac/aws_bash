@@ -1,5 +1,6 @@
-home=${ADMIN_HOME:-$(ls /home | awk 'NR==1{print $1}')}
 scriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
+cdir=$(dirname $scriptDir)
+home=${ADMIN_HOME:-$(bash $cdir/get_home.sh)}
 
 if [ -d $home ]; then
     homeUser=$(basename $home)
