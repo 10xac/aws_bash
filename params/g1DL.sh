@@ -10,7 +10,7 @@ ssmgittoken="git_token_tenx"
 
 # == control variables 
 team="b5training"
-iam_users=("mukuz" "mahlet" "bereket" "micheal" "zelalem") #provide the iam ds user as array here
+iam_users=("mukuzi" "musa" "anastasia" "mahlet" "micheal") #provide the iam ds user as array here
 
 echo "name=$name, profile=$profile"
 
@@ -30,7 +30,7 @@ IAM="B4EC2Role"
 
 
 # ==  set it once and seldom change ==
-KEY=" itrain-team-useast1"     # EC2 key pair name
+KEY="itrain-team-useast1"     # EC2 key pair name
 COUNT=1         # how many instances to launch
 EBS_SIZE=100    # root EBS volume size (GB)
 

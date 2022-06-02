@@ -92,8 +92,10 @@ iam_users=
 if [ ! -z $iam_users ]; then
     for n in ${iam_users[@]}; do
         echo "copying public key to authorized_keys for user=$n"
-        aws s3 cp s3://${s3bucket}/credentials/${n}/authorized_keys pub_key
-        cat pub_key >> $home/.ssh/authorized_keys | echo "ERROR: can not copy authorization key from s3"
+        aws s3 cp s3://${s3bucket}/credentials/${n}/authorized_keys pub_key || echo "sshkey for $n not found"
+        if [ -f pub_key ]; then
+            cat pub_key >> $home/.ssh/authorized_keys | echo "ERROR: can not copy authorization key from s3"
+        fi
     done
 fi
 

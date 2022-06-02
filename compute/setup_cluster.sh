@@ -16,7 +16,9 @@ echo "home=$home"
 
 #----------add variables to bashrc
 configfile="params.txt"
-[ $# -gt 0 ] && [ -f "$1" ] && configfile="$1"
+if [ -f "$1" ]; then
+    configfile="$1"
+fi
 
 echo "setup_cluster config file: $configfile"
 

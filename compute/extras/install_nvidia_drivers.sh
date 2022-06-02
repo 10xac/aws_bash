@@ -14,7 +14,7 @@ source $home/.bashrc
 
 echo "installing nvidea driver .."
 if command -v apt-get >/dev/null; then
-    sudo apt-get install -y gcc make linux-headers-$(uname -r)
+    sudo apt-get install -qq -y gcc make linux-headers-$(uname -r)
 
     cat << EOF | sudo tee --append /etc/modprobe.d/blacklist.conf
 blacklist vga16fb
@@ -28,7 +28,7 @@ EOF
     sh -c "echo 'GRUB_CMDLINE_LINUX=\"rdblacklist=nouveau\"' >>  /etc/default/grub"    
     
 elif command -v yum >/dev/null; then
-    yum install -y gcc kernel-devel-$(uname -r)
+    yum install -qq -y gcc kernel-devel-$(uname -r)
     
 else
     echo "unknown os system.."
@@ -50,7 +50,7 @@ aws s3 cp --recursive s3://ec2-linux-nvidia-drivers/latest/ .
 chmod +x NVIDIA-Linux-x86_64*.run
 
 # Run the self-install script as follows to install the GRID driver that you downloaded. 
-/bin/sh ./NVIDIA-Linux-x86_64*.run
+/bin/sh ./NVIDIA-Linux-x86_64*.run -qq
 
 echo "nvidea drivers are successfully installed .. reboot to complete setup .."
 
