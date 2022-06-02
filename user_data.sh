@@ -9,14 +9,14 @@ export HOME=${HOME:-"/root"}
 home=$HOME
 
 if command -v apt-get >/dev/null; then
-    sudo apt-get update -y
-    sudo apt-get install -y git emacs htop jq unzip
+    sudo apt-get update -qq -y
+    sudo apt-get install -qq -y git emacs htop jq unzip
     if [ -d /home/ubuntu ]; then
         home=/home/ubuntu
     fi
 else
-    sudo yum update -y 
-    sudo yum install -y git emacs htop jq unzip
+    sudo yum update -qq -y
+    sudo yum install -qq -y git emacs htop jq unzip
     if [ -d /home/centos ]; then
         home=/home/centos
     fi
@@ -48,7 +48,7 @@ echo "export SSM_GITTOKEN_NAME=${SSM_GITTOKEN_NAME}" >> $home/.bashrc
 #--------update aws cli
 pip3 install botocore --upgrade || echo "unable to upgrade botocore"
 function awscli_install(){
-    yum install unzip -y 
+    yum install unzip -y -qq
     curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
     unzip -qq awscliv2.zip
     ./aws/install --update
@@ -91,16 +91,17 @@ git clone https://${git_token}@github.com/10xac/aws_bash.git || echo "failed wit
 iam_users=
 if [ ! -z $iam_users ]; then
     for n in ${iam_users[@]}; do
-    # if [ -f /mnt/$CREDROOTFOLDER/ssh/${n}_authorized_keys ]; then
-    #     sudo cp /mnt/$CREDROOTFOLDER/ssh/${n}_authorized_keys $HOME/.ssh/authorized_keys
-    # elif [ -f /mnt/$CREDROOTFOLDER/${n}/authorized_keys ]; then
-    #         sudo cp /mnt/$CREDROOTFOLDER/${n}/authorized_keys $HOME/.ssh/authorized_keys
-    # fi
         echo "copying public key to authorized_keys for user=$n"
         aws s3 cp s3://${s3bucket}/credentials/${n}/authorized_keys pub_key
         cat pub_key >> $home/.ssh/authorized_keys | echo "ERROR: can not copy authorization key from s3"
     done
 fi
+
+# if [ -f /mnt/$CREDROOTFOLDER/ssh/${n}_authorized_keys ]; then
+#     sudo cp /mnt/$CREDROOTFOLDER/ssh/${n}_authorized_keys $HOME/.ssh/authorized_keys
+# elif [ -f /mnt/$CREDROOTFOLDER/${n}/authorized_keys ]; then
+#         sudo cp /mnt/$CREDROOTFOLDER/${n}/authorized_keys $HOME/.ssh/authorized_keys
+# fi
 
 
 specfile=""

@@ -18,7 +18,7 @@ CRED_FOLDERS=""
 NOTEBOOK_FOLDER="$BUCKET/notebooks"
 
 ###features to install or setup
-mounts3=false
+mounts3=true
 addusers=true
 setupconda=true
 setupjhub=true
