@@ -2,6 +2,8 @@
 #exec > >(tee /var/log/user-data.log|logger -t user-data -s 2>/dev/console) 2>&1
 
 region="eu-west-1"
+s3bucket='10ac-batch-5'
+
 
 export HOME=${HOME:-"/root"}
 home=$HOME
@@ -48,7 +50,7 @@ pip3 install botocore --upgrade || echo "unable to upgrade botocore"
 function awscli_install(){
     yum install unzip -y 
     curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-    unzip awscliv2.zip
+    unzip -qq awscliv2.zip
     ./aws/install --update
     if [ -f /usr/bin/aws ]; then
         rm /usr/bin/aws || echo "unable to remove aws"
@@ -83,14 +85,19 @@ git_token=$(aws secretsmanager get-secret-value \
     --output text --region $region)
 
 echo "git clone aws_bash .."
-git clone https://${git_token}@github.com/FutureAdLabs/aws_bash.git
+git clone https://${git_token}@github.com/10xac/aws_bash.git || echo "failed with git_token=$git_token"
 
 ## enable an iam user to ss
 iam_users=
 if [ ! -z $iam_users ]; then
     for n in ${iam_users[@]}; do
+    # if [ -f /mnt/$CREDROOTFOLDER/ssh/${n}_authorized_keys ]; then
+    #     sudo cp /mnt/$CREDROOTFOLDER/ssh/${n}_authorized_keys $HOME/.ssh/authorized_keys
+    # elif [ -f /mnt/$CREDROOTFOLDER/${n}/authorized_keys ]; then
+    #         sudo cp /mnt/$CREDROOTFOLDER/${n}/authorized_keys $HOME/.ssh/authorized_keys
+    # fi
         echo "copying public key to authorized_keys for user=$n"
-        aws s3 cp s3://ml-box-data/creds/ssh/${n}_authorized_keys pub_key
+        aws s3 cp s3://${s3bucket}/credentials/${n}/authorized_keys pub_key
         cat pub_key >> $home/.ssh/authorized_keys | echo "ERROR: can not copy authorization key from s3"
     done
 fi

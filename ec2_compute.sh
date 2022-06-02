@@ -23,6 +23,7 @@ fi
 sed 's|specfile=.*|specfile='"$udcfile"'|g' user_data.sh > $fname
 sed  $SEDOPTION 's|iam_users=|iam_users='"${iam_users}"'|g' $fname
 sed  $SEDOPTION 's|yabi-git-token|'"${ssmgittoken}"'|g' $fname
+sed  $SEDOPTION 's|10ac-batch-5|'"${s3bucket}"'|g' $fname
 
 
 if [ "$service" == "ec2" ]; then

@@ -14,7 +14,8 @@ iam_users=("mukuz" "mahlet" "bereket" "micheal" "zelalem") #provide the iam ds u
 echo "name=$name, profile=$profile"
 
 # == define s3 path ==
-s3root="s3://10ac-batch-${batch}"
+s3bucket="10ac-batch-${batch}"
+s3root="s3://${s3bucket}"
 
 # == defines what to install ==
 udcfile='g1.txt' # comment out if you don't want to install compute packages
