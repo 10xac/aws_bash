@@ -97,7 +97,7 @@ fi
 # #------------copy cred to current user-----
 if ${addusers:-true}; then
     script=user/dshub_add_users.sh
-    run_script ${script}
+    run_script ${script} $USERS_FILE
 fi
 
 # #----------install miniconda and create algos env
@@ -138,8 +138,8 @@ fi
 
 #--------install docker
 if ${setupdocker:-true}; then
-    script=extras/install_docker.sh
-    run_script ${script}
+    script=extras/install_docker.sh 
+    run_script ${script} $USERS_FILE
 fi
 
 #-------------mount s3 folder---------

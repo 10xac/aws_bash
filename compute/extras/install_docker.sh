@@ -53,19 +53,10 @@ fi
 docker --version
 docker-compose --version
 
-if [ -d user ]; then
-    cd user
-    if [ $# -gt 0 ]; then
-        userfile=$1
-    else
-        userfile=${USERS_FILE:-"users.txt"}
-    fi
+if [ -f $1 ]; then
+    userfile=$1
 
     sudo groupadd docker || echo "docker user already exists"
-    if [ -f users.txt ] && [ $userfile != "users.txt" ]; then
-	echo "adduing users.txt content to  $userfile"
-	cat users.txt >> $userfile
-    fi
 
     for n in `cat $userfile`; do
 	if [ -d "/home/$n" ]; then
