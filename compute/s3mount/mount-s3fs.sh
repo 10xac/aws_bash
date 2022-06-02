@@ -98,9 +98,11 @@ else
     echo ""
 fi
 
-if [ $1 == "unmount" ]; then
-    if [ $2 != "mount" ]; then
-        exit 0
+if [ $# -gt 1 ]; then
+    if [ $1 == "unmount" ]; then
+        if [ $2 != "mount" ]; then
+            exit 0
+        fi
     fi
 fi
 
