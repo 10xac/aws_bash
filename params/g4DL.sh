@@ -10,7 +10,8 @@ ssmgittoken="git_token_tenx"
 
 # == control variables 
 team="b5training"
-iam_users=("mukuzi" "musa" "anastasia" "mahlet" "micheal") #provide the iam ds user as array here
+iam_users="mukuzi musa anastasia mahlet micheal" #provide the iam ds user as array here
+
 
 echo "name=$name, profile=$profile"
 

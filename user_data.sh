@@ -89,8 +89,8 @@ git clone https://${git_token}@github.com/10xac/aws_bash.git || echo "failed wit
 
 ## enable an iam user to ss
 iam_users=
-if [ ! -z $iam_users ]; then
-    for n in ${iam_users[@]}; do
+if (( ${#iam_users[@]} )); then
+    for n in $iam_users; do
         echo "copying public key to authorized_keys for user=$n"
         aws s3 cp s3://${s3bucket}/credentials/${n}/authorized_keys pub_key || echo "sshkey for $n not found"
         if [ -f pub_key ]; then
