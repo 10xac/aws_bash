@@ -15,11 +15,17 @@ echo "current directory: `pwd`"
 echo "home=$home"
 
 #----------add variables to bashrc
-configfile="params.txt"
-if [ -f "$1" ]; then
+if [ ! -z "$1" ]; then
     configfile="$1"
+    if [ -f configs/$configfile ]; then
+        configfile=configs/$configfile
+    fi
 fi
 
+#if empty set default
+if [ -z $configfile ]; then
+    configfile="params.txt"
+fi
 echo "setup_cluster config file: $configfile"
 
 #copy userfile if it is in s3

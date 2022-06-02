@@ -82,7 +82,7 @@ echo "get git token from ssm .."
 git_token=$(aws secretsmanager get-secret-value \
     --secret-id  ${SSM_GITTOKEN_NAME} \
     --query SecretString \
-    --output text --region $region)
+    --output text --region $region | cut -d: -f2 | tr -d \"{})
 
 echo "git clone aws_bash .."
 git clone https://${git_token}@github.com/10xac/aws_bash.git || echo "failed with git_token=$git_token"

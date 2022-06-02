@@ -1,7 +1,7 @@
 # == key variable ==
 batch=5
 
-name="g1"  #it is also a tag
+name="g2"  #it is also a tag
 service="ec2"
 
 # == AWS CLI profile ==
