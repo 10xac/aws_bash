@@ -19,8 +19,10 @@ else
     SEDOPTION="-i "
 fi
 
+
 sed 's|specfile=.*|specfile='"$udcfile"'|g' user_data.sh > $fname
 sed  $SEDOPTION 's|iam_users=|iam_users='"${iam_users}"'|g' $fname
+sed  $SEDOPTION 's|yabi-git-token|'"${ssmgittoken}"'|g' $fname
 
 
 if [ "$service" == "ec2" ]; then
@@ -30,14 +32,14 @@ if [ "$service" == "ec2" ]; then
         echo "Fetching docker-optimised AWS Linux AMI"
         amipath=/aws/service/ecs/optimized-ami/amazon-linux-2/recommended
         AMI=$(aws ssm get-parameters --names $amipath \
-                  --query 'Parameters[0].[Value]' \
-                  --output text --profile $profile | jq -r '.image_id')        
+                  --query 'Parameters[0].[Value]'  --output text \
+                  --profile $profile --region $region | jq -r '.image_id')        
     else
         echo "Fetching latest AWS Linux AMI"        
         amipath="/aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-x86_64-gp2"
         AMI=$(aws ssm get-parameters --names $amipath \
                   --query 'Parameters[0].[Value]' \
-                  --output text --profile $profile)        
+                  --output text --profile $profile --region $region | jq -r '.image_id')        
     fi
 
     echo "using AMI-ID=$AMI"

@@ -24,3 +24,4 @@ setupconda=true
 setupjhub=true
 setupjnb=true
 setupdocker=true
+setupnvidea=true

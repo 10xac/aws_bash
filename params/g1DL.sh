@@ -5,6 +5,7 @@ service="ec2"
 
 # == AWS CLI profile ==
 profile="tenac"
+ssmgittoken="git_token_tenx"
 
 # == control variables 
 team="b5training"
@@ -27,7 +28,7 @@ IAM="B4EC2Role"
 
 
 # ==  set it once and seldom change ==
-KEY=" tech-ds-team"     # EC2 key pair name
+KEY=" itrain-team-useast1"     # EC2 key pair name
 COUNT=1         # how many instances to launch
 EBS_SIZE=100    # root EBS volume size (GB)
 

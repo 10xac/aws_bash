@@ -35,6 +35,12 @@ echo "export ADMIN_HOME=$home" >> $HOME/.bashrc
 echo "export ADMIN_HOME=$home" >> $home/.bashrc
 source $HOME/.bashr
 
+export SSM_GITTOKEN_NAME=yabi-git-token
+echo "export SSM_GITTOKEN_NAME=${SSM_GITTOKEN_NAME}" >> $HOME/.bashrc
+echo "export SSM_GITTOKEN_NAME=${SSM_GITTOKEN_NAME}" >> $home/.bashrc
+
+
+
 #source ~/.bashrc
 
 #--------update aws cli
@@ -68,10 +74,11 @@ echo "config git email and name .."
 git config --global user.email "yabebal@gmail.com"
 git config --global user.name "Yabebal Fantaye"
 
+
 #----------get git packages
 echo "get git token from ssm .."
 git_token=$(aws secretsmanager get-secret-value \
-    --secret-id yabi-git-token \
+    --secret-id  ${SSM_GITTOKEN_NAME} \
     --query SecretString \
     --output text --region $region)
 

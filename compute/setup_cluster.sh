@@ -142,5 +142,10 @@ if ${unmounts3:-false}; then
 fi
 
 #--------install apps
+if ${setupnvidea:-false}; then
+    script=extras/install_nvidia_drivers.sh
+    run_script ${script}
+fi
+
 #script=apps/pjmatch/jobmodel.sh
 #run_script ${script}
