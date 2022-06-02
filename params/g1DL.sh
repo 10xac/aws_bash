@@ -22,6 +22,7 @@ s3root="s3://${s3bucket}"
 udcfile="${name}.txt" # comment out if you don't want to install compute packages
 
 # == often change ==
+amiopt=nvidea
 #TYPE="t3.small"   # EC2 instance type
 TYPE="g5.4xlarge"   # GPU 1/24GB CPU 16/64GB
 

@@ -35,6 +35,8 @@ if [ "$service" == "ec2" ]; then
         AMI=$(aws ssm get-parameters --names $amipath \
                   --query 'Parameters[0].[Value]'  --output text \
                   --profile $profile --region $region | jq -r '.image_id')        
+    elif [ "${amiopt:-nvidea}" == "nvidea" ]; then
+        AMI="ami-057396a15eb04af10"
     else
         echo "Fetching latest AWS Linux AMI"        
         amipath="/aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-x86_64-gp2"
