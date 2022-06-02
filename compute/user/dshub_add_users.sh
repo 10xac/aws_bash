@@ -39,6 +39,7 @@ CREDENVFILES="${CRED_ENV_FILES:-}"
 function copy_user_creds(){
     n=$1
     HOME=/home/$1
+    echo "copy user ssh key to /home/$n/.ssh/authorized_keys"
     for folder in $CREDFOLDERS; do        
         if [ -d /mnt/$CREDROOTFOLDER/$folder ]; then
             mkdir $HOME/.$folder || echo "~/.$folder exists"        
@@ -54,13 +55,18 @@ function copy_user_creds(){
     done
 
     if [ -f /mnt/$CREDROOTFOLDER/ssh/${n}_authorized_keys ]; then
+        echo "copy ssh key from /mnt/$CREDROOTFOLDER/ssh/${n}_* .."
         sudo cp /mnt/$CREDROOTFOLDER/ssh/${n}_authorized_keys $HOME/.ssh/authorized_keys
     elif [ -f /mnt/$CREDROOTFOLDER/${n}/authorized_keys ]; then
-            sudo cp /mnt/$CREDROOTFOLDER/${n}/authorized_keys $HOME/.ssh/authorized_keys
+        echo "copy from /mnt/$CREDROOTFOLDER/${n} .."
+        sudo cp /mnt/$CREDROOTFOLDER/${n}/authorized_keys $HOME/.ssh/authorized_keys
     else
+        echo "WARNING: HAVE NOT FOUND USER SSH KEY!! USING GENERIC PUBLIC KEY"
         if [ -f /mnt/$CREDROOTFOLDER/ssh/authorized_keys ]; then
+            echo "copy from /mnt/$CREDROOTFOLDER/ssh/authorized_keys .."
             sudo cp /mnt/$CREDROOTFOLDER/ssh/authorized_keys $HOME/.ssh/authorized_keys
         elif [ -f /mnt/$CREDROOTFOLDER/authorized_keys ]; then
+            echo "copy from /mnt/$CREDROOTFOLDER/authorized_keys .."
             sudo cp /mnt/$CREDROOTFOLDER/authorized_keys $HOME/.ssh/authorized_keys
         fi
     fi
