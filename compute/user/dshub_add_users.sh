@@ -61,7 +61,7 @@ function copy_user_creds(){
         echo "copy from /mnt/$CREDROOTFOLDER/${n} .."
         sudo cp /mnt/$CREDROOTFOLDER/${n}/authorized_keys $HOME/.ssh/authorized_keys
     else
-        echo "WARNING: HAVE NOT FOUND USER SSH KEY!! USING GENERIC PUBLIC KEY"
+        echo "WARNING: HAVE NOT FOUND USER SSH KEY in /mnt/$CREDROOTFOLDER/ssh/${n}_ or /mnt/$CREDROOTFOLDER/${n}/!! USING GENERIC PUBLIC KEY"
         if [ -f /mnt/$CREDROOTFOLDER/ssh/authorized_keys ]; then
             echo "copy from /mnt/$CREDROOTFOLDER/ssh/authorized_keys .."
             sudo cp /mnt/$CREDROOTFOLDER/ssh/authorized_keys $HOME/.ssh/authorized_keys
