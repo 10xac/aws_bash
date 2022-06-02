@@ -1,7 +1,7 @@
 # == key variable ==
 batch=5
 
-name="group3"  #it is also a tag
+name="g3"  #it is also a tag
 service="ec2"
 
 # == AWS CLI profile ==
@@ -19,7 +19,7 @@ s3bucket="10ac-batch-${batch}"
 s3root="s3://${s3bucket}"
 
 # == defines what to install ==
-udcfile='g1.txt' # comment out if you don't want to install compute packages
+udcfile="${name}.txt" # comment out if you don't want to install compute packages
 
 # == often change ==
 #TYPE="t3.small"   # EC2 instance type
