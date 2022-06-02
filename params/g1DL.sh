@@ -4,7 +4,7 @@ name="group1"  #it is also a tag
 service="ec2"
 
 # == AWS CLI profile ==
-profile="tenx"
+profile="tenac"
 
 # == control variables 
 team="b5training"
