@@ -66,7 +66,7 @@ function copy_user_creds(){
     fi
 }
 
-sed -i "" 's/PasswordAuthentication no/PasswordAuthentication yes/y' /etc/ssh/sshd_config
+#sed -i "" 's/PasswordAuthentication no/PasswordAuthentication yes/y' /etc/ssh/sshd_config
 
 # if [ -f users.txt ]; then
 #     cat users.txt >> $userfile
