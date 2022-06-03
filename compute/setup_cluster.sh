@@ -86,6 +86,8 @@ function run_script(){
     fi    
 }
 
+#setup cront to restart services
+bash restart_services.sh
 
 #-------------mount s3 folder---------
 #copy scripts
