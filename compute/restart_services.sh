@@ -1,5 +1,4 @@
-scriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
-maindir=$(dirname $scriptDir)
+maindir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 
 home=${ADMIN_HOME:-$(bash get_home.sh)}
 
