@@ -24,7 +24,7 @@ udcfile="${name}.txt" # comment out if you don't want to install compute package
 # == often change ==
 #amiopt=docker  #nvidea
 #TYPE="t3.small"   # EC2 instance type
-TYPE="g5.4xlarge"   # GPU 1/24GB CPU 16/64GB
+TYPE="g5.2xlarge"   # GPU 1/24GB CPU 16/64GB
 
 # == security
 IAM="B4EC2Role" 
