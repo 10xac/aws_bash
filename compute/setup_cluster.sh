@@ -153,7 +153,7 @@ fi
 
 #--------install apps
 if ${setupnvidea:-false}; then
-    script=extras/install_nvidia_drivers.sh
+    script=extras/nvidia_drivers_install.sh
     run_script ${script}
 fi
 
