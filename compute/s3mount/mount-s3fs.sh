@@ -2,11 +2,15 @@
 #https://cloud.ibm.com/docs/cloud-object-storage?topic=cloud-object-storage-s3fs
 
 
-BUCKET="${BUCKET:-10ac-batch-4}"
+
 
 scriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 cdir=$(dirname $scriptDir)
 home=${ADMIN_HOME:-$(bash $cdir/get_home.sh)}
+
+source $home/.bashrc
+BUCKET="${BUCKET:-10ac-batch-4}"
+
 
 if [ -d $home ]; then
     homeUser=$(basename $home)
