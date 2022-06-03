@@ -14,7 +14,7 @@ source $home/.bashrc
 
 echo "installing nvidea driver .."
 if command -v apt-get >/dev/null; then
-    sudo apt-get install -qq gcc make linux-headers-$(uname -r)
+    sudo apt-get install -qq -y gcc make linux-headers-$(uname -r)
 
     cat << EOF | sudo tee --append /etc/modprobe.d/blacklist.conf
 blacklist vga16fb
@@ -28,7 +28,7 @@ EOF
     sh -c "echo 'GRUB_CMDLINE_LINUX=\"rdblacklist=nouveau\"' >>  /etc/default/grub"    
     
 elif command -v yum >/dev/null; then
-    yum install -qq gcc kernel-devel-$(uname -r)
+    yum install -qq -y gcc kernel-devel-$(uname -r)
     
 else
     echo "unknown os system.."
