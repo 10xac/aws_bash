@@ -50,7 +50,7 @@ aws s3 cp --recursive s3://ec2-linux-nvidia-drivers/latest/ .
 chmod +x NVIDIA-Linux-x86_64*.run
 
 # Run the self-install script as follows to install the GRID driver that you downloaded. 
-/bin/sh ./NVIDIA-Linux-x86_64*.run -s
+/bin/sh ./NVIDIA-Linux-x86_64*.run -q
 
 echo "nvidea drivers are successfully installed .. reboot to complete setup .."
 
