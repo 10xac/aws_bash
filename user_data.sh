@@ -131,4 +131,4 @@ else
     echo "Missing specfile path - it is a necessary argument when calling setup_cluster.py"
 fi
 
-mv $home/aws_bash $HOME/
+#mv $home/aws_bash $HOME/
