@@ -16,6 +16,7 @@ else
 fi
 
 profile_name=${3:-tenac}
+region=${4:-'eu-west-1'}
 
-
-aws ec2 modify-volume --size $gb --volume-id $vid --profile $profile_name
+echo "command: aws ec2 modify-volume --size $gb --volume-id $vid --profile $profile_name --region $region"
+aws ec2 modify-volume --size $gb --volume-id $vid --profile $profile_name --region $region
