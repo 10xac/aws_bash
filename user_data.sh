@@ -79,7 +79,7 @@ git_token=$(aws secretsmanager get-secret-value \
 gitaccountname=
 
 echo "git clone aws_bash .."
-git clone https://${git_token}@github.com/${gitaccoutname}/aws_bash.git
+git clone https://${git_token}@github.com/${gitaccountname}/aws_bash.git
 
 ## enable an iam user to ss
 iam_users=

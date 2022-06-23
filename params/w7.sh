@@ -9,7 +9,7 @@ fi
 group=${group}
 
 name="group${group}"  #it is also a tag
-dns_namespace=${name}.10academy.org
+dns_namespace="g${group}.10academy.org"
 service="ec2"
 
 # == AWS CLI profile ==
