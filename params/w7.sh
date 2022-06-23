@@ -15,7 +15,7 @@ service="ec2"
 # == AWS CLI profile ==
 profile="ustenac"
 ssmgittoken="git_token_tenx"
-gitaccountname=="10xac"
+gitaccountname="10xac"
 
 # == control variables 
 team="b5training"
