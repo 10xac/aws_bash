@@ -157,5 +157,7 @@ if ${setupnvidea:-false}; then
     run_script ${script}
 fi
 
-#script=apps/pjmatch/jobmodel.sh
-#run_script ${script}
+if ${lidarapp:-false}; then
+    script=apps/satellite-lidar/install_packages.sh
+    run_script ${script}
+fi

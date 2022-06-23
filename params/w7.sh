@@ -1,17 +1,23 @@
 # == key variable ==
 batch=5
 
-name="g3"  #it is also a tag
+if [ -z $group ];
+   echo "please pass group number as environment variable e.g. export group=1"
+   exit 0
+fi   
+group=${group}
+
+name="w7"  #it is also a tag
 service="ec2"
 
 # == AWS CLI profile ==
 profile="tenac"
 ssmgittoken="git_token_tenx"
-
+gitaccountname="10xac
+"
 # == control variables 
 team="b5training"
 iam_users="mukuzi musa anastasia mahlet micheal" #provide the iam ds user as array here
-
 
 echo "name=$name, profile=$profile"
 
@@ -21,11 +27,12 @@ s3root="s3://${s3bucket}"
 
 # == defines what to install ==
 udcfile="${name}.txt" # comment out if you don't want to install compute packages
+USERS_FILE="group${group}.txt"
+echo "Using: group={group}, udcfile=${udcfile}, userfile={USERS_FILE}"
 
 # == often change ==
-#amiopt=docker   #nvidea
-#TYPE="t3.small"   # EC2 instance type
-TYPE="g5.2xlarge"   # GPU 1/24GB CPU 16/64GB
+#amiopt='docker'    #nvidea
+TYPE="a1.4xlarge"   # EC2 instance type
 
 # == security
 IAM="B4EC2Role" 
@@ -34,7 +41,7 @@ IAM="B4EC2Role"
 # ==  set it once and seldom change ==
 KEY="itrain-team-useast1"     # EC2 key pair name
 COUNT=1         # how many instances to launch
-EBS_SIZE=100    # root EBS volume size (GB)
+EBS_SIZE=200    # root EBS volume size (GB)
 
 #=== networking ===
 #SG="sg-0606253fdd87db25e"  # (trainees_cluster)

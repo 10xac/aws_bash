@@ -1,5 +1,3 @@
-####List of users (usernames)
-USERS_FILE="group3.txt"
 
 ####where conda is installed
 PYTHON_DIR=/opt/miniconda

@@ -2,6 +2,7 @@
 #https://bytes.babbel.com/en/articles/2017-07-04-spark-with-jupyter-inside-vpc.html
 #https://cloud-gc.readthedocs.io/en/latest/chapter03_advanced-tutorial/advanced-awscli.html
 
+
 echo "Number passed arguments: $#"
 if [ $# -gt 0 ]; then
    source $1
@@ -19,11 +20,9 @@ else
     SEDOPTION="-i "
 fi
 
-
 sed 's|specfile=.*|specfile='"$udcfile"'|g' user_data.sh > $fname
-sed  $SEDOPTION 's|iam_users=|iam_users="'"${iam_users}"'"|g' $fname
-sed  $SEDOPTION 's|yabi-git-token|'"${ssmgittoken}"'|g' $fname
-sed  $SEDOPTION 's|10ac-batch-5|'"${s3bucket}"'|g' $fname
+sed  $SEDOPTION 's|iam_users=|iam_users='"${iam_users}"'|g' $fname
+sed  $SEDOPTION 's|USERS_FILE=|USERS_FILE='"${USERS_FILE}"'|g' $fname
 
 
 if [ "$service" == "ec2" ]; then
@@ -33,16 +32,14 @@ if [ "$service" == "ec2" ]; then
         echo "Fetching docker-optimised AWS Linux AMI"
         amipath=/aws/service/ecs/optimized-ami/amazon-linux-2/recommended
         AMI=$(aws ssm get-parameters --names $amipath \
-                  --query 'Parameters[0].[Value]'  --output text \
-                  --profile $profile --region $region | jq -r '.image_id')        
-    elif [ "${amiopt:-docker}" == "nvidea" ]; then
-        AMI="ami-057396a15eb04af10"
+                  --query 'Parameters[0].[Value]' \
+                  --output text --profile $profile | jq -r '.image_id')        
     else
         echo "Fetching latest AWS Linux AMI"        
         amipath="/aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-x86_64-gp2"
         AMI=$(aws ssm get-parameters --names $amipath \
                   --query 'Parameters[0].[Value]' \
-                  --output text --profile $profile --region $region | jq -r '.image_id')        
+                  --output text --profile $profile)        
     fi
 
     echo "using AMI-ID=$AMI"
