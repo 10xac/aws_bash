@@ -22,8 +22,9 @@ fi
 
 sed 's|specfile=.*|specfile='"$udcfile"'|g' user_data.sh > $fname
 sed  $SEDOPTION 's|iam_users=|iam_users='"${iam_users}"'|g' $fname
+sed  $SEDOPTION 's|gitaccountname=|gitaccountname='"${gitaccountname}"'|g' $fname
 sed  $SEDOPTION 's|USERS_FILE=|USERS_FILE='"${USERS_FILE}"'|g' $fname
-
+exit
 
 if [ "$service" == "ec2" ]; then
     

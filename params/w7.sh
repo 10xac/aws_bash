@@ -1,7 +1,7 @@
 # == key variable ==
 batch=5
 
-if [ -z $group ];
+if [ -z $group ]; then
    echo "please pass group number as environment variable e.g. export group=1"
    exit 0
 fi   
@@ -13,8 +13,8 @@ service="ec2"
 # == AWS CLI profile ==
 profile="tenac"
 ssmgittoken="git_token_tenx"
-gitaccountname="10xac
-"
+gitaccountname=="10xac"
+
 # == control variables 
 team="b5training"
 iam_users="mukuzi musa anastasia mahlet micheal" #provide the iam ds user as array here
@@ -28,7 +28,7 @@ s3root="s3://${s3bucket}"
 # == defines what to install ==
 udcfile="${name}.txt" # comment out if you don't want to install compute packages
 USERS_FILE="group${group}.txt"
-echo "Using: group={group}, udcfile=${udcfile}, userfile={USERS_FILE}"
+echo "Using: group=${group}, udcfile=${udcfile}, userfile=${USERS_FILE}"
 
 # == often change ==
 #amiopt='docker'    #nvidea
