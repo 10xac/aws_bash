@@ -69,9 +69,10 @@ git config --global user.email "yabebal@gmail.com"
 git config --global user.name "Yabebal Fantaye"
 
 #----------get git packages
+ssmgittoken=
 echo "get git token from ssm .."
 git_token=$(aws secretsmanager get-secret-value \
-    --secret-id yabi-git-token \
+    --secret-id $ssmgittoken \
     --query SecretString \
     --output text --region $region)
 

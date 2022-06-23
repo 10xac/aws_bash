@@ -14,10 +14,14 @@ fi
 
 echo "Requested action is: $action"
 
+if [ ! -z $root_name ]; then
+    name=$root_name
+    TYPE=$AwsInstanceType
+fi
 
-name=$root_name
-TYPE=$AwsInstanceType
-
+if [ -z $profile_name ]; then
+    profile_name=$profile
+fi
 
 echo "------------------------------------"
 echo "                 `date`"
@@ -38,7 +42,7 @@ InstanceVars=$(aws ec2 describe-instances --region $region \
                    --filters "Name=instance-type,Values=$TYPE" \
                    --filters "Name=tag:team,Values=$team" "Name=tag:Name,Values=$name" \
                    --query "Reservations[*].Instances[*].$RequestedFields" \
-                   --profile $profile_name
+                   --profile $profile_name --region $region
             )
 
 echo "Instanced found based on name and team tag filters: "

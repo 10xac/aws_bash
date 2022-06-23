@@ -1,5 +1,6 @@
 # == key variable ==
 batch=5
+week=7
 
 if [ -z $group ]; then
    echo "please pass group number as environment variable e.g. export group=1"
@@ -7,11 +8,12 @@ if [ -z $group ]; then
 fi   
 group=${group}
 
-name="w7"  #it is also a tag
+name="group${group}"  #it is also a tag
+dns_namespace=${name}.10academy.org
 service="ec2"
 
 # == AWS CLI profile ==
-profile="tenac"
+profile="ustenac"
 ssmgittoken="git_token_tenx"
 gitaccountname=="10xac"
 
@@ -26,13 +28,13 @@ s3bucket="10ac-batch-${batch}"
 s3root="s3://${s3bucket}"
 
 # == defines what to install ==
-udcfile="${name}.txt" # comment out if you don't want to install compute packages
+udcfile="w${week}.txt" # comment out if you don't want to install compute packages
 USERS_FILE="group${group}.txt"
 echo "Using: group=${group}, udcfile=${udcfile}, userfile=${USERS_FILE}"
 
 # == often change ==
-#amiopt='docker'    #nvidea
-TYPE="a1.4xlarge"   # EC2 instance type
+amiopt='docker'    #nvidea
+TYPE="m4.4xlarge"   # EC2 instance type
 
 # == security
 IAM="B4EC2Role" 
