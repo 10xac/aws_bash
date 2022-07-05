@@ -1,6 +1,6 @@
 # == key variable ==
 batch=5
-week=7
+week=9
 
 if [ -z $group ]; then
    echo "please pass group number as environment variable e.g. export group=1"

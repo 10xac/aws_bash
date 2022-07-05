@@ -31,7 +31,6 @@ echo "number of instances to create: $istart to $iend"
 ec2script=${ec2script:-"ec2_compute.sh"}
 ipscript=${ipscript:-"postup/update_r53_record.sh"}
 
-exit
 
 #--------------------------------------------------------#
 ###--------execute the scripts with input arguments------#
