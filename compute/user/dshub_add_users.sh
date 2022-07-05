@@ -56,20 +56,26 @@ function copy_user_creds(){
 
     if [ -f /mnt/$CREDROOTFOLDER/ssh/${n}_authorized_keys ]; then
         echo "copy ssh key from /mnt/$CREDROOTFOLDER/ssh/${n}_* .."
-        sudo cp /mnt/$CREDROOTFOLDER/ssh/${n}_authorized_keys $HOME/.ssh/authorized_keys
+        cp /mnt/$CREDROOTFOLDER/ssh/${n}_authorized_keys $HOME/.ssh/authorized_keys
     elif [ -f /mnt/$CREDROOTFOLDER/${n}/authorized_keys ]; then
         echo "copy from /mnt/$CREDROOTFOLDER/${n} .."
-        sudo cp /mnt/$CREDROOTFOLDER/${n}/authorized_keys $HOME/.ssh/authorized_keys
+        cp /mnt/$CREDROOTFOLDER/${n}/authorized_keys $HOME/.ssh/authorized_keys
     else
         echo "WARNING:/mnt/$CREDROOTFOLDER/ssh/${n}_* or /mnt/$CREDROOTFOLDER/${n}/* NOT FOUND!! USING GENERIC PUBLIC KEY"
         if [ -f /mnt/$CREDROOTFOLDER/ssh/authorized_keys ]; then
             echo "copy from /mnt/$CREDROOTFOLDER/ssh/authorized_keys .."
-            sudo cp /mnt/$CREDROOTFOLDER/ssh/authorized_keys $HOME/.ssh/authorized_keys
+            cp /mnt/$CREDROOTFOLDER/ssh/authorized_keys $HOME/.ssh/authorized_keys
         elif [ -f /mnt/$CREDROOTFOLDER/authorized_keys ]; then
             echo "copy from /mnt/$CREDROOTFOLDER/authorized_keys .."
-            sudo cp /mnt/$CREDROOTFOLDER/authorized_keys $HOME/.ssh/authorized_keys
+            cp /mnt/$CREDROOTFOLDER/authorized_keys $HOME/.ssh/authorized_keys
         fi
     fi
+}
+
+function allow_user_sudo() {
+    grps=$(groups ${homeUser} | cut -d" " -f 2- | tr ' ' ',')
+    usermod -aG ${homeUser} $1
+    echo "user=$1 added to groups: $grps"
 }
 
 #sed -i "" 's/PasswordAuthentication no/PasswordAuthentication yes/y' /etc/ssh/sshd_config
@@ -78,24 +84,37 @@ function copy_user_creds(){
 #     cat users.txt >> $userfile
 # fi
 
-for n in `cat $userfile`; do
+for line in `cat $userfile`; do
+    IFS=', ' read -r -a array <<< "$n"
+    n="${array[0]}"
+    
+    
+        allowsudo=true
+    else
+        allowsudo=false
+    fi
+    
     if [ ! -d "/home/$n" ]; then
 	
         echo "user $n does not exist .. creating it"
         
-        sudo adduser $n
-        sudo sh -c "echo '$n' | passwd --stdin $n"
-        sudo mkdir -p /home/$n/.ssh
-        sudo touch /home/$n/.ssh/authorized_keys
+        adduser $n
+        sh -c "echo '$n' | passwd --stdin $n"
+        mkdir -p /home/$n/.ssh
+        touch /home/$n/.ssh/authorized_keys
+
+        # specified to have root access - allow sudo
+        if [ "${array[0]}" == "root" ]; then 
+            allow_user_sudo $n
+        fi
         
-        sudo usermod -aG ${homeUser} $n
         #add to docker group
         if command -v docker >/dev/null; then
 	    usermod -a -G docker $n
         fi
         
         #cat root bashrc to user bashrc
-        sudo cat /root/.bashrc >> /home/$n/.bashrc
+        cat /root/.bashrc >> /home/$n/.bashrc
         
     else
         echo "user $n exists ..  passing to the folder check"    	
@@ -104,13 +123,18 @@ for n in `cat $userfile`; do
     #from mounted disk copy and create
     if [ -d "/mnt/$BUCKET" ]; then
         copy_user_creds $n
-    fi    
+    fi
+    
     if [ ! -d "/mnt/$NOTEBOOKFOLDER/$n" ]; then
         mkdir "/mnt/$NOTEBOOKFOLDER/$n"
-    fi    
-    sudo chmod 600 /home/$n/.ssh/authorized_keys || echo "~/.ssh/authorized_keys does not exist"
-    
-    sudo chown -R $n:$n /home/$n
-    
+    fi
+
+    if [ -f "/home/$n/.ssh/authorized_keys" ]; then
+        chmod 600 /home/$n/.ssh/authorized_keys || echo "~/.ssh/authorized_keys does not exist"
+    fi
+
+    if [ -d "/home/$n" ]; then
+        chown -R $n:$n /home/$n
+    fi
 done
 
