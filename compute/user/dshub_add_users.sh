@@ -87,12 +87,7 @@ function allow_user_sudo() {
 for line in `cat $userfile`; do
     IFS=', ' read -r -a array <<< "$n"
     n="${array[0]}"
-    
-    
-        allowsudo=true
-    else
-        allowsudo=false
-    fi
+    nflag="${array[0]}"
     
     if [ ! -d "/home/$n" ]; then
 	
@@ -104,7 +99,7 @@ for line in `cat $userfile`; do
         touch /home/$n/.ssh/authorized_keys
 
         # specified to have root access - allow sudo
-        if [ "${array[0]}" == "root" ]; then 
+        if [ "$nflag" == "root" ]; then 
             allow_user_sudo $n
         fi
         
