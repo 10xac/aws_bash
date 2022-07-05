@@ -1,6 +1,6 @@
-rehmet_yeshanew
-rehmet
-abel_mitiku
+rehmet_yeshanew, root
+rehmet, root
+abel_mitiku, root
 samrawit_ayalew
 yonas_tadesse
 matilda_awuor

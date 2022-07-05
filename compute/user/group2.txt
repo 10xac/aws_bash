@@ -1,5 +1,5 @@
-selam
-henok_tilaye
+selam, root
+henok_tilaye, root
 biruk_getaneh
 kevin
 tadesse_kebede

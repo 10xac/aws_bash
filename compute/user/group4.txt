@@ -1,5 +1,5 @@
-nardos
-tesfaye_alemayehu
+nardos, root
+tesfaye_alemayehu, root
 martin_luther
 hikma_brhan
 ammon

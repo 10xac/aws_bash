@@ -1,5 +1,5 @@
-biniyam_belayneh
-meron_abate
+biniyam_belayneh, root
+meron_abate, root
 gezahegn
 hewan_mulu
 titus_wachira
