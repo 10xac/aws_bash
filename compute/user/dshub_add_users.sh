@@ -73,8 +73,8 @@ function copy_user_creds(){
 }
 
 function allow_user_sudo() {
-    grps=$(groups ${homeUser} | cut -d" " -f 2- | tr ' ' ',')
-    usermod -aG ${homeUser} $1
+    grps=$(groups ${homeUser} | cut -d" " -f 4- | tr ' ' ',')
+    usermod -aG ${grps} $1
     echo "user=$1 added to groups: $grps"
 }
 
@@ -84,10 +84,14 @@ function allow_user_sudo() {
 #     cat users.txt >> $userfile
 # fi
 
-for line in `cat $userfile`; do
-    IFS=', ' read -r -a array <<< "$n"
+cat $userfile | while read line; do
+    
+    IFS=', ' read -r -a array <<< "$line"
     n="${array[0]}"
-    nflag="${array[0]}"
+    nflag="${array[1]}"
+    echo ""
+    echo "---------processing line: $line ---------"
+    echo ""
     
     if [ ! -d "/home/$n" ]; then
 	
@@ -98,10 +102,6 @@ for line in `cat $userfile`; do
         mkdir -p /home/$n/.ssh
         touch /home/$n/.ssh/authorized_keys
 
-        # specified to have root access - allow sudo
-        if [ "$nflag" == "root" ]; then 
-            allow_user_sudo $n
-        fi
         
         #add to docker group
         if command -v docker >/dev/null; then
@@ -115,6 +115,11 @@ for line in `cat $userfile`; do
         echo "user $n exists ..  passing to the folder check"    	
     fi
 
+    # specified to have root access - allow sudo
+    if [ "$nflag" == "root" ]; then
+        allow_user_sudo $n
+    fi
+    
     #from mounted disk copy and create
     if [ -d "/mnt/$BUCKET" ]; then
         copy_user_creds $n
