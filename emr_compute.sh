@@ -2,6 +2,8 @@
 #https://bytes.babbel.com/en/articles/2017-07-04-spark-with-jupyter-inside-vpc.html
 #https://cloud-gc.readthedocs.io/en/latest/chapter03_advanced-tutorial/advanced-awscli.html
 
+export AWS_PAGER=""
+
 echo "Number passed arguments: $#"
 if [ $# -gt 0 ]; then
    source $1

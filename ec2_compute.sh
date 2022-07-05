@@ -2,7 +2,6 @@
 #https://bytes.babbel.com/en/articles/2017-07-04-spark-with-jupyter-inside-vpc.html
 #https://cloud-gc.readthedocs.io/en/latest/chapter03_advanced-tutorial/advanced-awscli.html
 
-
 echo "Number passed arguments: $#"
 if [ $# -gt 0 ]; then
    source $1
@@ -46,6 +45,8 @@ if [ "$service" == "ec2" ]; then
 
     echo "using AMI-ID=$AMI"
     #profile: ecsInstanceRole
+
+    export AWS_PAGER=""
     
     aws ec2 run-instances --image-id $AMI \
         --instance-type $TYPE --count $COUNT \

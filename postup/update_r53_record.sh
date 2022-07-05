@@ -1,3 +1,5 @@
+export AWS_PAGER=""
+
 echo "Number passed arguments: $#"
 if [ $# -gt 0 ]; then
    source $1

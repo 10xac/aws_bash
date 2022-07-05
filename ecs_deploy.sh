@@ -5,6 +5,9 @@
 #   https://aws.amazon.com/blogs/containers/maintaining-transport-layer-security-all-the-way-to-your-container-using-the-application-load-balancer-with-amazon-ecs-and-envoy/
 #
 
+#https://stackoverflow.com/questions/60122188/how-to-turn-off-the-pager-for-aws-cli-return-value
+export AWS_PAGER=""
+
 scriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 
 echo "Starting from `pwd` dir .."
