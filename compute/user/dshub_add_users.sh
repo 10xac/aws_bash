@@ -89,9 +89,13 @@ cat $userfile | while read line; do
     IFS=', ' read -r -a array <<< "$line"
     n="${array[0]}"
     nflag="${array[1]}"
+    if [ -z $n ]; then
+        continue
+    fi
     echo ""
     echo "---------processing line: $line ---------"
     echo ""
+    
     
     if [ ! -d "/home/$n" ]; then
 	
