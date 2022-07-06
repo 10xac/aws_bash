@@ -35,7 +35,7 @@ ipscript=${ipscript:-"postup/update_r53_record.sh"}
 #--------------------------------------------------------#
 ###--------execute the scripts with input arguments------#
 ##-------------------------------------------------------#
-for ((ig=$istart; ig<=$iend; i++)); do
+for ((ig=$istart; ig<=$iend; ig++)); do
 
     if [ "$action" == "create" ]; then
         echo "******creating instances for group=$ig********"

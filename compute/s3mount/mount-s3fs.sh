@@ -91,7 +91,7 @@ if [ $# -gt 0 ]; then
     if [ $1 == "unmount" ]; then	
 	#https://stackoverflow.com/questions/24966676/transport-endpoint-is-not-connected
 	#https://dausruddin.com/fusermount-failed-to-unmount-path-device-or-resource-busy/
-	sudo /usr/local/bin/fusermount -uz /mnt/$BUCKET
+	#sudo /usr/local/bin/fusermount -uz /mnt/$BUCKET
 	sudo umount -l /mnt/$BUCKET
 	pkill  s3fs
     else
