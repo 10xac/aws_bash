@@ -1,3 +1,4 @@
+
 #--------------------------------------------------------#
 ###-----Define necessary environment variables if passed -----##
 ##------------------------------------------------------#
@@ -106,7 +107,12 @@ source $HOME/.bashrc
 
 #--------update aws cli
 function awscli_install(){    
-    curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+    if [[ $(uname -m) == *arch64* ]]; then 
+        curl "https://awscli.amazonaws.com/awscli-exe-linux-aarch64.zip" -o "awscliv2.zip"
+    else
+        curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+    fi
+
     unzip -qq awscliv2.zip
     ./aws/install --update
     #
@@ -222,6 +228,9 @@ for s3akp in $s3_authorized_keys_path; do
 EOF
 cat <<'EOF' >>  $fnameuserdata
    if [ ! -z $s3akp ]; then
+      if [[ "$s3akp" =~ ^s3//.*|^/mnt/.* ]]; then
+         s3akp=${s3_cred_path}/$s3akp
+      fi
       aws s3 cp $s3akp - >> $home/.ssh/authorized_keys #| echo "ERROR: can not copy authorization key from s3"
    fi
 done

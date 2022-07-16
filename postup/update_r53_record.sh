@@ -4,7 +4,9 @@ echo "Number passed arguments: $#"
 if [ $# -gt 0 ]; then
    source $1
 else
-    echo "You must pass a configuration file that contains key parameters"
+    echo "You must pass the following"
+    echo "     1st argument - a configuration file: that contains key parameters"
+    echo "     2nd argument - action: status or iplink  "
     exit 0
 fi
 
@@ -77,12 +79,18 @@ echo $res > logs/$1/output-route53-change-record-latest.json
 }
 
 
-
-
+echo ""
+f1="Name=instance-type,Values=$TYPE"
+f2="Name=tag:Name,Values=$name" 
+echo "getting instances using filter: "
+echo $f1
+echo $f2
+echo ""
+                 
 RequestedFields="{Name:Tags[?Key=='Name']|[0].Value,Id:InstanceId,PublicIP:PublicIpAddress,Status:State.Name}"
 InstanceVars=$(aws ec2 describe-instances --region $region \
-                   --filters "Name=instance-type,Values=$TYPE" \
-                   --filters "Name=tag:team,Values=$team" "Name=tag:Name,Values=$name" \
+                   --filters $f1 \
+                   --filters $f2 \
                    --query "Reservations[*].Instances[*].$RequestedFields" \
                    --profile $profile_name --region $region
             )

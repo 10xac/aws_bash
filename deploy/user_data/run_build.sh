@@ -9,6 +9,7 @@ fi
 
 cat <<EOF >>  $fout
 
+
 region=${region:-"eu-west-1"}
 ssmgittoken=${ssmgittoken:-"git_token_tenx"}
 gituname=${gituname:-"10xac"}

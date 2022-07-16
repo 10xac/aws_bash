@@ -1,3 +1,5 @@
+hosted_zone_id=Z034028834IXN0CQEMHZ9 #10academy.org
+
 if [ -z $setup_ec2 ]; then
     setup_ec2=${setupec2-true}
 fi

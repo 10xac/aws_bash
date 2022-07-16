@@ -21,12 +21,13 @@ export gituname="10xac"
 export sshKeyName="tech-ds-team"
 export s3bucket="s3://tenx-airflow-dags"
 export s3MountBucket=
-export s3_authorized_keys_path="s3://10ac-team/credentials/mahlet/authorized_keys"
+export s3_cred_path="s3://10ac-team/credentials"
+export s3_authorized_keys_path="mahlet/authorized_keys micheal/authorized_keys bereket/authorized_keys"
 #
 echo "profile=$profile_name"
 
 #extra user_data for ec2
-export extrauserdata="user_data/fix_redis.sh user_data/mount-s3fs.sh user_data/run_build.sh"
+export extrauserdata="user_data/fix_redis.sh user_data/mount-s3fs.sh user_data/run_build.sh user_data/add_ip_r53.sh"
 export ec2launch_install_docker=true
 
 #application and proxy names
@@ -39,11 +40,15 @@ export log_group_name="/ecs/ecs-${root_name}-ssl"
 echo "root_name=$root_name"
 echo "dns=$dns_namespace"
 
+#cost instance type
+#https://www.instance-pricing.com/provider=aws-ec2/region=eu-west-1/
 #check this for diff TLS 1.2 vs TLS 1.3 https://bidhankhatri.com.np/system/enable-tls-1.3/
-export AwsImageId="ami-0258eeb71ddf238b3"  #Ubuntu 21.10 sup[p
+#export AwsImageId="ami-0258eeb71ddf238b3"  #Ubuntu 21.10 sup[p
 #export AwsImageId="ami-0c62045417a6d2199"  #amazon linux - does not support TLS V1.3
-export AwsInstanceType="t3.medium"
-export EbsVolumeSize=30
+#export AwsImageId="ami-08a35b8c2ae512dee"  #us east 1, Ubuntu 22.04, ARM64
+export AwsImageId="ami-084500a7f52db24ed" #eu-west-1, Ubuntu 22.04, ARM64
+export AwsInstanceType="t4g.large"   #"m6g.large"  #t3.large
+export EbsVolumeSize=60
      
 export ecsTaskPortMapList=8080
 export ecsTaskFromTemplate=False

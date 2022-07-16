@@ -9,7 +9,11 @@ folder=${PYTHON_DIR:-/opt/miniconda}
 
 
 #get miniconda
-curl https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -o /tmp/miniconda.sh
+if [[ $(uname -m) == *arch64* ]]; then
+    curl https://repo.anaconda.com/miniconda/Miniconda-latest-Linux-armv7l.sh -o /tmp/miniconda.sh
+else
+    curl https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -o /tmp/miniconda.sh
+fi
 sudo bash /tmp/miniconda.sh -b -p $folder
 rm /tmp/miniconda.sh
 
