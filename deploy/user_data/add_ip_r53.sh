@@ -25,7 +25,7 @@ publicip=$(curl http://169.254.169.254/latest/meta-data/public-ipv4)
 #http://www.scalingbits.com/aws/dnsfailover/changehostnameentries
 
 frecord="r53_record.json"
-cat <<EOF > $frecord
+cat <<EOFF > $frecord
 {
   "Comment": "CREATE/UPDATE a record ",
   "Changes": [{
@@ -40,6 +40,7 @@ cat <<EOF > $frecord
   }]
 }
 
+EOFF
 
 #----------------------------------------#
 ###-------- Create a record set---------##

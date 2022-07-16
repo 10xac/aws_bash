@@ -223,14 +223,18 @@ if [ -d ./cert ]; then
    cp -r ./cert /etc/ssl/letsencrypt
 fi
 
-#copy ssh key 
+#copy ssh key
+s3_cred_path=$s3_cred_path 
 for s3akp in $s3_authorized_keys_path; do
 EOF
 cat <<'EOF' >>  $fnameuserdata
    if [ ! -z $s3akp ]; then
-      if [[ "$s3akp" =~ ^s3//.*|^/mnt/.* ]]; then
-         s3akp=${s3_cred_path}/$s3akp
-      fi
+      if [[ $s3akp == s3://* ]] || [[ $s3akp == /mnt/* ]]; then
+          echo "$s3akp starts with s3:// or /mnt .."
+       else
+          s3akp=${s3_cred_path}/$s3akp
+       fi
+       echo "copying $s3akp .."
       aws s3 cp $s3akp - >> $home/.ssh/authorized_keys #| echo "ERROR: can not copy authorization key from s3"
    fi
 done
