@@ -40,7 +40,7 @@ source $HOME/.bashr
 #--------update aws cli
 pip3 install botocore --upgrade || echo "unable to upgrade botocore"
 function awscli_install(){
-    yum install unzip -y
+
     if [[ $(uname -m) == *arch64* ]]; then 
         curl "https://awscli.amazonaws.com/awscli-exe-linux-aarch64.zip" -o "awscliv2.zip"
     else

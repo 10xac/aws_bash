@@ -112,7 +112,13 @@ if [ $# -gt 1 ]; then
 fi
 
 #mount s3 bucket
-/usr/local/bin/s3fs $BUCKET /mnt/$BUCKET -o allow_other -o iam_role=auto \
+if [ -f ${HOME}/.passwd-s3fs ]; then
+    pval="passwd_file=${HOME}/.passwd-s3fs"
+else
+    pval="iam_role=auto"
+fi
+
+/usr/local/bin/s3fs $BUCKET /mnt/$BUCKET -o allow_other -o $pval \
 	      -o umask=0 -o url=https://s3.amazonaws.com  -o no_check_certificate \
 	      -o cipher_suites=AESGCM \
 	      -o max_background=1000 \
