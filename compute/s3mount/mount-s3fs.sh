@@ -8,6 +8,8 @@ scriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 cdir=$(dirname $scriptDir)
 home=${ADMIN_HOME:-$(bash $cdir/get_home.sh)}
 
+echo "mounts3: home=$home"
+echo "BUCKET=$BUCKET"
 source $home/.bashrc
 BUCKET="${BUCKET:-10ac-batch-4}"
 
@@ -37,54 +39,53 @@ fi
 function install_s3fs()
 {
 
-    if command -v apt-get >/dev/null; then
+    if command -v conda >/dev/null; then
+	conda install -c conda-forge s3fs-fuse
+
+	sudo su -c 'echo user_allow_other >> /etc/fuse.conf'
+	mkdir -p /mnt/s3fs-cache
+	mkdir -p /mnt/$BUCKET
+	
+	exit
+	
+    elif command -v apt-get >/dev/null; then
         sudo apt-get remove -y fuse
-	sudo apt-get install -y gcc gcc-c++
-	sudo apt-get install -y openssl-devel libcurl libssl1.0.0 libssl-dev libxml-2.0 fuse automake
-        sudo apt-get install -y build-essential libcurl4-openssl-dev libxml2-dev mime-support        
+	#sudo apt-get install -y gcc gcc-c++ autotools-dev automake 
+	#sudo apt-get install -y openssl-devel libcurl libssl1.0.0 libssl-dev libxml-2.0 fuse 
+        #sudo apt-get install -y build-essential libcurl4-openssl-dev libxml2-dev mime-support
+
+	sudo apt-get install -y build-essential git libfuse-dev libcurl4-openssl-dev libxml2-dev mime-support automake libtool
+	sudo apt-get install -y pkg-config libssl-dev # See (*3)
+
 	sudo apt-get install -y memcached
-	sudo service memcached start
-        
+	sudo service memcached start	
+
+	
     elif command -v yum >/dev/null; then
-        # sudo yum remove -y fuse
-        # sudo yum install -y gcc libstdc++-devel gcc-c++ curl-devel libxml2-devel openssl-devel mailcap
 	sudo yum install -y gcc gcc-c++	
-	sudo yum install -y openssl-devel libcurl libcrypto.so.10 libxml-2.0 fuse automake	
+	sudo yum install -y openssl-devel libcurl libcrypto.so.10 libxml-2.0 fuse autotools-dev 
 	sudo yum install -y libcurl libcurl-devel graphviz cyrus-sasl cyrus-sasl-devel readline readline-devel gnuplot
 	sudo yum install -y automake fuse fuse-devel libxml2-devel
-	sudo yum install -y memcached
+	sudo yum install -y memcached 
+	sudo yum install -y automake
 	sudo service memcached start
+	
     else
 	echo "unknown os system.."
 	exit
     fi    
-
-    # cd /mnt
-    # fuse="fuse-3.10.4"
-    # wget https://github.com/libfuse/libfuse/releases/download/$fuse/$fuse.tar.xz 
-    # tar xzf $fuse.tar.xz
-    # cd $fuse
-    # ./configure #–prefix=/usr/local
-    # make
-    # sudo make install
-    # export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig
-    # ldconfig
-    # modprobe fuse
-
-    # install s3fs    
+    
     git clone https://github.com/s3fs-fuse/s3fs-fuse.git
     cd s3fs-fuse/
     ls -alrt
     ./autogen.sh
-    ./configure #–prefix=/usr/local
+    ./configure --prefix=/usr/local --with-openssl
     make
     sudo make install
+    
     sudo su -c 'echo user_allow_other >> /etc/fuse.conf'
     mkdir -p /mnt/s3fs-cache
     mkdir -p /mnt/$BUCKET
-    # /usr/local/bin/s3fs -o allow_other -o iam_role=auto -o umask=0  \
-	#	-o url=https://s3.amazonaws.com  -o no_check_certificate \
-	# -o enable_noobj_cache -o use_cache=/mnt/s3fs-cache $BUCKET /mnt/$BUCKET
 }
 
 if [ $# -gt 0 ]; then
@@ -112,15 +113,17 @@ fi
 
 #mount s3 bucket
 /usr/local/bin/s3fs $BUCKET /mnt/$BUCKET -o allow_other -o iam_role=auto \
--o umask=0 -o url=https://s3.amazonaws.com  -o no_check_certificate \
--o cipher_suites=AESGCM \
--o max_background=1000 \
--o max_stat_cache_size=100000 \
--o multipart_size=52 \
--o parallel_count=30 \
--o multireq_max=30 \
--o dbglevel=warn \
--o enable_noobj_cache -o use_cache=/mnt/s3fs-cache 
+	      -o umask=0 -o url=https://s3.amazonaws.com  -o no_check_certificate \
+	      -o cipher_suites=AESGCM \
+	      -o max_background=1000 \
+	      -o max_stat_cache_size=100000 \
+	      -o multipart_size=52 \
+	      -o parallel_count=30 \
+	      -o multireq_max=30 \
+	      -o dbglevel=warn \
+	      -o enable_noobj_cache -o use_cache=/mnt/s3fs-cache
+
+echo "mounting $BUCKET done"
 #-o kernel_cache 
 
 #sudo chmod 777 -R /mnt || echo "unable to change /mnt permission"

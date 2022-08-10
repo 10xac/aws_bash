@@ -52,7 +52,8 @@ fi
 #read config file
 sed -e 's/[[:space:]]*#.*// ; /^[[:space:]]*$/d' "$configfile" |
     while read line; do
-        echo "export $line" >> ~/.bashrc           
+        echo "export $line" >> ~/.bashrc
+        echo "export $line" >> $home/.bashrc
     done
 source ~/.bashrc
 
@@ -94,6 +95,10 @@ bash restart_services.sh
 if ${mounts3:-true}; then
     script=s3mount/mount-s3fs.sh
     run_script ${script} install
+    if [ ! -d /mnt/$BUCKET/credentials ]; then
+	echo "/mnt/$BUCKET/credentials not found"
+	exit
+    fi
 fi
 
 # #------------copy cred to current user-----
