@@ -25,16 +25,31 @@ sed  $SEDOPTION 's|ssmgittoken=|ssmgittoken='"${ssmgittoken}"'|g' $fname
 sed  $SEDOPTION 's|gitaccountname=|gitaccountname='"${gitaccountname}"'|g' $fname
 sed  $SEDOPTION 's|USERS_FILE=|USERS_FILE='"${USERS_FILE}"'|g' $fname
 
+if [ -z $amiarc ]; then
+    amiarc=${amiopt:-arm64}
+fi
+if [ -z $amifordocker ]; then
+    amifordocker=false
+fi
 
 if [ "$service" == "ec2" ]; then
     
     echo "Creating EC2 instance with $fname user_data script .."
-    if [ "${amiopt:-docker}" == "docker" ]; then
-        echo "Fetching docker-optimised AWS Linux AMI"
-        amipath=/aws/service/ecs/optimized-ami/amazon-linux-2/recommended
-        AMI=$(aws ssm get-parameters --names $amipath \
-                  --query 'Parameters[0].[Value]' \
-                  --output text --profile $profile --region $region | jq -r '.image_id')        
+        
+    echo "Fetching latest AWS Linux AMI of type ${amiopt} .."
+    if [ "${amios:-'ubuntu}" == "ubuntu" ]; then
+        amipath="/aws/service/canonical/ubuntu/server/focal/stable/current/${amiopt}/hvm/ebs-gp2/ami-id"
+    else
+        if $amifordocker; then
+            amipath="/aws/service/ecs/optimized-ami/amazon-linux-2/recommended"
+        else
+            amipath="/aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-${amiopt}-gp2"
+        fi
+    fi
+    AMI=$(aws ssm get-parameters --names $amipath \
+              --query 'Parameters[0].[Value]' \
+              --output text --profile $profile --region $region| jq -r '.image_id')        
+    
     else
         echo "Fetching latest AWS Linux AMI"        
         amipath="/aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-x86_64-gp2"

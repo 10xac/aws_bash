@@ -8,6 +8,12 @@ scriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 cdir=$(dirname $scriptDir)
 home=${ADMIN_HOME:-$(bash $cdir/get_home.sh)}
 
+if [ -d $home ]; then
+    homeUser=$(basename $home)
+else
+    homeUser=`whoami`
+fi
+
 
 # Parse Inputs. This is specific to this script, and can be ignored
 # -----------------------------------------------------------------
@@ -32,10 +38,21 @@ echo "installing python libs in master"
 # 2. prepare folder and install libraries
 
 ## create a user account that will be used to run JupyterHub. Here we’ll use jupyterhub
+function allow_user_sudo() {
+    grps=$(groups ${homeUser} | cut -d" " -f 4- | tr ' ' ',')
+    usermod -aG ${grps} $1
+    echo "user=$1 added to groups: $grps"
+}
+
+
 if [ ! -d "/home/jupyterhub" ]; then
-    sudo adduser jupyterhub
+    n=jupyterhub
+    sudo adduser $n
+    sudo sh -c "echo '$n' | passwd --stdin $n"
+    allow_user_sudo $n
+    echo "jupyterhub user is created and added to sudo group"    
 fi
-echo "You may need to add jupyterhub user in the sudo group: https://linuxhint.com/centos_add_users_sudoers/"
+
 
 ## Software files
 sudo mkdir -p /opt/jupyterhub
