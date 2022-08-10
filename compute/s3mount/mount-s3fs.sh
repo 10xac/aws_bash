@@ -40,12 +40,7 @@ function install_s3fs()
 {
 
     if command -v conda >/dev/null; then
-	conda install -c conda-forge s3fs-fuse
-
-	sudo su -c 'echo user_allow_other >> /etc/fuse.conf'
-	mkdir -p /mnt/s3fs-cache
-	mkdir -p /mnt/$BUCKET
-	
+	conda install -c conda-forge s3fs-fuse	
 	exit
 	
     elif command -v apt-get >/dev/null; then
@@ -83,9 +78,6 @@ function install_s3fs()
     make
     sudo make install
     
-    sudo su -c 'echo user_allow_other >> /etc/fuse.conf'
-    mkdir -p /mnt/s3fs-cache
-    mkdir -p /mnt/$BUCKET
 }
 
 if [ $# -gt 0 ]; then
@@ -116,6 +108,12 @@ if [ -f ${HOME}/.passwd-s3fs ]; then
     pval="passwd_file=${HOME}/.passwd-s3fs"
 else
     pval="iam_role=auto"
+fi
+
+if [ -f /usr/local/bin/s3fs ]; then
+    sudo su -c 'echo user_allow_other >> /etc/fuse.conf'
+    mkdir -p /mnt/s3fs-cache
+    mkdir -p /mnt/$BUCKET
 fi
 
 /usr/local/bin/s3fs $BUCKET /mnt/$BUCKET -o allow_other -o $pval \
