@@ -10,7 +10,7 @@ folder=${PYTHON_DIR:-/opt/miniconda}
 
 #get miniconda
 if [[ $(uname -m) == *arch64* ]]; then
-    curl https://repo.anaconda.com/miniconda/Miniconda-latest-Linux-aarch64.sh -o /tmp/miniconda.sh    
+    curl https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-aarch64.sh -o /tmp/miniconda.sh    
 else
     curl https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh -o /tmp/miniconda.sh
 fi
@@ -21,11 +21,10 @@ sudo chmod 777 -R $folder
 
 cat <<EOF >> $home/.bashrc
 export PATH="${folder}/bin:${PATH}"
-alias pip=${folder}/envs/algos/bin/pip3
 EOF
 
 source $home/.bashrc
-conda init bash
+$folder/bin/conda init bash
 source $home/.bashrc
 
 #create venv
