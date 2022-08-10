@@ -60,7 +60,7 @@ fi
 ## Software files
 sudo mkdir -p /opt/jupyterhub
 sudo chown -R jupyterhub /opt/jupyterhub
-sudo chmod -R 777 /opt/jupyterhub
+sudo chmod -R 600 /opt/jupyterhub
 
 # Runtime files
 sudo mkdir -p /var/jupyterhub

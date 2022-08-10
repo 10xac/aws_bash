@@ -1,7 +1,7 @@
 # == key variable ==
 
 
-name="jupyterhub"  #it is also a tag
+name="ds-experiment"  #it is also a tag
 dns_namespace="jupyter.kifiya.com"
 service="ec2"
 
@@ -11,8 +11,8 @@ ssmgittoken="git_token_tic"
 gitaccountname="10xac"
 
 # == control variables 
-team="b5training"
-iam_users="dibora ephrem" #provide the iam ds user as array here
+team="dsde-team"
+iam_users="dibora ephrem nebiyu yabi" #provide the iam ds user as array here
 
 echo "name=$name, profile=$profile"
 
@@ -26,12 +26,15 @@ USERS_FILE="kifiya.txt"
 echo "Using: udcfile=${udcfile}, userfile=${USERS_FILE}"
 
 # == often change ==
-amiopt='arm64'    #nvidea
+amiarc="arm64"    #nvidea
+amios="ubuntu"
+amifordocker=false
+
 #TYPE="m6g.4xlarge"   # EC2 instance type
 TYPE="c7g.2xlarge"
 
 # == security
-IAM="B4EC2Role" 
+IAM="Ec2DSDERole" 
 
 
 # ==  set it once and seldom change ==

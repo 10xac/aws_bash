@@ -51,8 +51,8 @@ NOTEBOOK_DIR_S3_S3CONTENTS=false
 
 openssl rand -hex 32 > /tmp/rsec
 sudo mv /tmp/rsec /opt/jupyterhub/jupyterhub_cookie_secret
-sudo chmod 600 /opt/jupyterhub/jupyterhub_cookie_secret
 sudo chown jupyterhub /opt/jupyterhub/jupyterhub_cookie_secret
+sudo chmod 600 /opt/jupyterhub/jupyterhub_cookie_secret
 
 
 sudo mkdir -p /var/log/jupyter

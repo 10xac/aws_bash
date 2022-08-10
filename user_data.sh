@@ -7,14 +7,16 @@ export HOME=${HOME:-"/root"}
 home=$HOME
 
 if command -v apt-get >/dev/null; then
-    sudo apt-get update -y
-    sudo apt-get install -y git emacs htop jq unzip
+    apt-get update -y
+    apt-get upgrade -y
+    apt-get install -y git emacs htop jq unzip
     if [ -d /home/ubuntu ]; then
         home=/home/ubuntu
     fi
-else
-    sudo yum update -y 
-    sudo yum install -y git emacs htop jq unzip
+else    
+    yum update -y
+    yum upgrade -y
+    yum install -y git emacs htop jq unzip
     if [ -d /home/centos ]; then
         home=/home/centos
     fi
@@ -38,7 +40,7 @@ source $HOME/.bashr
 #source ~/.bashrc
 
 #--------update aws cli
-pip3 install botocore --upgrade || echo "unable to upgrade botocore"
+#pip3 install botocore --upgrade || echo "unable to upgrade botocore"
 function awscli_install(){
 
     if [[ $(uname -m) == *arch64* ]]; then 

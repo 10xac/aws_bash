@@ -22,6 +22,7 @@ fi
 sed 's|specfile=.*|specfile='"$udcfile"'|g' user_data.sh > $fname
 sed  $SEDOPTION 's|iam_users=|iam_users='"${iam_users}"'|g' $fname
 sed  $SEDOPTION 's|ssmgittoken=|ssmgittoken='"${ssmgittoken}"'|g' $fname
+sed  $SEDOPTION 's|region='eu-west-1'|region='"${region}"'|g' $fname
 sed  $SEDOPTION 's|gitaccountname=|gitaccountname='"${gitaccountname}"'|g' $fname
 sed  $SEDOPTION 's|USERS_FILE=|USERS_FILE='"${USERS_FILE}"'|g' $fname
 
@@ -32,34 +33,40 @@ if [ -z $amifordocker ]; then
     amifordocker=false
 fi
 
+echo "*************"
+
 if [ "$service" == "ec2" ]; then
     
-    echo "Creating EC2 instance with $fname user_data script .."
+    echo "Creating EC2 instance with $fname user_data script .."        
+
+    
+    if [ "${amios:-'ubuntu'}" == "ubuntu" ]; then
+        echo "Fetching latest Ubuntu AMI of type ${amiarc} .."
+        amipath="/aws/service/canonical/ubuntu/server/focal/stable/current/${amiarc}/hvm/ebs-gp2/ami-id"
+        #
+        echo "using amipath=$amipath"
+        AMI=$(aws ssm get-parameters --names $amipath \
+                  --query 'Parameters[0].[Value]' \
+                  --output text --profile $profile --region $region) # | jq -r '.[0]')        
         
-    echo "Fetching latest AWS Linux AMI of type ${amiopt} .."
-    if [ "${amios:-'ubuntu}" == "ubuntu" ]; then
-        amipath="/aws/service/canonical/ubuntu/server/focal/stable/current/${amiopt}/hvm/ebs-gp2/ami-id"
     else
+        echo "Fetching latest AWS Linux AMI of type ${amiarc} .."
         if $amifordocker; then
             amipath="/aws/service/ecs/optimized-ami/amazon-linux-2/recommended"
         else
-            amipath="/aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-${amiopt}-gp2"
+            amipath="/aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-${amiarc}-gp2"
         fi
-    fi
-    AMI=$(aws ssm get-parameters --names $amipath \
-              --query 'Parameters[0].[Value]' \
-              --output text --profile $profile --region $region| jq -r '.image_id')        
-    
-    else
-        echo "Fetching latest AWS Linux AMI"        
-        amipath="/aws/service/ami-amazon-linux-latest/amzn2-ami-hvm-x86_64-gp2"
+        #
+        echo "using amipath=$amipath"
         AMI=$(aws ssm get-parameters --names $amipath \
                   --query 'Parameters[0].[Value]' \
                   --output text --profile $profile --region $region| jq -r '.image_id')        
+        
     fi
+    
 
     echo "using AMI-ID=$AMI"
-    #profile: ecsInstanceRole
+
 
     export AWS_PAGER=""
     
@@ -76,6 +83,7 @@ if [ "$service" == "ec2" ]; then
         --block-device-mapping DeviceName=/dev/xvda,Ebs={VolumeSize=$EBS_SIZE} \
         --region $region \
         --profile $profile
+    
 	#        --instance-market-options '{"MarketType":"spot"}'
 	#extra volume
     #        --block-device-mapping DeviceName=/dev/sda1,Ebs={VolumeSize=$EBS_SIZE} \
