@@ -3,7 +3,7 @@
 PYTHON_DIR=/opt/miniconda
 
 ####root bucket
-BUCKET="10ac-batch-5"
+BUCKET="kft-dsteam-box"
 
 ####credential root folder
 CRED_ROOT_FOLDER="$BUCKET/credentials"
