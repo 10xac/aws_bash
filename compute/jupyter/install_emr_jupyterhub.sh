@@ -47,8 +47,11 @@ function allow_user_sudo() {
 
 if [ ! -d "/home/jupyterhub" ]; then
     n=jupyterhub
-    sudo adduser $n
-    sudo sh -c "echo '$n' | passwd --stdin $n"
+    p=$(python3 -c 'import crypt; print(crypt.crypt("$n"))')
+    useradd -m -p $p -s /bin/bash $n    
+
+    #echo "$n:$n" | chpasswd
+    
     allow_user_sudo $n
     echo "jupyterhub user is created and added to sudo group"    
 fi

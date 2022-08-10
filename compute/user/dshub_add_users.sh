@@ -100,9 +100,18 @@ cat $userfile | while read line; do
     if [ ! -d "/home/$n" ]; then
 	
         echo "user $n does not exist .. creating it"
+
+        #https://www.baeldung.com/linux/passwd-shell-script
+        #https://askubuntu.com/questions/94060/run-adduser-non-interactively
         
-        adduser $n
-        sh -c "echo '$n' | passwd --stdin $n"
+        p=$(python3 -c 'import crypt; print(crypt.crypt("$n"))')
+        useradd -m -p $p -s /bin/bash $n
+
+        #echo "$n:$n" | chpasswd
+        
+        # adduser $n
+        # sh -c "echo '$n' | passwd --stdin $n"
+        
         mkdir -p /home/$n/.ssh
         touch /home/$n/.ssh/authorized_keys
 
