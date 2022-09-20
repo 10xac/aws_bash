@@ -8,7 +8,7 @@ if [ -z $group ]; then
 fi   
 group=${group}
 
-name="b${batch}g${group}"  #it is also a tag
+name="group${group}"  #it is also a tag
 dns_namespace="g${group}.10academy.org"
 service="ec2"
 
@@ -29,12 +29,17 @@ s3root="s3://${s3bucket}"
 
 # == defines what to install ==
 udcfile="w${week}.txt" # comment out if you don't want to install compute packages
-USERS_FILE="group${group}.txt"
+USERS_FILE="b${batch}g${group}.txt"
 echo "Using: group=${group}, udcfile=${udcfile}, userfile=${USERS_FILE}"
 
+
 # == often change ==
-amiopt='docker'    #nvidea
-TYPE="m4.4xlarge"   # EC2 instance type
+amiarc="arm64"    #nvidea
+amios="ubuntu"
+amifordocker=false
+
+#TYPE="m4.4xlarge"   # EC2 instance type
+TYPE="c7g.2xlarge"
 
 # == security
 IAM="B4EC2Role" 

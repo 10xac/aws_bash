@@ -5,7 +5,7 @@ curdir=`pwd`
 ###--------Define necessary environment variables-----##
 ##------------------------------------------------------#
 if [ $# -lt 2 ]; then
-    echo "Usage: ecs_deploy <path to params file> <create/iplink> [[key=value]]"
+    echo "Usage: bash multiple_instance.sh <path to params file> <action type 'create' or 'iplink'> [[key=value]]"
     exit 0
 fi
 
