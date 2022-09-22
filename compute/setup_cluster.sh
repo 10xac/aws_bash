@@ -95,9 +95,9 @@ bash restart_services.sh
 if ${mounts3:-true}; then
     script=s3mount/mount-s3fs.sh
     run_script ${script} install
-    if [ "$(ls -A /mnt/$BUCKET)" ]; then
+    if [ -z "$(ls -A /mnt/$BUCKET)" ]; then
 	echo "/mnt/$BUCKET is empty"
-	exit
+	
     fi
 fi
 
