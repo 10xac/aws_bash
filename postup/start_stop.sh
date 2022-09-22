@@ -54,19 +54,19 @@ do
     if [ $action = "start" ]; then
         if [ $state = "stopped" ]; then
             echo "starting instance-id=$id .."
-            aws ec2 start-instances --instance-ids $id --profile $profile
+            aws ec2 start-instances --instance-ids $id --profile $profile --region $region
         fi
     fi
     if [ $action = "stop" ]; then
         if [ $state = "running" ]; then
             echo "stopping instance-id=$id .."
-            aws ec2 stop-instances --instance-ids $id --profile $profile
+            aws ec2 stop-instances --instance-ids $id --profile $profile --region $region
         fi
     fi
     if [ $action = "terminate" ]; then
         if [ $state = "running" ]; then
             echo "terminating instance-id=$id .."
-            aws ec2 terminate-instances --instance-ids $id --profile $profile
+            aws ec2 terminate-instances --instance-ids $id --profile $profile --region $region
         fi
     fi
 
