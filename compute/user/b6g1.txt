@@ -3,6 +3,7 @@ akubazgi_gebremariam, root
 amanuel_zewdu, root
 amdework_asefa, root
 andenet_alexander, root
+yonas_moges, root
 azaria_tamrat, root
 nardos_tilahun, root
 yididiya_sugamo, root

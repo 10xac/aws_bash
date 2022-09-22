@@ -28,7 +28,7 @@ s3bucket="10ac-batch-${batch}"
 s3root="s3://${s3bucket}"
 
 # == defines what to install ==
-udcfile="${batch}g${group}.txt" # comment out if you don't want to install compute packages
+udcfile="b${batch}g${group}.txt" # comment out if you don't want to install compute packages
 USERS_FILE="b${batch}g${group}.txt"
 echo "Using: group=${group}, udcfile=${udcfile}, userfile=${USERS_FILE}"
 

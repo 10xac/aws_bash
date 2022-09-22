@@ -3,6 +3,7 @@ natnael_zerihun, root
 niyomukiza_thamar, root
 tegisty_hailay, root
 tibarek_berassu, root
+wangui_gachugu, root
 azaria_tamrat, root
 nardos_tilahun, root
 yididiya_sugamo, root
