@@ -107,6 +107,7 @@ if [ ! -z $specfile ]; then
     cd aws_bash/compute
 
     export USERS_FILE=
+    export BUCKET=
     bash setup_cluster.sh $specfile 
     
     #copy all root environment to user

@@ -25,6 +25,7 @@ sed  $SEDOPTION 's|ssmgittoken=|ssmgittoken='"${ssmgittoken}"'|g' $fname
 sed  $SEDOPTION 's|region='eu-west-1'|region='"${region}"'|g' $fname
 sed  $SEDOPTION 's|gitaccountname=|gitaccountname='"${gitaccountname}"'|g' $fname
 sed  $SEDOPTION 's|USERS_FILE=|USERS_FILE='"${USERS_FILE}"'|g' $fname
+sed  $SEDOPTION 's|BUCKET=|BUCKET='"${s3bucket}"'|g' $fname
 
 if [ -z $amiarc ]; then
     amiarc=${amiopt:-arm64}

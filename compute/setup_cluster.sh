@@ -95,8 +95,8 @@ bash restart_services.sh
 if ${mounts3:-true}; then
     script=s3mount/mount-s3fs.sh
     run_script ${script} install
-    if [ ! -d /mnt/$BUCKET/credentials ]; then
-	echo "/mnt/$BUCKET/credentials not found"
+    if [ "$(ls -A /mnt/$BUCKET)" ]; then
+	echo "/mnt/$BUCKET is empty"
 	exit
     fi
 fi
