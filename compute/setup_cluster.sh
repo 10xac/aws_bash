@@ -96,11 +96,10 @@ if ${mounts3:-true}; then
     script=s3mount/mount-s3fs.sh
     run_script ${script} install
     if [ -z "$(ls -A /mnt/$BUCKET)" ]; then
-	echo "/mnt/$BUCKET is empty"
-	
+	echo "/mnt/$BUCKET is empty"	
     fi
 fi
-
+echo "installing other tasks once s3 is mounted .."
 # #------------copy cred to current user-----
 if ${addusers:-true}; then
     script=user/dshub_add_users.sh
