@@ -49,6 +49,7 @@ fi
 
 
 #sudo sh -c "sed -i '/^PasswordAuthentication/s/no/yes/' /etc/ssh/sshd_config"
+touch envvars.sh
 
 #read config file
 sed -e 's/[[:space:]]*#.*// ; /^[[:space:]]*$/d' "$configfile" |
@@ -56,6 +57,7 @@ sed -e 's/[[:space:]]*#.*// ; /^[[:space:]]*$/d' "$configfile" |
         echo "--------- exporting to .bashrc line: $line ..."
         echo "export $line" >> $HOME/.bashrc
         echo "export $line" >> $home/.bashrc
+        echo "export $line" >> envvars.sh        
     done
 source $HOME/.bashrc
 
@@ -67,7 +69,11 @@ function copy_from_s3(){
     if [ $# -gt 1 ]; then    
         script=$1        
         fpath=$2
+        echo ""
+        echo "-------------------------"
         echo "copying $script from s3 ..."
+        echo "-------------------------"
+        echo ""        
         aws s3 cp $fpath/${script} ${curdir}/${script} || echo "failed to copy $script from S3"
     else
         echo "You must pass the filename to copy"
@@ -78,7 +84,10 @@ function run_script(){
     if [ $# -gt 0 ]; then    
         script=$1    
         if [ -f ${curdir}/${script} ]; then
+            echo ""
+            echo "*********************************"            
             echo "running $script ..."
+            echo "*********************************"            
             if [ $# -gt 1 ]; then
                 arg=$2
                 bash ${curdir}/${script} $arg || echo "unable to run $script $arg"
@@ -93,7 +102,7 @@ function run_script(){
 bash restart_services.sh
 
 #-------------mount s3 folder---------
-source $home/.bashrc
+source envvars.sh
 echo "mounts3=$mounts3"
 echo "addusers=$addusers"
 echo "setupconda=$setupconda"

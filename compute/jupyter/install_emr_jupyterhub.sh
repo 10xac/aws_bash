@@ -89,7 +89,8 @@ sudo su -c "source /root/.bashrc"
 source ~/.bashrc
 
 # echo "Installing Jupyter"
-conda install \
+folder=$PYTHON_DIR/bin/
+$folder/conda install \
       -c conda-forge \
       -y \
       -q \
@@ -101,7 +102,7 @@ conda install \
       nb_conda_kernels \
       jupyter-server-proxy 
 
-jupyter serverextension enable jupyterlab
+$folder/jupyter serverextension enable jupyterlab
 
 # -----------------------------------------------------------------------------
 # 4.  Configure basic JupyterHub installation and see if everything works.
