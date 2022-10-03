@@ -1,9 +1,9 @@
 natnael_masresha, root
-birhanu_gebisa, root
-fisseha_estifanos, root
-akubazgi_gebremariam, root
+birhanu_gebisa 
+fisseha_estifanos 
+akubazgi_gebremariam 
 niyomukiza_thamar, root
-emtinan_salaheldin, root
+emtinan_salaheldin
 anastasia_kiiru, root
 azaria_tamrat, root
 nardos_tilahun, root
