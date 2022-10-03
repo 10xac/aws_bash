@@ -21,7 +21,6 @@ sudo chmod 777 -R $folder
 
 cat <<EOF >> $home/.bashrc
 export PATH="${folder}/bin:${PATH}"
-alias pip=${folder}/envs/algos/bin/pip3
 EOF
 
 source $home/.bashrc

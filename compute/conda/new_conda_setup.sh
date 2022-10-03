@@ -28,4 +28,4 @@ $folder/bin/conda init bash
 source $home/.bashrc
 
 #create venv
-conda install -c anaconda -y ipykernel
+$folder/bin/conda install -c anaconda -y ipykernel
