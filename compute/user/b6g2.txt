@@ -1,9 +1,9 @@
 natnael_melese, root
-yishak_tadele, root
-henok_desalegn, root
-gedion_abebe, root
-bekalu_tadele, root
-adijat_ojutomori, root
+yishak_tadele
+henok_desalegn
+gedion_abebe
+bekalu_tadele
+adijat_ojutomori
 birtukan_kuma, root
 azaria_tamrat, root
 nardos_tilahun, root
