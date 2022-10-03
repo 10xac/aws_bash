@@ -1,7 +1,7 @@
 #!/bin/bash 
 #exec > >(tee /var/log/user-data.log|logger -t user-data -s 2>/dev/console) 2>&1
 
-region="eu-west-1"
+region=
 
 export HOME=${HOME:-"/root"}
 home=$HOME
@@ -87,16 +87,6 @@ gitaccountname=
 
 echo "git clone aws_bash .."
 git clone https://${git_token}@github.com/${gitaccountname}/aws_bash.git
-
-## enable an iam user to ss
-iam_users=
-if [ ! -z $iam_users ]; then
-    for n in ${iam_users[@]}; do
-        echo "copying public key to authorized_keys for user=$n"
-        aws s3 cp s3://ml-box-data/creds/ssh/${n}_authorized_keys pub_key
-        cat pub_key >> $home/.ssh/authorized_keys | echo "ERROR: can not copy authorization key from s3"
-    done
-fi
 
 
 specfile=""

@@ -24,7 +24,8 @@ fi
 
 #if empty set default
 if [ -z $configfile ]; then
-    configfile="params.txt"
+    echo "********ERROR:  $configfile not found!**********"
+    exit 0
 fi
 echo "setup_cluster config file: $configfile"
 
@@ -52,6 +53,7 @@ fi
 #read config file
 sed -e 's/[[:space:]]*#.*// ; /^[[:space:]]*$/d' "$configfile" |
     while read line; do
+        echo "--------- exporting to .bashrc line: $line ..."
         echo "export $line" >> ~/.bashrc
         echo "export $line" >> $home/.bashrc
     done

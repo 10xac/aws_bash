@@ -31,9 +31,9 @@ if [ ! -f $userfile ]; then
 fi
 
 BUCKET="${BUCKET:-ml-box-data}"
-CREDROOTFOLDER="${CRED_ROOT_FOLDER:-$BUCKET/creds}"
-NOTEBOOKFOLDER="${NOTEBOOK_FOLDER:-$BUCKET/emr-notebooks}"
-CREDFOLDERS="${CRED_FOLDERS:-aws adludio}"
+CREDROOTFOLDER="${CRED_ROOT_FOLDER:-$BUCKET/credentials}"
+NOTEBOOKFOLDER="${NOTEBOOK_FOLDER:-$BUCKET/notebooks}"
+CREDFOLDERS="${CRED_FOLDERS:-aws}"
 CREDENVFILES="${CRED_ENV_FILES:-}" 
 
 function copy_user_creds(){
