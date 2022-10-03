@@ -1,9 +1,10 @@
-birhanu_gebisa, root
+natnael_melese, root
+yishak_tadele, root
+henok_desalegn, root
+gedion_abebe, root
+bekalu_tadele, root
+adijat_ojutomori, root
 birtukan_kuma, root
-degaga_wolde, root
-emtinan_osman, root
-fisseha_estifanos, root
-yohans_samuel, root
 azaria_tamrat, root
 nardos_tilahun, root
 yididiya_sugamo, root
