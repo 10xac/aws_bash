@@ -54,13 +54,13 @@ fi
 sed -e 's/[[:space:]]*#.*// ; /^[[:space:]]*$/d' "$configfile" |
     while read line; do
         echo "--------- exporting to .bashrc line: $line ..."
-        echo "export $line" >> ~/.bashrc
+        echo "export $line" >> $HOME/.bashrc
         echo "export $line" >> $home/.bashrc
     done
-source ~/.bashrc
+source $HOME/.bashrc
 
 echo "following bashrc file sourced: "
-cat ~/.bashrc
+cat $HOME/.bashrc
 
 curdir=`pwd`
 function copy_from_s3(){
@@ -93,6 +93,15 @@ function run_script(){
 bash restart_services.sh
 
 #-------------mount s3 folder---------
+source $home/.bashrc
+echo "mounts3=$mounts3"
+echo "addusers=$addusers"
+echo "setupconda=$setupconda"
+echo "installmlfow=$installmlfow"
+echo "setupjhub=$setupjhub"
+echo "setupjhub2=${setupjhub:-false}"
+echo "setupjnb=setupjnb"
+
 #copy scripts
 if ${mounts3:-true}; then
     script=s3mount/mount-s3fs.sh
@@ -133,13 +142,13 @@ if ${bidAlgo:-false}; then
 fi
 
 # #---------install jupyterhub
-if ${setupjhub:-false}; then
+if ${setupjhub:-true}; then
     script=jupyter/install_emr_jupyterhub.sh
     run_script ${script}
 fi
 
 #------configure jupyter
-if ${setupjnb:-false}; then
+if ${setupjnb:-true}; then
     script=jupyter/notebook_config.sh
     run_script ${script}
 fi
