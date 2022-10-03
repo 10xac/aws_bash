@@ -8,8 +8,8 @@ if [ -z $group ]; then
 fi   
 group=${group}
 
-name="group${group}"  #it is also a tag
-dns_namespace="g${group}.10academy.org"
+name="team${group}"  #it is also a tag
+dns_namespace="team${group}.10academy.org"
 service="ec2"
 
 # == AWS CLI profile ==
