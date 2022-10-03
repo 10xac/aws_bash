@@ -1,10 +1,10 @@
 yonas_moges, root
-nahom_habtemichael, root
+nahom_habtemichael
 haylemicheal_mekonnen, root
-mohammed_esamaldin, root
-patrick_rubayita, root
-janerose_nyambura, root
-wangui_gachugu, root
+mohammed_esamaldin
+patrick_rubayita
+janerose_nyambura
+wangui_gachugu
 azaria_tamrat, root
 nardos_tilahun, root
 yididiya_sugamo, root
