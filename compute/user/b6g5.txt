@@ -1,9 +1,9 @@
-yohans_samuel, root
+yohans_samuel
 degaga_wolde, root
 margaret_chepkirui , root
-yohanes_gutema, root
-tibarek_mesfin, root
-andenet_alexander, root
+yohanes_gutema
+tibarek_mesfin
+andenet_alexander
 azaria_tamrat, root
 nardos_tilahun, root
 yididiya_sugamo, root
