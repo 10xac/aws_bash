@@ -1,9 +1,9 @@
 kibatu_woldemariam, root
-margaret_chepkirui, root
-michael_abebe, root
-mohammed_esamaldin, root
-nahom_habtemichael, root
-yishak_tadele, root
+michael_getachew, root
+josias_ounsinli, root
+tegisty_hailay, root
+genet_shanko, root
+amanuel_zewdu, root
 azaria_tamrat, root
 nardos_tilahun, root
 yididiya_sugamo, root
