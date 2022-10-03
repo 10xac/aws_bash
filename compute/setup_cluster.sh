@@ -167,3 +167,9 @@ if ${lidarapp:-false}; then
     script=apps/satellite-lidar/install_packages.sh
     run_script ${script}
 fi
+
+#make coda folder global writable
+folder=${PYTHON_DIR:-/opt/miniconda}
+if [ -d $folder ]; then
+    sudo chmod 777 -R $folder
+fi

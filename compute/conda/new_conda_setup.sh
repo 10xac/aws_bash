@@ -17,7 +17,8 @@ fi
 sudo bash /tmp/miniconda.sh -b -p $folder
 rm /tmp/miniconda.sh
 
-sudo chmod 777 -R $folder
+
+$folder/bin/conda update -n base -c defaults conda
 
 cat <<EOF >> $home/.bashrc
 export PATH="${folder}/bin:${PATH}"
