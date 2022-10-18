@@ -98,8 +98,6 @@ function run_script(){
     fi    
 }
 
-#setup cront to restart services
-bash restart_services.sh
 
 #-------------mount s3 folder---------
 source envvars.sh
@@ -110,6 +108,9 @@ echo "installmlfow=$installmlfow"
 echo "setupjhub=$setupjhub"
 echo "setupjhub2=${setupjhub:-false}"
 echo "setupjnb=setupjnb"
+
+#setup cront to restart services
+bash restart_services.sh 
 
 #copy scripts
 if ${mounts3:-true}; then

@@ -2,6 +2,8 @@ scriptDir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 cdir=$(dirname $scriptDir)
 home=${ADMIN_HOME:-$(bash $cdir/get_home.sh)}
 
+#where to install conda
+folder=${PYTHON_DIR:-/opt/miniconda}
 
 #reload bashrc
 source $home/.bashrc
@@ -13,22 +15,19 @@ if ! command -v conda >/dev/null; then
 fi
 
 #activate conda
-conda init bash
+$folder/bin/conda  init bash
 source $home/.bashrc
 
-#create venv
-conda create -n algos -y
-conda activate algos
 
 #install common packages
-conda install \
+$folder/bin/conda  install \
       -c conda-forge \
       -y \
       -q \
       boto3 mysqlclient
       
-conda install -c anaconda -y ipykernel
-pip install mlflow
+$folder/bin/conda  install -c anaconda -y ipykernel
+$folder/bin/pip3  install mlflow
 
 #----------get git packages
 #bash git-submodule.sh
@@ -41,12 +40,12 @@ pip install mlflow
 #git clone https://${git_token}@github.com/FutureAdLabs/algos-common.git ${home}/algos-common
 
 # MLflow credentials
-creds=$(aws secretsmanager get-secret-value --secret-id MLFLOW_DB_CREDS --query SecretString --output text --region ${region:-"eu-west-1"})
+creds=$(aws secretsmanager get-secret-value --secret-id "db/dev/pg" --query SecretString --output text --region ${region:-"eu-west-1"})
 username=$(echo $creds | jq -r ".username")
 password=$(echo $creds | jq -r ".password")
 host=$(echo $creds | jq -r ".host")
 engine=$(echo $creds | jq -r ".engine")
-db=$(echo $creds | jq -r ".dbname")
+db="mlflow"   #$(echo $creds | jq -r ".dbname")
 port=$(echo $creds | jq -r ".port")
 
 function system_deamon()
@@ -61,7 +60,7 @@ Description=Algos_Mlflow
 Environment="PATH=${PYTHON_DIR}/bin:$PATH"
 ExecStart=${PYTHON_DIR}/bin/mlflow server --host 0.0.0.0 --port 5000 \
 --backend-store-uri ${engine}://${username}:${password}@${host}:${port}/${db}   
---default-artifact-root s3://ml-box-data/model_store
+--default-artifact-root s3://kft-mlflow-artifacts/model_store
 Restart=always
 RestartSec=10
 

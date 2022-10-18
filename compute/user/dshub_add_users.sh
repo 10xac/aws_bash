@@ -30,7 +30,7 @@ if [ ! -f $userfile ]; then
     exit 0
 fi
 
-BUCKET="${BUCKET:-ml-box-data}"
+BUCKET="${BUCKET:-10ac-batch-6}"
 CREDROOTFOLDER="${CRED_ROOT_FOLDER:-$BUCKET/credentials}"
 NOTEBOOKFOLDER="${NOTEBOOK_FOLDER:-$BUCKET/notebooks}"
 CREDFOLDERS="${CRED_FOLDERS:-aws}"
