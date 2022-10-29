@@ -27,12 +27,12 @@ if command -v apt-get >/dev/null; then
 #     # Edit the /etc/default/grub file and add the following line
 #     sh -c "echo 'GRUB_CMDLINE_LINUX=\"rdblacklist=nouveau\"' >>  /etc/default/grub"    
 
-#     sudo update-grub
+#     sudo update-grub -y
 
-#     apt install nvidia-driver-515 nvidia-dkms-515
+#     apt install nvidia-driver-515 nvidia-dkms-515 -y
 
-    apt-get update
-    apt-get install nvidia-cuda-toolkit
+    apt-get update -y 
+    apt-get install nvidia-cuda-toolkit -y
     
 elif command -v yum >/dev/null; then
     
