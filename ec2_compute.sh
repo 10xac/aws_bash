@@ -81,7 +81,7 @@ if [ "$service" == "ec2" ]; then
         --iam-instance-profile Name=$IAM \
         --tag-specifications "ResourceType=instance,Tags=[{Key=Name,Value=$name},{Key=team,Value=$team}]" \
         --user-data "file://$fname" \
-        --block-device-mapping DeviceName=/dev/xvda,Ebs={VolumeSize=$EBS_SIZE} \
+        --block-device-mapping DeviceName=/dev/sda1,Ebs={VolumeSize=$EBS_SIZE} \
         --region $region \
         --profile $profile
     

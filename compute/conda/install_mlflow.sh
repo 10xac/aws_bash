@@ -24,10 +24,9 @@ $folder/bin/conda  install \
       -c conda-forge \
       -y \
       -q \
-      boto3 mysqlclient
+      boto3 mysqlclient psycopg2 
       
-$folder/bin/conda  install -c anaconda -y ipykernel
-$folder/bin/pip3  install mlflow
+$folder/bin/pip3  install mlflow 
 
 #----------get git packages
 #bash git-submodule.sh

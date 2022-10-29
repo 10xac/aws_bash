@@ -49,8 +49,8 @@ EBS_SIZE=60    # root EBS volume size (GB)
 #region="eu-west-1"
 
 SG="sg-03f49fcdeb509e291"  # (ssh-only)
-vpc="vpc-04eedbe41ac02cac8"  #(us-east1-training-vpc)
-subnetId="subnet-003f75c0e47f0b090"
+vpc="vpc-04eedbe41ac02cac8"  #kft data vpc
+subnetId="subnet-003f75c0e47f0b090" #public
 region="us-east-1"
 
 #private
