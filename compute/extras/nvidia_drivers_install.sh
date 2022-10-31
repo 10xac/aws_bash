@@ -29,9 +29,9 @@ if command -v apt-get >/dev/null; then
 
 #     sudo update-grub -y
 
-#     apt install nvidia-driver-515 nvidia-dkms-515 -y
 
-    apt-get update -y 
+    apt-get update -y
+    apt-get install nvidia-driver-515 nvidia-dkms-515 -y    
     apt-get install nvidia-cuda-toolkit -y
     
 elif command -v yum >/dev/null; then
