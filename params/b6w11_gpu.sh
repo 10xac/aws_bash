@@ -1,6 +1,6 @@
 # == key variable ==
 batch=6
-week=5
+week=11
 
 if [ -z $group ]; then
    echo "please pass group number as environment variable e.g. export group=1"
@@ -8,8 +8,8 @@ if [ -z $group ]; then
 fi   
 group=${group}
 
-name="team${group}"  #it is also a tag
-dns_namespace="team${group}.10academy.org"
+name="group${group}"  #it is also a tag
+dns_namespace="g${group}.10academy.org"
 service="ec2"
 
 # == AWS CLI profile ==
@@ -28,8 +28,8 @@ s3bucket="10ac-batch-${batch}"
 s3root="s3://${s3bucket}"
 
 # == defines what to install ==
-udcfile="b${batch}team_gpu.txt" # comment out if you don't want to install compute packages
-USERS_FILE="b${batch}team.txt"
+udcfile="b${batch}w${week}_gpu.txt" # comment out if you don't want to install compute packages
+USERS_FILE="b${batch}g${group}.txt"
 echo "Using: group=${group}, udcfile=${udcfile}, userfile=${USERS_FILE}"
 
 # == often change ==
