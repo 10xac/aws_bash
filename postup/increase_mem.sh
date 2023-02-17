@@ -3,14 +3,16 @@
 # 2) https://codersathi.com/increase-ebs-volume-size-in-aws-ec2-instance/
 
 if [ -z "$1" ]; then
-    echo "Usage: bash increase_mem <volume-id> <size in GB> [profile_name]"
+    echo "Usage: bash increase_mem <volume-id> <size in GB> [profile_name] [region]"
+    exit
 else
     vid=$1
 fi
 
 
 if [ -z "$2" ]; then
-    echo "Usage: bash increase_mem <volume-id> <size in GB> [profile_name]"
+    echo "Usage: bash increase_mem <volume-id> <size in GB> [profile_name] [region]"
+    exit
 else
     gb=$2
 fi
