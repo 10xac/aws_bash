@@ -28,7 +28,7 @@ export s3_authorized_keys_path="s3://10ac-team/credentials/bereket/authorized_ke
 echo "profile=$profile_name"
 
 #extra user_data for ec2
-export extrauserdata="user_data/install_ecs_agent.sh user_data/run_build.sh"
+export extrauserdata="user_data/install_ecs_agent.sh"
 export ec2launch_install_docker=true
 
 #application and proxy names
@@ -60,7 +60,7 @@ echo "root_name=$root_name"
 echo "dns=$dns_namespace"
 
 #check this for diff TLS 1.2 vs TLS 1.3 https://bidhankhatri.com.np/system/enable-tls-1.3/
-amiarc="arm64"    #
+amiarc="amd64"    #
 echo "Fetching latest Ubuntu AMI of type ${amiarc} .."
 amipath="/aws/service/canonical/ubuntu/server/focal/stable/current/${amiarc}/hvm/ebs-gp2/ami-id"
 #                                                                                                                                                        
@@ -71,6 +71,7 @@ AMI=$(aws ssm get-parameters --names $amipath \
 
 echo "using AMI-ID=$AMI"
 export AwsImageId=$AMI  #Ubuntu latest
+
 
 
 export AwsInstanceType="t3.small"
@@ -140,7 +141,7 @@ setup_ecs=true
 source ${scriptDir}/ecs_params.sh
 
 #create ECR repo
-export create_ecr_repo=false
+export create_ecr_repo=true
 
 #ECS parameters
 export ecr_repo_name=${root_name}
