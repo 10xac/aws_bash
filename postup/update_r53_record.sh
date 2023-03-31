@@ -39,7 +39,7 @@ echo ""
 
 function update_r53() {
 
-    mkdir -p logs/$1
+    mkdir -p logs/r53/$1
     fout=logs/$1/r53_record.json
 
 #http://www.scalingbits.com/aws/dnsfailover/changehostnameentries

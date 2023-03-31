@@ -1,0 +1,5 @@
+dibora, root
+ephi, root
+azaria, root
+abel, root
+yabi, root

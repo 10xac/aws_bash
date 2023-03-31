@@ -284,8 +284,8 @@ server {
 
     ssl_certificate /etc/ssl/letsencrypt/live/${certdnsname:-dns_namespace}/fullchain.pem;
     ssl_certificate_key /etc/ssl/letsencrypt/live/${certdnsname:-dns_namespace}/privkey.pem;
-    include /etc/ssl/letsencrypt/options-ssl-nginx.conf;
-    ssl_dhparam /etc/ssl/letsencrypt/ssl-dhparams.pem;
+    #include /etc/ssl/letsencrypt/options-ssl-nginx.conf;
+    #ssl_dhparam /etc/ssl/letsencrypt/ssl-dhparams.pem;
 
 EOF
 #-------
