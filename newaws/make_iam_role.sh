@@ -30,21 +30,32 @@ region=${region:-"eu-west-1"}
 create_ec2_dsde_role() {
     role_name=EC2DSDERole
 
-    res=$(aws iam create-role --role-name ${role_name} \
-              --assume-role-policy-document file://logs/configs/ec2_trust_policy.json \
-              --region $region --profile $profile_name)              
+    
+    # res=$(aws iam create-role --role-name ${role_name} \
+    #           --assume-role-policy-document file://logs/configs/ec2_trust_policy.json \
+    #           --region $region --profile $profile_name)              
 
-    source logs/configs/aws_managed_policy_list.sh
+    # source logs/configs/aws_managed_policy_list.sh
 
-    for policyarn in "${ec2role[@]}"; do
-        # To attach an AWS-managed policy to an IAM role with the AWS CLI, use the attach-role-policy command
-        echo "attaching policy arn: $policyarn"
-        res=$(aws iam attach-role-policy --policy-arn $policyarn --role-name ${role_name} \
-                  --region $region --profile $profile_name)
-    done
+    # for policyarn in "${ec2role[@]}"; do
+    #     # To attach an AWS-managed policy to an IAM role with the AWS CLI, use the attach-role-policy command
+    #     echo "attaching policy arn: $policyarn"
+    #     res=$(aws iam attach-role-policy --policy-arn $policyarn --role-name ${role_name} \
+    #               --region $region --profile $profile_name)
+    # done
+
+    #create instance profile and add the above role to it
+    echo "creating instance profile: ${role_name}..."
+    res=$(aws iam create-instance-profile --instance-profile-name $role_name \
+              --region $region --profile $profile_name)
+
+    echo "adding role to instance profile"
+    aws iam add-role-to-instance-profile --instance-profile-name ${role_name} \
+        --role-name ${role_name}   --region $region --profile $profile_name
+    
 }
 
-#create_ec2_dsde_role
+create_ec2_dsde_role
 
 
 exit

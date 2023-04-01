@@ -320,16 +320,16 @@ fi
 #-------------------------------------------------------------------------
 #create ssh key pair
 if [ -z $KEY ]; then
-    keyname=${KEY}.pem
+    keyname=${KEY}
 else
-    keyname=${profile_name}_aws_private_key.pem
+    keyname=${profile_name}_aws_private_key
 fi
-keyfile=~/.ssh/$keyname
+keyfile=~/.ssh/$keyname.pem
 
 fout=$logoutputdir/create_key_pair.json
 if [ ! -f $fout ]; then
     echo "creating ssh key pair ..."
-    res=$(aws ec2 create-key-pair --key-name cli-keyPair \
+    res=$(aws ec2 create-key-pair --key-name $keyname \
               --query 'KeyMaterial' --output text \
               --region $region --profile $profile_name > $keyfile)
 

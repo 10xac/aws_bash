@@ -34,30 +34,28 @@ amifordocker=false
 TYPE="c7g.2xlarge"
 
 # == security
-IAM="Ec2DSDERole" 
+IAM="EC2DSDERole" 
 
 
 # ==  set it once and seldom change ==
-KEY="dsde-ubongo-key-pair"     # EC2 key pair name
+KEY="dsde-ubongo-key-pair"     # EC2 key pair name 
 COUNT=1         # how many instances to launch
 EBS_SIZE=100    # root EBS volume size (GB)
 
 #=== networking ===
-#SG="sg-0606253fdd87db25e"  # (trainees_cluster)
-#vpc="vpc-06cf87345b7d5fa44" #  (10xtraining) 
-#subnetId="subnet-02990182ba1ce1a9f" # (training-subnet-1) 
-#region="eu-west-1"
+SG="sg-05a16e27c00717fae"  # (ssh-only)
+vpc="vpc-0c2141870d7e73204"  #(us-east-1 ubongo-vpc-dev)
 
-SG="sg-03f49fcdeb509e291"  # (ssh-only)
-vpc="vpc-04eedbe41ac02cac8"  #(us-east1-training-vpc)
-#subnetId="subnet-003f75c0e47f0b090" #1a
-subnetId="subnet-028a9b53678a0bf64"  #1b
+#ubongo public subnets
+#subnet-04c25c4f9179ade84 1d 
+#subnet-0598d14aa993251dd 1e
+#subnet-03dac05dc2b890bcf 1f
+
+#ubongo private subnets
+#subnet-0c11ad424682315d1 1a
+#subnet-00de59bbfca6cfafd 1b
+#subnet-0c11ad424682315d1 1c
+
+
+subnetId="subnet-03dac05dc2b890bcf" 
 region="us-east-1"
-
-#private
-# subnet 1a: subnet-002d16113b7c1d15d
-# subnet 1b: subnet-06a7f1609a9a138a7
-
-#public
-# subnet 1a: subnet-003f75c0e47f0b090
-# subnet 1b: subnet-028a9b53678a0bf64
