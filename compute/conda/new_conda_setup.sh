@@ -18,7 +18,7 @@ sudo bash /tmp/miniconda.sh -b -p $folder
 rm /tmp/miniconda.sh
 
 
-$folder/bin/conda update -n base -c defaults conda
+$folder/bin/conda update -n base -c defaults conda -y
 
 cat <<EOF >> $home/.bashrc
 export PATH="${folder}/bin:${PATH}"
