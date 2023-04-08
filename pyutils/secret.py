@@ -53,26 +53,7 @@ def get_ssm_secret(secret_name):
             SecretId=secret_name
         )
     except ClientError as e:
-        if e.response['Error']['Code'] == 'DecryptionFailureException':
-            # Secrets Manager can't decrypt the protected secret text using the provided KMS key.
-            # Deal with the exception here, and/or rethrow at your discretion.
-            raise e
-        elif e.response['Error']['Code'] == 'InternalServiceErrorException':
-            # An error occurred on the server side.
-            # Deal with the exception here, and/or rethrow at your discretion.
-            raise e
-        elif e.response['Error']['Code'] == 'InvalidParameterException':
-            # You provided an invalid value for a parameter.
-            # Deal with the exception here, and/or rethrow at your discretion.
-            raise e
-        elif e.response['Error']['Code'] == 'InvalidRequestException':
-            # You provided a parameter value that is not valid for the current state of the resource.
-            # Deal with the exception here, and/or rethrow at your discretion.
-            raise e
-        elif e.response['Error']['Code'] == 'ResourceNotFoundException':
-            # We can't find the resource that you asked for.
-            # Deal with the exception here, and/or rethrow at your discretion.
-            raise e
+        raise e
     else:
         # Decrypts secret using the associated KMS CMK.
         # Depending on whether the secret is a string or binary, one of these fields will be populated.
@@ -162,18 +143,30 @@ def get_auth(ssmkey=None, envvar=None, fconfig=None):
     return {}
 
 if __name__ == "__main__":
+
+    if len(sys.argv)>0:
+        ssmkey=sys.argv[1]
+        print(f'using passed ssmkey={ssmkey}')
+    else:
+        ssmkey='tenx/db/pjmatch'
+
+    if '/' in ssmkey:
+        suffix = os.path.basename(ssmkey)
+    else:
+        suffix = ssmkey
+
+     
+    fconfig = f'.env/{suffix}.json'
+    
+    print(f'reading {ssmkey} with envvar={suffix}, fconfig={fconfig}')
+
     
     path = os.path.dirname(os.path.realpath(__file__))
     path = os.path.dirname(path)
-    dbauth = get_auth(ssmkey='tenx/db/pjmatch',
-                      envvar='RDS_CONFIG',
-                      fconfig=f'{path}/.env/dbconfig.json')
-    print('**Getting config files from ssm if they it is not already in .env folder ..')
-    # print('=====================================')
-    _ = get_auth(ssmkey="tenx/db/strapi",
-                 fconfig=f'{path}/.env/postdbconfig.json',
-                 envvar='rds_CONFIG',
-                 )
-    print(_)
-#print(dbauth)
+    dbauth = get_auth(ssmkey=ssmkey,
+                      envvar=suffix,
+                      fconfig=fconfig)
+    print(dbauth)
+
+
 	

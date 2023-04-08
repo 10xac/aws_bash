@@ -107,7 +107,7 @@ cat $userfile | while read line; do
         p=$(python3 -c 'import crypt; print(crypt.crypt("$n"))')
         useradd -m -p $p -s /bin/bash $n
 
-        #echo "$n:$n" | chpasswd
+        echo "$n:$n" | chpasswd
         
         # adduser $n
         # sh -c "echo '$n' | passwd --stdin $n"
