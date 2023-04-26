@@ -10,20 +10,20 @@ cd $deployDir
 
 #---------------Basic Parameters------------------
 #load the right vpc parameters 
-source ${scriptDir}/vpc_10academy.sh
+source ${scriptDir}/vpc_aiqem.sh
 
 #aws cli profile
-export region="eu-west-1"
-export profile_name="tenac"
-export email="yabebal@10academy.org"
+export region="us-east-1"
+export profile_name="aiqem"
+export email="yabebal@gmail.com"
 #
-export ssmgittoken="git_token_tenx"
-export gituname="10xac"
+export ssmgittoken="git/token/yabi"
+export gituname="AiQeM-Tech"
 #
-export sshKeyName="tech-ds-team"
-export s3bucket="s3://all-tenx-system"
+export sshKeyName="dsde-aiqem-key-pair"
+export s3bucket="s3://aiqem-team/"
 export s3MountBucket=
-export s3_authorized_keys_path="s3://10ac-team/credentials/bereket/authorized_keys"
+export s3_authorized_keys_path="s3://aiqem-team/credentials/bereket/authorized_keys"
 #
 echo "profile=$profile_name"
 
@@ -34,7 +34,7 @@ export ec2launch_install_docker=true
 #application and proxy names
 export ENV=${ENV:-prod}
 export root_name="www" #name you give to your project in ecs env
-export rootdns=10academy.org
+export rootdns=aiqem.tech
 export certdnsname="${root_name}.${rootdns}"
 export s3certpath=${s3bucket}/ssl-certs/${root_name}
 export repo_name="tenac-app" #used to check out git repo
