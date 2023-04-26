@@ -66,9 +66,9 @@ amipath="/aws/service/canonical/ubuntu/server/focal/stable/current/${amiarc}/hvm
 #                                                                                                                                                        
 echo "using amipath=$amipath"
 if $(curl -s -m 5 http://169.254.169.254/latest/dynamic/instance-identity/document | grep -q availabilityZone) ; then
-    auth="--profile ${profile_name} --region $region)"
-else
     auth="--region $region)"
+else
+    auth="--profile ${profile_name} --region $region)"
 fi
 
 AMI=$(aws ssm get-parameters --names $amipath \
