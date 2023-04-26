@@ -65,9 +65,15 @@ echo "Fetching latest Ubuntu AMI of type ${amiarc} .."
 amipath="/aws/service/canonical/ubuntu/server/focal/stable/current/${amiarc}/hvm/ebs-gp2/ami-id"
 #                                                                                                                                                        
 echo "using amipath=$amipath"
+if $(curl -s -m 5 http://169.254.169.254/latest/dynamic/instance-identity/document | grep -q availabilityZone) ; then
+    auth="--profile ${profile_name} --region $region)"
+else
+    auth="--region $region)"
+fi
+
 AMI=$(aws ssm get-parameters --names $amipath \
           --query 'Parameters[0].[Value]' \
-          --output text --profile ${profile_name} --region $region) # | jq -r '.[0]')                                                                           
+          --output text $auth )
 
 echo "using AMI-ID=$AMI"
 export AwsImageId=$AMI  #Ubuntu latest
