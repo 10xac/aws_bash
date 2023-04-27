@@ -122,6 +122,7 @@ export setup_nginx=true
 #---------------EC2 Parameters------------------
 setup_ec2=true
 
+
 #now load the common ec2 params
 source ${scriptDir}/ec2_params.sh
 

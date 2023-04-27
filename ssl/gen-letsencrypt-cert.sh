@@ -27,7 +27,7 @@ cd $curdir
 
 # create docker-compose and nginx configs
 # setup also certbot and nginx folders
-source create_ssl_configs.sh ""
+source ssl/create_ssl_configs.sh ""
 
 # define key parameters for certbot
 domains=(${dns_namespace})
