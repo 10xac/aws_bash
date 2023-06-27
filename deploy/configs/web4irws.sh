@@ -52,6 +52,8 @@ elif [ "$ENV" == "stag" ]; then
 fi
 
 export dns_namespace="${dnsprefix}.${rootdns}"  ##This should be your domain 
+export dns_ssl_list="${rootdns} ${dnsprefix}.${rootdns} dev-cms.${rootdns} www.${rootdns} dev.${rootdns}"  ##gen ssl 
+
 export app_name="${root_name}"  #-app
 export proxy_name="${root_name}-proxy"
 export log_group_name="/ecs/ecs-${root_name}-ssl"
