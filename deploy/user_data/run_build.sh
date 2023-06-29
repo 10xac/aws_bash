@@ -23,10 +23,15 @@ cat <<'EOF' >>  $fout
 
 if [ ! -z $repo_name ]; then
 
-    git_token=$(aws secretsmanager get-secret-value \
+    ssmres=$(aws secretsmanager get-secret-value \
                     --secret-id ${ssmgittoken} \
                     --query SecretString \
-                    --output text --region $region  | cut -d: -f2 | tr -d \"})
+                    --output text --region $region)
+    if [[ $ssmres == *"git_token"* ]]; then
+        git_token=$(echo $ssmres | jq -r '.git_token')
+    else
+        git_token=$(echo $ssmres | cut -d: -f2 | tr -d \"})
+    fi
 
   #----------------------
   cd ${home:-$HOME}

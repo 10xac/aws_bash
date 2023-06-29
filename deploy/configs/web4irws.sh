@@ -17,18 +17,18 @@ export region="us-east-1"
 export profile_name="debo"
 export email="4irworkspaces@gmail.com"
 #
-export ssmgittoken="git/token/yabi"
+export ssmgittoken="debo/dev/env"
 export gituname="debospaces"
 #
 export sshKeyName="dsde-debo-key-pair"
-export s3bucket="s3://debo-team/"
+export s3bucket="s3://all-debo-system/"
 export s3MountBucket=
 export s3_authorized_keys_path=
 #"s3://debo-team/credentials/zelalem/authorized_keys"
 echo "profile=$profile_name"
 
 #extra user_data for ec2
-export extrauserdata="user_data/install_ecs_agent.sh"
+export extrauserdata="user_data/mount-s3fs.sh user_data/run_build.sh"
 export ec2launch_install_docker=true
 
 #application and proxy names

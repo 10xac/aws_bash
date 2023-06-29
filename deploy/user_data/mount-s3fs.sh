@@ -119,7 +119,8 @@ fi
 mkdir -p /mnt/s3fs-cache
 mkdir -p /mnt/$BUCKET
 
-#mount s3 bucket
+# mount s3 bucket
+# https://cloud.ibm.com/docs/cloud-object-storage?topic=cloud-object-storage-s3fs
 s3fs $BUCKET /mnt/$BUCKET -o allow_other -o iam_role=auto \
 -o umask=0 -o url=https://s3.amazonaws.com  -o no_check_certificate \
 -o cipher_suites=AESGCM \
@@ -131,7 +132,7 @@ s3fs $BUCKET /mnt/$BUCKET -o allow_other -o iam_role=auto \
 -o dbglevel=warn \
 -o enable_noobj_cache -o use_cache=/mnt/s3fs-cache 
 #-o kernel_cache 
-
+# -o nonempty
 #chmod 777 -R /mnt || echo "unable to change /mnt permission"
 #chown $homeUser:$homeUser -R /mnt || echo "unable to change /mnt ownership"
 
@@ -142,5 +143,12 @@ source $home/s3mount.sh install
 
 echo "Files in /mnt/$BUCKET : "
 ls /mnt/$BUCKET
+
+
+DIR_PATH=$(cd $(dirname “${BASH_SOURCE:-$0}”) && pwd)
+scriptpath=$DIR_PATH/$(basename “${BASH_SOURCE:-$0}”)
+
+echo " adding $scriptpath to crontab .."
+(crontab -l 2>/dev/null; echo "@reboot  BUCKET=$BUCKET /bin/bash ${scriptpath}") | crontab -
 
 EOF
