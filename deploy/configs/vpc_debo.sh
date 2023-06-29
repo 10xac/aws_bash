@@ -21,12 +21,12 @@ export vpcId="vpc-0bfb689a944eb79b6" # (debo-vpc) <- Change this to your VPC id
 echo "vpcid=$vpcId"
 
 #instance profile
-export IamInstanceProfile="arn:aws:iam::969813551597:role/EC2DockerS3Role"
+export IamInstanceProfile="arn:aws:iam::969813551597:instance-profile/EC2DockerS3Role"
 
 #--------------------------------------------------------------------##
 #---! DO NOT CHANGE THIS UNLESS YOU KNOW WHAT YOU ARE DOING !---------
 export create_acm_certificate=false
 #this is for *.adludio.com
-certificateArn=arn:aws:acm:us-east-1:536509993821:certificate/08f74147-8e19-4c1c-be5a-c9ce6b73b308
+certificateArn=arn:aws:acm:us-east-1:969813551597:certificate/265cf81c-e7c4-41df-b98a-c8a6bc29d746
 #--------------------------------------------------------------------##
 

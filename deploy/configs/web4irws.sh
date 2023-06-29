@@ -23,8 +23,8 @@ export gituname="debospaces"
 export sshKeyName="dsde-debo-key-pair"
 export s3bucket="s3://debo-team/"
 export s3MountBucket=
-export s3_authorized_keys_path="s3://debo-team/credentials/zelalem/authorized_keys"
-#
+export s3_authorized_keys_path=
+#"s3://debo-team/credentials/zelalem/authorized_keys"
 echo "profile=$profile_name"
 
 #extra user_data for ec2
@@ -33,14 +33,14 @@ export ec2launch_install_docker=true
 
 #application and proxy names
 export ENV=${ENV:-prod}
-export root_name="www" #name you give to your project in ecs env
+export root_name="debo-cms" #name you give to your project in ecs env
 export rootdns=4irworkspaces.com
 export certdnsname="${root_name}.${rootdns}"
 export s3certpath=${s3bucket}/ssl-certs/${root_name}
-export repo_name="tenac-app" #used to check out git repo
+export repo_name="debo-cms" #used to check out git repo
 export repo_branch="main"
 #
-export dnsprefix=www
+export dnsprefix=cms
 if [ "$ENV" == "dev" ]; then
     export dnsprefix="dev-${dnsprefix}"
     export root_name="dev-$root_name"
@@ -80,15 +80,15 @@ export AwsImageId=$AMI  #Ubuntu latest
 
 
 
-export AwsInstanceType="t3.small"
+export AwsInstanceType="t3.micro"
 export EbsVolumeSize=30
      
-export ecsTaskPortMapList=3000  #all ports to expose
+export ecsTaskPortMapList=1337  #all ports to expose
 export ecsTaskFromTemplate=False
 export ecsTaskTemplate=
 
 #ecs service params
-export ecsContainerPort=3000 #The port on the container to associate with the load balancer
+export ecsContainerPort=1337 #The port on the container to associate with the load balancer
 export ecsDesiredCount=0
 export ecsServiceTemplate=template/ecs-ec2-service-template.json
 
@@ -148,7 +148,7 @@ setup_ecs=false
 source ${scriptDir}/ecs_params.sh
 
 #create ECR repo
-export create_ecr_repo=true
+export create_ecr_repo=false
 
 #ECS parameters
 export ecr_repo_name=${root_name}

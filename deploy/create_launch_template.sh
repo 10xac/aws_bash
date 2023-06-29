@@ -344,7 +344,7 @@ fi
 
 
 #convert user data to base64
-userdata=$(base64 $fnameuserdata)
+userdata=$(base64 -i $fnameuserdata)
 #echo "----UserData base64 hash----"
 #echo $userdata
 
