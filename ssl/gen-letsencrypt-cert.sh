@@ -31,12 +31,14 @@ source ssl/create_ssl_configs.sh ""
 
 # define key parameters for certbot
 domains=(${ssldnsname:-$dns_namespace})
-echo "checking of --${dns_ssl_list}-- is empty"
+
 if [ ${#dns_ssl_list[@]} -eq 0 ]; then
   dns_namespace_array=(${dns_namespace})
 else
   dns_namespace_array=(${dns_ssl_list})
 fi
+echo "Using -- dns_namespace_array=${dns_ssl_list}"
+
 domainsarray=(${dns_namespace_array})
 input, "generating certificate for: ${dns_namespace_array}? (Y/N)"
 

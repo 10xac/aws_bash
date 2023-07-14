@@ -62,7 +62,7 @@ export setup_nginx=true
 
 # used in the ssl generation script as well as to insert an A record in R53 
 export dns_namespace="${rootdns}"  ##This should be your domain - DNS name of the server 
-export dns_ssl_list="vdb1.${rootdns} vdb2.${rootdns} weaviate.${rootdns} vdb.${rootdns} milvus.${rootdns}"  ##gen ssl 
+export dns_ssl_list="vdb.${rootdns} vdbx.${rootdns} vdby.${rootdns} vdbz.${rootdns} weaviate.${rootdns} milvus.${rootdns}"  ##gen ssl 
 
 export app_name="${root_name}"  #-app
 export proxy_name="${root_name}-proxy"
