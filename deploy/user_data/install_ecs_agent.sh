@@ -10,6 +10,12 @@ fi
 
 cat <<EOF >>  $fout
 
+echo ""
+echo "============================================"
+echo "    Install ECS Agent and Awslog with config"
+echo "============================================"
+echo ""
+
 
 #download CloudWatch Logs Agent deb
 #ref; https://www.petefreitag.com/item/868.cfm

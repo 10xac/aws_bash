@@ -9,7 +9,15 @@ else
 fi
 
 cat <<EOF >>  $fout
-BUCKET="${s3bucket:-all-tenx-system}"
+
+BUCKET="${s3bucket:-BUCKET}"
+
+echo ""
+echo "============================================"
+echo "           Mount S3 Bucket=${BUCKET}                  "
+echo "============================================"
+echo ""
+
 
 EOF
 
@@ -17,8 +25,8 @@ EOF
 cat <<'EOF' >>  $fout
 
 # remove s3:// from bucket 
-BUCKET=${BUCKET#"s3://"}
-
+BUCKET=${BUCKET#"s3://"}  #remove s3://
+BUCKET=${BUCKET%/}  #remove training /
 
 # write mount unmount script 
 cat <<EOFF >>  $home/s3mount.sh
@@ -48,8 +56,8 @@ function install_s3fs()
 	apt-get -qq install -y gcc gcc-c++
 	apt-get -qq install -y openssl-devel libcurl libssl1.0.0 libssl-dev libxml-2.0 fuse automake
         apt-get -qq install -y build-essential libcurl4-openssl-dev libxml2-dev mime-support        
-	apt-get -qq install -y memcached
-	service memcached start
+	#apt-get -qq install -y memcached
+	#service memcached start
         
     elif command -v yum >/dev/null; then
         # yum remove -y fuse
@@ -58,8 +66,8 @@ function install_s3fs()
 	yum -qq install -y openssl-devel libcurl libcrypto.so.10 libxml-2.0 fuse automake	
 	yum -qq install -y libcurl libcurl-devel graphviz cyrus-sasl cyrus-sasl-devel readline readline-devel gnuplot
 	yum -qq install -y automake fuse fuse-devel libxml2-devel
-	yum -qq install -y memcached
-	service memcached start
+	#yum -qq install -y memcached
+	#service memcached start
     else
 	echo "unknown os system.."
 	exit

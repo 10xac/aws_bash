@@ -10,58 +10,55 @@ cd $deployDir
 
 #---------------Basic Parameters------------------
 #load the right vpc parameters 
-source ${scriptDir}/vpc_aiqem.sh
+source ${scriptDir}/vpc_debo.sh
 
 #aws cli profile
 export region="us-east-1"
-export profile_name="aiqem"
-export email="yabebal@gmail.com"
+export profile_name="debo"
+export email="4irworkspaces@gmail.com"
 #
-export ssmgittoken="git/token/yabi"
-export gituname="AiQeM-Tech"
+export ssmgittoken="debo/dev/env"
+export gituname="debospaces"
 #
-export sshKeyName="dsde-aiqem-key-pair"
-export s3bucket="s3://aiqem-team"
-export s3MountBucket=
-export s3_authorized_keys_path="s3://aiqem-team/credentials/alex/authorized_keys"
-#
+export sshKeyName="dsde-debo-key-pair"
+export s3bucket="s3://all-debo-system"
+#export BUCKET=   #if you want to mount another BUCKET
+export s3_authorized_keys_path=
+#"s3://debo-team/credentials/zelalem/authorized_keys"
 echo "profile=$profile_name"
 
 #extra user_data for ec2
-export extrauserdata="user_data/run_build.sh"
+export extrauserdata="user_data/mount-s3fs.sh user_data/run_build.sh"
 export ec2launch_install_docker=true
 
 #application and proxy names
 export ENV=${ENV:-prod}
-export root_name="website" #name you give to your project in ecs env
-export rootdns="aiqem.tech"
-export certdnsname="aiqem.tech"
-export s3certpath=${s3bucket}/ssl-certs/${root_name}
-export repo_name="aiqem.tech" #used to check out git repo
+export root_name="debo-cms" #name you give to your project in ecs env
+export rootdns=4irworkspaces.com
+
+#
+export s3certpath="s3://debo-team/ssl-certs/4irworkspace"
+export ssldnsname=4irworkspaces.com #what is in letsencrypt/live/<ssldnsname>
+export nginxservername=cms.4irworkspaces.com  #what is in nginx conf
+export certdnsname="${root_name}.${rootdns}"
+
+#
+export repo_name="debo-cms" #used to check out git repo
 export repo_branch="main"
 #
-export dnsprefix="www"
-if [ ! -z $dnsprefix ]; then
-    dp="-${dnsprefix}"   
-else
-    dp=""
-fi
-
+export dnsprefix=cms
 if [ "$ENV" == "dev" ]; then
-    export dnsprefix="dev${dp}"
+    export dnsprefix="dev-${dnsprefix}"
     export root_name="dev-$root_name"
     export repo_branch="dev"    
 elif [ "$ENV" == "stag" ]; then
-    export dnsprefix="staging${dp}"
+    export dnsprefix="staging-${dnsprefix}"
     export root_name="staging-$root_name"
     export repo_branch="staging"
 fi
 
-if [ ! -z $dnsprefix ]; then
-    export dns_namespace="${dnsprefix}.${rootdns}"  ##This should be your domain 
-else
-    export dns_namespace=${rootdns}  ##This should be your domain
-fi
+export dns_namespace="${dnsprefix}.${rootdns}"  ##This should be your domain 
+export dns_ssl_list="${rootdns} ${dnsprefix}.${rootdns} dev-cms.${rootdns} www.${rootdns} dev.${rootdns}"  ##gen ssl 
 
 export app_name="${root_name}"  #-app
 export proxy_name="${root_name}-proxy"
@@ -94,12 +91,12 @@ export AwsImageId=$AMI  #Ubuntu latest
 export AwsInstanceType="t3.small"
 export EbsVolumeSize=30
      
-export ecsTaskPortMapList=3000  #all ports to expose
+export ecsTaskPortMapList=1337  #all ports to expose
 export ecsTaskFromTemplate=False
 export ecsTaskTemplate=
 
 #ecs service params
-export ecsContainerPort=3000 #The port on the container to associate with the load balancer
+export ecsContainerPort=1337 #The port on the container to associate with the load balancer
 export ecsDesiredCount=0
 export ecsServiceTemplate=template/ecs-ec2-service-template.json
 

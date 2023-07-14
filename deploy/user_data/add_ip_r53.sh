@@ -9,6 +9,13 @@ fi
 
 cat <<EOF >>  $fout
 
+echo ""
+echo "============================================"
+echo "           ADD IP to R53 Record             "
+echo "============================================"
+echo ""
+
+
 region=${region:-"eu-west-1"}
 r53dns=$dns_namespace
 hosted_zone_id=${hosted_zone_id:-Z034028834IXN0CQEMHZ9}

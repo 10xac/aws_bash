@@ -10,14 +10,16 @@ if [ ! -z "$1" ]; then
     echo "logdir=$logoutputdir"    
 fi
 
-#---- use 
-certpath=${s3bucket}/ssl-certs/${root_name}    
-if [ "${ENV:-prod}" == "dev" ]; then
-    certpath=${s3bucket}/ssl-certs/dev-${root_name}
-elif [ "${ENV:-prod}" == "stag" ]; then
-    certpath=${s3bucket}/ssl-certs/stagin-${root_name}
+#---- use
+if [ -z $s3certpath ]; then
+    certpath=${s3bucket}/ssl-certs/${root_name}    
+    if [ "${ENV:-prod}" == "dev" ]; then
+        certpath=${s3bucket}/ssl-certs/dev-${root_name}
+    elif [ "${ENV:-prod}" == "stag" ]; then
+        certpath=${s3bucket}/ssl-certs/stagin-${root_name}
+    fi
+    s3certpath=${s3certpath:-$certpath}
 fi
-s3certpath=${s3certpath:-$certpath}
 
 localcertdir=$configoutputdir/certs
 fnameuserdata=$configoutputdir/${root_name}_user_data.sh
@@ -33,9 +35,22 @@ fi
 #write modified user_data file
 cat <<EOF >  $fnameuserdata
 #!/bin/bash
+
+echo ""
+echo "============================================"
+echo "          SET ECS_CLUSTER ENV               "
+echo "============================================"
+echo ""
+
 mkdir -p /etc/ecs
 echo ECS_CLUSTER=${ecs_cluster_name} >> /etc/ecs/ecs.config;
 echo ECS_BACKEND_HOST= >> /etc/ecs/ecs.config;
+
+echo ""
+echo "============================================"
+echo "        Install fuse, git, jq, unzip        "
+echo "============================================"
+echo ""
 
 if command -v apt-get >/dev/null; then
    apt -qq update -y
@@ -67,6 +82,12 @@ EOF
 
 #--------
 cat <<'EOF' >>  $fnameuserdata
+
+echo ""
+echo "============================================"
+echo "    SET ENV & Install AWS CLI               "
+echo "============================================"
+echo ""
 
 home=$HOME
 if command -v apt-get >/dev/null; then
@@ -140,6 +161,12 @@ if ${ec2launch_install_docker:-true} ; then
     
 cat <<'EOF' >>  $fnameuserdata
 
+echo ""
+echo "============================================"
+echo "           Install DOCKER                   "
+echo "============================================"
+echo ""
+
 #install docker
 if command -v docker >/dev/null; then
 	echo "docker is already installed"
@@ -212,15 +239,21 @@ cp config.json $home/.aws
 EOF
 fi
 
-if $copy_ssl_cert_froms3 ; then
+if ${copy_ssl_cert_froms3} ; then
 cat <<EOF >>  $fnameuserdata
+
+echo ""
+echo "============================================"
+echo "       Install COPY SSL CERT & SSH KEYS     "
+echo "============================================"
+echo ""
 
 #copy cert  
 aws s3 cp $s3certpath ./cert --recursive #| echo "ERROR: can not copy cert folder from s3"
-mkdir -p /etc/ssl
+mkdir -p /etc/ssl/letsencrypt
 
 if [ -d ./cert ]; then
-   cp -r ./cert /etc/ssl/letsencrypt
+   cp -r ./cert/* /etc/ssl/letsencrypt/
 fi
 
 #copy ssh key
@@ -243,8 +276,13 @@ done
 EOF
 fi
 
-if ${setup_nginx:-$copy_ssl_cert_froms3} ; then
+if ${setup_nginx:-${copy_ssl_cert_froms3}} ; then
 cat <<EOF >>  $fnameuserdata
+echo ""
+echo "============================================"
+echo "           Install NGINX & Add app.conf     "
+echo "============================================"
+echo ""
 
 #install nginx
 if command -v apt-get >/dev/null; then
@@ -256,7 +294,7 @@ fi
 cat <<'EndOF' > app.conf
 server {
        listen 80;
-       server_name ${dns_namespace};
+       server_name ${nginxservername};
        server_tokens off;
 
 EOF
@@ -272,18 +310,19 @@ cat <<'EOF' >>  $fnameuserdata
 
 EOF
 #---------
+if ${copy_ssl_cert_froms3} ; then
 cat <<EOF >>  $fnameuserdata
 server {
     listen 443 ssl;
-    server_name ${dns_namespace};
+    server_name ${nginxservername};
     server_tokens off;
 
     #ssl_certificate /etc/ssl/my-aws-public.crt;
     #ssl_certificate_key /etc/ssl/my-aws-private.key;
     #ssl_dhparam /etc/ssl/dhparam.pem;
 
-    ssl_certificate /etc/ssl/letsencrypt/live/${certdnsname:-dns_namespace}/fullchain.pem;
-    ssl_certificate_key /etc/ssl/letsencrypt/live/${certdnsname:-dns_namespace}/privkey.pem;
+    ssl_certificate /etc/ssl/letsencrypt/live/${ssldnsname}/fullchain.pem;
+    ssl_certificate_key /etc/ssl/letsencrypt/live/${ssldnsname}/privkey.pem;
     #include /etc/ssl/letsencrypt/options-ssl-nginx.conf;
     #ssl_dhparam /etc/ssl/letsencrypt/ssl-dhparams.pem;
 
@@ -309,7 +348,11 @@ cat <<'EOF' >>  $fnameuserdata
     }
     
 }
+EOF
 
+fi  #if ssl copy cert
+
+cat <<EOF >>  $fnameuserdata
 EndOF
 
 mkdir -p /etc/nginx/conf.d/

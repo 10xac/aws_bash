@@ -2,7 +2,7 @@
 ##Export region and account
 export AccountId="536509993821"
 #AccountId=$(aws sts get-caller-identity --query Account --output text --profile ${profile_name})  
-export AWS_REGION=${TENX_AWS_REGION:-"us-east-1"} # <- Your AWS Region
+export AWS_REGION=${AIQEM_AWS_REGION:-"us-east-1"} # <- Your AWS Region
 export account=$AccountId
 export region=$AWS_REGION
 echo "account=$account"
@@ -27,6 +27,6 @@ export IamInstanceProfile="arn:aws:iam::536509993821:instance-profile/EC2DockerS
 #---! DO NOT CHANGE THIS UNLESS YOU KNOW WHAT YOU ARE DOING !---------
 export create_acm_certificate=false
 #this is for *.adludio.com
-certificateArn=arn:aws:acm:us-east-1:536509993821:certificate/08f74147-8e19-4c1c-be5a-c9ce6b73b308
+certificateArn=arn:aws:acm:us-east-1:536509993821:certificate/ad6f807f-79bc-49c4-b4e2-92df66d12d2f
 #--------------------------------------------------------------------##
 

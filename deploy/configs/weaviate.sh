@@ -10,22 +10,24 @@ cd $deployDir
 
 #---------------Basic Parameters------------------
 #load the right vpc parameters 
-source ${scriptDir}/vpc_debo.sh
+source ${scriptDir}/vpc_useast1_10academy.sh
 
 #aws cli profile
 export region="us-east-1"
-export profile_name="debo"
-export email="4irworkspaces@gmail.com"
+export profile_name="tenac"
+export email="yabebal@10academy.org"
 #
-export ssmgittoken="debo/dev/env"
-export gituname="debospaces"
+export ssmgittoken="git_token_tenx"
+export gituname="10xac"
 #
-export sshKeyName="dsde-debo-key-pair"
-export s3bucket="s3://all-debo-system/"
-export s3MountBucket=
+export sshKeyName="devops-tenx-useast1-keypair"
+export s3bucket="s3://all-tenx-system"
+#export BUCKET=   #if you want to mount another BUCKET
 export s3_authorized_keys_path=
 #"s3://debo-team/credentials/zelalem/authorized_keys"
 echo "profile=$profile_name"
+
+#
 
 #extra user_data for ec2
 export extrauserdata="user_data/mount-s3fs.sh user_data/run_build.sh"
@@ -33,30 +35,38 @@ export ec2launch_install_docker=true
 
 #application and proxy names
 export ENV=${ENV:-prod}
-export root_name="debo-cms" #name you give to your project in ecs env
-export rootdns=4irworkspaces.com
-export certdnsname="${root_name}.${rootdns}"
-export s3certpath=${s3bucket}/ssl-certs/${root_name}
-export repo_name="debo-cms" #used to check out git repo
-export repo_branch="main"
-#
-export dnsprefix=cms
-if [ "$ENV" == "dev" ]; then
-    export dnsprefix="dev-${dnsprefix}"
-    export root_name="dev-$root_name"
-    export repo_branch="dev"    
-elif [ "$ENV" == "stag" ]; then
-    export dnsprefix="staging-${dnsprefix}"
-    export root_name="staging-$root_name"
-    export repo_branch="staging"
-fi
 
-export dns_namespace="${dnsprefix}.${rootdns}"  ##This should be your domain 
-export dns_ssl_list="${rootdns} ${dnsprefix}.${rootdns} dev-cms.${rootdns} www.${rootdns} dev.${rootdns}"  ##gen ssl 
+#
+export repo_name="tenx-vdb" #used to check out git repo
+export repo_branch="weaviate"   
+
+pp=""
+export root_name="${pp}${repo_branch}-vdb" #name you give to your project in ecs env
+export rootdns=10academy.org
+
+#
+#---------------SSL Parameters------------------
+# pregenerated ssl certificate path 
+export s3certpath="s3://10ac-team/ssl-certs/tenx_vdb"
+
+# parameters in nginx.conf
+export ssldnsname=vdb.10academy.org #what is in letsencrypt/live/<ssldnsname>
+export nginxservername=vdb.10academy.org  #what is in nginx conf
+
+# existing SSL certificate will be copied when an instance starts.
+export copy_ssl_cert_froms3=false
+
+# The nginx will be enabled with the ssl configration and the ec2 instance
+# can be accessed securely.
+export setup_nginx=true
+
+# used in the ssl generation script as well as to insert an A record in R53 
+export dns_namespace="${rootdns}"  ##This should be your domain - DNS name of the server 
+export dns_ssl_list="vdb1.${rootdns} vdb2.${rootdns} weaviate.${rootdns} vdb.${rootdns} milvus.${rootdns}"  ##gen ssl 
 
 export app_name="${root_name}"  #-app
 export proxy_name="${root_name}-proxy"
-export log_group_name="/ecs/ecs-${root_name}-ssl"
+export log_group_name="/ec2/ec2-${root_name}-ssl"
 echo "ENV=$ENV"
 echo "root_name=$root_name"
 echo "dns=$dns_namespace"
@@ -82,15 +92,15 @@ export AwsImageId=$AMI  #Ubuntu latest
 
 
 
-export AwsInstanceType="t3.micro"
-export EbsVolumeSize=30
+export AwsInstanceType="t3.small"
+export EbsVolumeSize=20
      
-export ecsTaskPortMapList=1337  #all ports to expose
+export ecsTaskPortMapList=8080  #all ports to expose
 export ecsTaskFromTemplate=False
 export ecsTaskTemplate=
 
 #ecs service params
-export ecsContainerPort=1337 #The port on the container to associate with the load balancer
+export ecsContainerPort=8080 #The port on the container to associate with the load balancer
 export ecsDesiredCount=0
 export ecsServiceTemplate=template/ecs-ec2-service-template.json
 
@@ -111,15 +121,6 @@ if [ -z $configoutputdir ]; then
     exit 0
 fi
 
-#---------------SSL Parameters------------------
-# When true it means you have generated a letsencrypt
-# or something similar ssl manually, and you have saved it in s3.
-# Moreover, the lanuch template generation code/template is modified accordingly 
-# such that the SSL certificate will be copied when an instance starts.
-# The nginx will be enabled with the ssl configration and the ec2 instance
-# can be accessed securely.
-export copy_ssl_cert_froms3=true
-export setup_nginx=true
 
 #---------------EC2 Parameters------------------
 setup_ec2=true

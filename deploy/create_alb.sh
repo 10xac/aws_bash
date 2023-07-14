@@ -47,9 +47,12 @@ echo "export loadbalancerArn=$loadbalancerArn" > $logoutputdir/alb_output_params
 echo "export targetGroupArn=$targetGroupArn" >> $logoutputdir/alb_output_params.sh
 source $logoutputdir/alb_output_params.sh
 
+echo ""
+echo "creating ALB listeners .."
+echo ""
 aws elbv2 create-listener --load-balancer-arn $loadbalancerArn \
     --protocol HTTPS --port 443  \
     --certificates CertificateArn=$certificateArn \
     --default-actions Type=forward,TargetGroupArn=$targetGroupArn \
     --region $region --profile ${profile_name}
-
+echo "--------done creating alb listeners-------------"

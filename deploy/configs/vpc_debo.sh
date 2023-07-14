@@ -27,6 +27,7 @@ export IamInstanceProfile="arn:aws:iam::969813551597:instance-profile/EC2DockerS
 #---! DO NOT CHANGE THIS UNLESS YOU KNOW WHAT YOU ARE DOING !---------
 export create_acm_certificate=false
 #this is for *.adludio.com
-certificateArn=arn:aws:acm:us-east-1:969813551597:certificate/265cf81c-e7c4-41df-b98a-c8a6bc29d746
+certificateArn=arn:aws:acm:us-east-1:969813551597:certificate/3c726dfd-e232-438c-b7da-6d48c39db012
+
 #--------------------------------------------------------------------##
 

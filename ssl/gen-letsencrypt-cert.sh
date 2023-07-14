@@ -30,7 +30,7 @@ cd $curdir
 source ssl/create_ssl_configs.sh ""
 
 # define key parameters for certbot
-domains=(${dns_namespace})
+domains=(${ssldnsname:-$dns_namespace})
 echo "checking of --${dns_ssl_list}-- is empty"
 if [ ${#dns_ssl_list[@]} -eq 0 ]; then
   dns_namespace_array=(${dns_namespace})

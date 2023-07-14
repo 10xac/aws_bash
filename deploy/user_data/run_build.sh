@@ -9,6 +9,12 @@ fi
 
 cat <<EOF >>  $fout
 
+echo ""
+echo "============================================"
+echo "           Git Clone APP and run build.sh   "
+echo "============================================"
+echo ""
+
 
 region=${region:-"eu-west-1"}
 ssmgittoken=${ssmgittoken:-"git_token_tenx"}
