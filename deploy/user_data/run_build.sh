@@ -34,9 +34,9 @@ if [ ! -z $repo_name ]; then
                     --query SecretString \
                     --output text --region $region)
     if [[ $ssmres == *"git_token"* ]]; then
-        git_token=$(echo $ssmres | jq -r '.git_token')
-    else
         git_token=$(echo $ssmres | cut -d: -f2 | tr -d \"})
+    else
+        git_token=$(echo $ssmres | jq -r '.git_token')
     fi
 
   #----------------------
