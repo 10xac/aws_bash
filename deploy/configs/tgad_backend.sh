@@ -62,7 +62,7 @@ export setup_nginx=true
 
 # used in the ssl generation script as well as to insert an A record in R53 
 export dns_namespace="${rootdns}"  ##This should be your domain - DNS name of the server 
-export dns_ssl_list="tgadb.${rootdns} adb.${rootdns} tgad.${rootdns} dev-tgadb.${rootdns} dev-adb.${rootdns} laq.${rootdns} dev-laq.${rootdns} laqb.${rootdns} dev-laqb.${rootdns}"  ##gen ssl 
+export dns_ssl_list="tgadb.${rootdns} adb.${rootdns} eth.${rootdns} dev-tgadb.${rootdns} dev-adb.${rootdns} dev-eth.${rootdns} laq.${rootdns} dev-laq.${rootdns} laqb.${rootdns} dev-laqb.${rootdns}"  ##gen ssl 
 
 export app_name="${root_name}"  #-app
 export proxy_name="${root_name}-proxy"
