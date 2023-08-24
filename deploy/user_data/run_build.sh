@@ -36,7 +36,7 @@ if [ ! -z $repo_name ]; then
     if [[ $ssmres == *"git_token"* ]]; then
         git_token=$(echo $ssmres | cut -d: -f2 | tr -d \"})
     else
-        git_token=$(echo $ssmres | jq -r '.git_token')
+        git_token=$(echo $ssmres | jq -r '.token')
     fi
 
   #----------------------
