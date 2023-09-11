@@ -6,17 +6,17 @@ if [ ! -z "$1" ]; then
     root_name=$1 #many key variables returned
     ENV=${2:-"prod"}
     profile_name=${3:-tenac}
-    region=${4:-eu-west-1}
+    region=${4:-us-east-1}
 fi
 
 if [ ! -z ${root_name} ]; then
     base_dir=$root_name
     #
-    export logoutputdir=output/${base_dir}/logs
-    export configoutputdir=output/${base_dir}/configs
+    export logoutputdir=output/${region}/${base_dir}/logs
+    export configoutputdir=output/${region}/${base_dir}/configs
 
     #
-    aws s3 cp $s3bucket/aws_bash_output/${base_dir} output/ --recursive \
+    aws s3 cp $s3bucket/aws_bash_output/${region}/${base_dir} output/ --recursive \
         --region $region --profile $profile_name
 
     if [ ! -d $logoutputdir ]; then

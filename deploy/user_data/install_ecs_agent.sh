@@ -12,7 +12,7 @@ cat <<EOF >>  $fout
 
 echo ""
 echo "============================================"
-echo "    Install ECS Agent and Awslog with config"
+echo "    Install Awslog with config"
 echo "============================================"
 echo ""
 
@@ -23,80 +23,6 @@ curl -o /root/amazon-cloudwatch-agent.deb https://s3.amazonaws.com/amazoncloudwa
 #install it
 dpkg -i -E /root/amazon-cloudwatch-agent.deb
 
-cat <<'EOFF' >> /opt/aws/amazon-cloudwatch-agent/bin/config.json
-{
-        "agent": {
-                "metrics_collection_interval": 60,
-                "run_as_user": "root"
-        },
-        "logs": {
-                "logs_collected": {
-                        "files": {
-                                "collect_list": [
-                                        {
-                                                "file_path": "/var/log/ecs-agent.log",
-                                                "log_group_name": "ecs-agent-log-group",
-                                                "log_stream_name": "{instance_id}/agent.log",
-                                                "retention_in_days": -1
-                                        },
-                                        {                                       
-                                        	"file_path": "/var/log/nginx/access.log",
-                                                "log_group_name": "web-server-log-group",
-                                                "log_stream_name": "{instance_id}/access.log",
-                                                "timestamp_format" :"[%d/%b/%Y:%H:%M:%S %z]",
-                                                "retention_in_days": -1
-                                        },
-                                        {
-                                        	"file_path": "/var/log/nginx/error.log",
-                                               	"log_group_name": "web-server-log-group",
-                                               	"log_stream_name": "{instance_id}/error.log",
-                                               	"timestamp_format" :"[%d/%b/%Y:%H:%M:%S %z]",
-                                                "retention_in_days": -1
-                                        }
-                                ]
-                        }
-                }
-        },
-        "metrics": {
-                "aggregation_dimensions": [
-                        [
-                                "InstanceId"
-                        ]
-                ],
-                "append_dimensions": {
-                        "AutoScalingGroupName": "${aws:AutoScalingGroupName}",
-                        "ImageId": "${aws:ImageId}",
-                        "InstanceId": "${aws:InstanceId}",
-                        "InstanceType": "${aws:InstanceType}"
-                },
-                "metrics_collected": {
-                        "collectd": {
-                                "metrics_aggregation_interval": 60
-                        },
-                        "disk": {
-                                "measurement": [
-                                        "used_percent"
-                                ],
-                                "metrics_collection_interval": 60,
-                                "resources": [
-                                        "*"
-                                ]
-                        },
-                        "mem": {
-                                "measurement": [
-                                        "mem_used_percent"
-                                ],
-                                "metrics_collection_interval": 60
-                        },
-                        "statsd": {
-                                "metrics_aggregation_interval": 60,
-                                "metrics_collection_interval": 60,
-                                "service_address": ":8125"
-                        }
-                }
-        }
-}
-EOFF
 
 #Add cwagent User to adm group
 #usermod -aG adm cwagent
@@ -135,7 +61,13 @@ ECS_LOGLEVEL=info
 EOFF
 
 sudo sysctl -p /etc/sysctl.conf
-sudo systemctl restart docker
+
+
+
+echo "============================================"
+echo "    Install ECS Agent"
+echo "============================================"
+
 
 curl -o ecs-agent.tar https://s3.${region:-eu-west-1}.amazonaws.com/amazon-ecs-agent-${region:-eu-west-1}/ecs-agent-latest.tar
 
@@ -143,7 +75,6 @@ docker load --input ./ecs-agent.tar
 
 docker run --name ecs-agent \
        --detach=true \
-       --restart=on-failure:10 \
        --volume=/var/run:/var/run \
        --volume=/var/log/ecs/:/log \
        --volume=/var/lib/ecs/data:/data \

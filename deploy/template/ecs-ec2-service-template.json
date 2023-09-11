@@ -11,7 +11,7 @@
             ],
     "launchType": "$ECSLaunchType", 
     "deploymentConfiguration": {
-                "maximumPercent": 200,
+                "maximumPercent": 100,
                 "minimumHealthyPercent": 0
             },
     "desiredCount": ${ecsDesiredCount},
