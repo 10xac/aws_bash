@@ -113,21 +113,46 @@ fi
 if [ -f /usr/local/bin/s3fs ]; then
     sudo su -c 'echo user_allow_other >> /etc/fuse.conf'
     mkdir -p /mnt/s3fs-cache
-    mkdir -p /mnt/$BUCKET
 fi
 
-/usr/local/bin/s3fs $BUCKET /mnt/$BUCKET -o allow_other -o $pval \
-	      -o umask=0 -o url=https://s3.amazonaws.com  -o no_check_certificate \
-	      -o cipher_suites=AESGCM \
-	      -o max_background=1000 \
-	      -o max_stat_cache_size=100000 \
-	      -o multipart_size=52 \
-	      -o parallel_count=30 \
-	      -o multireq_max=30 \
-	      -o dbglevel=warn \
-	      -o enable_noobj_cache -o use_cache=/mnt/s3fs-cache
+function mount_bucket(){
 
-echo "mounting $BUCKET done"
+    if [[ ! -z $1 ]]; then
+        mkdir -p /mnt/$BUCKET
+        
+        /usr/local/bin/s3fs $1 /mnt/$1 -o allow_other -o $pval \
+	                -o umask=0 -o url=https://s3.amazonaws.com  -o no_check_certificate \
+	                -o cipher_suites=AESGCM \
+	                -o max_background=1000 \
+	                -o max_stat_cache_size=100000 \
+	                -o multipart_size=52 \
+	                -o parallel_count=30 \
+	                -o multireq_max=30 \
+	                -o dbglevel=warn \
+	                -o enable_noobj_cache -o use_cache=/mnt/s3fs-cache
+    
+        echo "mounting $1 done"
+    else
+        echo "You need to pass BUCKET as first argument to mount_bucket function!"
+    fi
+}
+
+mount_bucket $BUCKET
+
+if [[ -z ${OTHER_BUCKETS} ]]; then    
+    for bkt in ${OTHER_BUCKETS[@]}; do
+        exists=true
+        aws s3api head-bucket --bucket $BUCKET  || exists=false
+        if $exists; then        
+            mount_bucket $bkt
+        else
+            echo "BUCKET=$bkt does not exist in S3! Skipping mounting .."
+        fi
+        
+    done
+fi
+
+
 #-o kernel_cache 
 
 #sudo chmod 777 -R /mnt || echo "unable to change /mnt permission"

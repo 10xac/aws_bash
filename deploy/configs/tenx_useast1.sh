@@ -173,7 +173,7 @@ export ECSLaunchType="EC2"  #"FARGATE"
 
 
 #ECS task execution IAM role
-export ecsTaskExecutionRoleArn="arn:aws:iam::$account:role/ecsTaskExecutionRole"
+export ecsTaskExecutionRoleArn="arn:aws:iam::$account:role/ECSTaskExecutionRole"
 export ecsTaskRoleArn="arn:aws:iam::$account:role/ECSTaskRole"
 
 export params_file="$scriptDir/$0"

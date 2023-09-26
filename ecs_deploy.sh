@@ -162,5 +162,5 @@ fi
 #------------------------------------------------------#
 
 outputdir=$(dirname $logoutputdir)
-aws s3 cp $outputdir $s3bucket/aws_bash_output/ --recursive \
+aws s3 cp $outputdir $s3bucket/aws_bash_output/$region/ --recursive \
     --region $region --profile $profile_name
