@@ -28,29 +28,27 @@ export s3_authorized_keys_path="s3://10ac-team/credentials/bereket/authorized_ke
 echo "profile=$profile_name"
 
 #extra user_data for ec2
-export extrauserdata="user_data/mount-s3fs.sh user_data/install_ecs_agent.sh"
+export extrauserdata="user_data/mount-s3fs.sh user_data/run_build.sh"
 export ec2launch_install_docker=true
 
 #application and proxy names
-export ENV=${ENV:-dev}
+export ENV=${ENV:-prod}
 
-export repo_name="tenx-app" #used to check out git repo
-export repo_branch="main"
+export repo_name="tenx-cms" #used to check out git repo
+export repo_branch="applyprod"
 
-export root_name="tenx" #name you give to your project in ecs env
+export root_name="apply-cms" #name you give to your project in ecs env
 export rootdns=10academy.org
 
-export dnsprefix=tenx
+export dnsprefix=apply-cms
 if [ "$ENV" == "dev" ]; then
     export dnsprefix="dev-${dnsprefix}"
     export root_name="dev-$root_name"
-    export repo_name="tenx-app" #used to check out git repo
-    export repo_branch="dev"    
-elif [ "$ENV" == "stag" ]; then
+    export repo_branch="applydev"    
+elif [ "$ENV" == "stage" ]; then
     export dnsprefix="dev-${dnsprefix}"
     export root_name="dev-$root_name"
-    export repo_name="tenx-app" #used to check out git repo
-    export repo_branch="staging"
+    export repo_branch="applystage"
 fi
 
 export dns_namespace="${dnsprefix}.${rootdns}"  ##This should be your domain 
@@ -105,12 +103,12 @@ export AwsInstanceType="t3.small"
 export EbsVolumeSize=20
 #----------
      
-export ecsTaskPortMapList=3000  #all ports to expose
+export ecsTaskPortMapList=1337  #all ports to expose
 export ecsTaskFromTemplate=False
 export ecsTaskTemplate=
 
 #ecs service params
-export ecsContainerPort=3000 #The port on the container to associate with the load balancer
+export ecsContainerPort=1337 #The port on the container to associate with the load balancer
 export ecsDesiredCount=0
 export ecsServiceTemplate=template/ecs-ec2-service-template.json
 
@@ -154,13 +152,13 @@ export create_route53_record=False
 export route53RecordTemplate=template/r53-record-set-template.json
 
 #-----------------ECS Parameters---------------
-setup_ecs=true
+setup_ecs=false
 
 #now load the common ec2 params
 source ${scriptDir}/ecs_params.sh
 
 #create ECR repo
-export create_ecr_repo=true
+export create_ecr_repo=false
 
 #ECS parameters
 export ecr_repo_name=${root_name}

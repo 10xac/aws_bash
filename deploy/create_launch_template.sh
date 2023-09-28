@@ -248,12 +248,14 @@ echo "       Install COPY SSL CERT & SSH KEYS     "
 echo "============================================"
 echo ""
 
+ssldirname=$(basename $s3certpath)
+
 #copy cert  
 aws s3 cp $s3certpath ./cert --recursive #| echo "ERROR: can not copy cert folder from s3"
-mkdir -p /etc/ssl/letsencrypt
+mkdir -p /etc/ssl
 
 if [ -d ./cert ]; then
-   cp -r ./cert/* /etc/ssl/letsencrypt/
+   cp -r ./cert/* /etc/ssl/
 fi
 
 #copy ssh key
@@ -317,16 +319,21 @@ server {
     server_name ${nginxservername};
     server_tokens off;
 
-    #ssl_certificate /etc/ssl/my-aws-public.crt;
-    #ssl_certificate_key /etc/ssl/my-aws-private.key;
-    #ssl_dhparam /etc/ssl/dhparam.pem;
-
+EOF
+if [[ ${sslbasename} == "sectigo" ]] ; then
+cat <<EOF >>  $fnameuserdata
+    ssl_certificate /etc/ssl/ssl-bundle.crt;
+    ssl_certificate_key /etc/ssl/my-aws-private.key;
+EOF
+else
+cat <<EOF >>  $fnameuserdata
     ssl_certificate /etc/ssl/letsencrypt/live/${ssldnsname}/fullchain.pem;
     ssl_certificate_key /etc/ssl/letsencrypt/live/${ssldnsname}/privkey.pem;
     #include /etc/ssl/letsencrypt/options-ssl-nginx.conf;
     #ssl_dhparam /etc/ssl/letsencrypt/ssl-dhparams.pem;
 
 EOF
+fi
 #-------
 cat <<'EOF' >>  $fnameuserdata
 

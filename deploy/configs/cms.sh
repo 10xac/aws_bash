@@ -35,7 +35,8 @@ export ENV=${ENV:-prod}
 export root_name="cms" #name you give to your project in ecs env
 export rootdns=10academy.org
 export certdnsname=${root_name}.${rootdns}
-export s3certpath=${s3bucket}/ssl-certs/${root_name}
+export s3certpath="s3://all-tenx-system/ssl-certs/sectigo"
+#export s3certpath=${s3bucket}/ssl-certs/${root_name}
 export repo_name="tenx-cms" #used to check out git repo
 export repo_branch="main"
 

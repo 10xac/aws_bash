@@ -47,10 +47,11 @@ export rootdns=10academy.org
 #
 #---------------SSL Parameters------------------
 # pregenerated ssl certificate path 
-export s3certpath="s3://10ac-team/ssl-certs/tenx_vdb"
+#export s3certpath="s3://10ac-team/ssl-certs/tenx_vdb"
+export s3certpath="s3://all-tenx-system/ssl-certs/sectigo"
 
 # parameters in nginx.conf
-export ssldnsname=vdb.10academy.org #what is in letsencrypt/live/<ssldnsname>
+export ssldnsname= #what is in letsencrypt/live/<ssldnsname>
 export nginxservername=vdb.10academy.org  #what is in nginx conf
 
 # existing SSL certificate will be copied when an instance starts.
