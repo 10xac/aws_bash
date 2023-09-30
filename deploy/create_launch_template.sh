@@ -320,7 +320,7 @@ server {
     server_tokens off;
 
 EOF
-if [[ ${sslbasename} == "sectigo" ]] ; then
+if [[ $(basename $s3certpath) == "sectigo" ]] ; then
 cat <<EOF >>  $fnameuserdata
     ssl_certificate /etc/ssl/ssl-bundle.crt;
     ssl_certificate_key /etc/ssl/my-aws-private.key;
