@@ -25,7 +25,7 @@ if $asgexist ; then
     res=$(aws autoscaling update-auto-scaling-group \
               --auto-scaling-group-name $AsgName \
               --launch-template LaunchTemplateName=$AsgTemplateName,Version='$Latest' \
-              --min-size $AsgMaxSize \
+              --min-size $AsgMinSize \
               --max-size $AsgMaxSize \
               --desired-capacity $AsgDesiredSize \
               --region $region --profile ${profile_name})
@@ -37,8 +37,8 @@ else
               --launch-template LaunchTemplateName=$AsgTemplateName,Version='$Latest' \
               --target-group-arns $targetGroupArn \
               --health-check-type EC2 \
-              --health-check-grace-period 160 \
-              --min-size $AsgMaxSize \
+              --health-check-grace-period 60 \
+              --min-size $AsgMinSize \
               --max-size $AsgMaxSize \
               --desired-capacity $AsgDesiredSize \
               --termination-policies "OldestInstance" \

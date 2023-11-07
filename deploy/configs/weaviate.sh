@@ -52,10 +52,10 @@ export s3certpath="s3://all-tenx-system/ssl-certs/sectigo"
 
 # parameters in nginx.conf
 export ssldnsname= #what is in letsencrypt/live/<ssldnsname>
-export nginxservername=vdb.10academy.org  #what is in nginx conf
+export nginxservername="vdb.10academy.org"  #what is in nginx conf
 
 # existing SSL certificate will be copied when an instance starts.
-export copy_ssl_cert_froms3=false
+export copy_ssl_cert_froms3=true
 
 # The nginx will be enabled with the ssl configration and the ec2 instance
 # can be accessed securely.

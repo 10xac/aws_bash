@@ -34,13 +34,13 @@ export ec2launch_install_docker=true
 #application and proxy names
 export ENV=${ENV:-dev}
 
-export repo_name="tenx_saas_application" #used to check out git repo
+export repo_name="chatbot-be-api" #used to check out git repo
 export repo_branch="$ENV"
 
-export root_name="tenx-apply" #name you give to your project in ecs env
+export root_name="nana" #name you give to your project in ecs env
 export rootdns=10academy.org
 
-export dnsprefix=apply
+export dnsprefix=nana
 if [ "$ENV" == "prod" ]; then
     export dnsprefix="${dnsprefix}"
     export root_name="prod-$root_name"
@@ -111,12 +111,12 @@ fi
 export EbsVolumeSize=20
 #----------
      
-export ecsTaskPortMapList=5173  #all ports to expose
+export ecsTaskPortMapList=8000  #all ports to expose
 export ecsTaskFromTemplate=False
 export ecsTaskTemplate=
 
 #ecs service params
-export ecsContainerPort=5173 #The port on the container to associate with the load balancer
+export ecsContainerPort=8000 #The port on the container to associate with the load balancer
 export ecsDesiredCount=1
 export ecsHealthTime=30
 export ecsServiceTemplate=template/ecs-ec2-service-template.json
@@ -167,8 +167,7 @@ setup_ecs=true
 source ${scriptDir}/ecs_params.sh
 
 #create ECR repo
-export create_ecr_repo=false
-export aws_ecr_repository_url_app=070096167435.dkr.ecr.us-east-1.amazonaws.com/dev-tenx-apply:latest
+export create_ecr_repo=true
 
 #ECS parameters
 export ecr_repo_name=${root_name}

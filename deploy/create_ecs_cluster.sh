@@ -29,7 +29,7 @@ cat <<EOF > $fout
   "requiresCompatibilities": [ 
        "$ECSLaunchType" 
     ],
-  "networkMode": "bridge",
+  "networkMode": "host",
   "cpu": "$ecsTaskCpuUnit",
   "memory": "$ecsTaskMemoryUnit",  
   "containerDefinitions": [
@@ -44,32 +44,32 @@ cat <<EOF > $fout
         }
       },
       "portMappings": [
-        {
-          "hostPort": 3306,
-          "protocol": "tcp",
-          "containerPort": 3306
-        },
-        {
-          "hostPort": 5432,
-          "protocol": "tcp",
-          "containerPort": 5432
-        },
 EOF
-for port in $ecsTaskPortMapList; do 
+# for port in $ecsTaskPortMapList; do 
+# cat <<EOF >> $fout
+#         {
+#           "hostPort": 3306,
+#           "protocol": "tcp",
+#           "containerPort": 3306
+#         },
+#         {
+#           "hostPort": 5432,
+#           "protocol": "tcp",
+#           "containerPort": 5432
+#         },
+#         {
+#           "hostPort": $port,
+#           "protocol": "tcp",
+#           "containerPort": $port
+#         },        
+#         {
+#           "hostPort": 80,
+#           "protocol": "tcp",
+#           "containerPort": 80
+#         }            
+# EOF
+# done
 cat <<EOF >> $fout
-        {
-          "hostPort": $port,
-          "protocol": "tcp",
-          "containerPort": $port
-        },                    
-EOF
-done
-cat <<EOF >> $fout
-        {
-          "hostPort": 80,
-          "protocol": "tcp",
-          "containerPort": 80
-        },
         {
           "hostPort": 443,
           "protocol": "tcp",
@@ -80,7 +80,7 @@ cat <<EOF >> $fout
       "environment": [
         {
           "name": "GIT_TOKEN",
-          "value": "arn:aws:secretsmanager:eu-west-1:$account:secret:$ssmgittoken"
+          "value": "arn:aws:secretsmanager:${region}:$account:secret:$ssmgittoken"
         }
       ],
       "image": "$aws_ecr_repository_url_app",
@@ -122,9 +122,18 @@ if $(echo $res | jq '.clusters | length==0') ; then
 fi
 
 
-#Register the task definition.
-res=$(aws ecs register-task-definition \
-    --cli-input-json file://$fout \
-    --region $region --profile ${profile_name})
+if [[ ! -z $ecsExistingTaskName ]]; then
+echo "Using existing task with task_name=$ecsExistingTaskName ..."
+cat <<EOF > $logoutputdir/output-register-ecs-task.json
+{ "taskDefinition": { "taskDefinitionArn": "arn:aws:ecs:${region}:${account}:task-definition/${ecsExistingTaskName}" } }
+EOF
 
-echo $res > $logoutputdir/output-register-ecs-task.json
+else
+
+    #Register the task definition.
+    res=$(aws ecs register-task-definition \
+              --cli-input-json file://$fout \
+              --region $region --profile ${profile_name})
+    
+    echo $res > $logoutputdir/output-register-ecs-task.json
+fi

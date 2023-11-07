@@ -29,6 +29,8 @@ echo "profile=$profile_name"
 
 #extra user_data for ec2
 export extrauserdata="user_data/mount-s3fs.sh user_data/run_build.sh"
+#"user_data/mount-s3fs.sh user_data/install_ecs_agent.sh user_data/run_build.sh""
+
 export ec2launch_install_docker=true
 
 #application and proxy names
@@ -84,22 +86,25 @@ amiarc="amd64"    #
 echo "Fetching latest Ubuntu AMI of type ${amiarc} .."
 amipath="/aws/service/canonical/ubuntu/server/focal/stable/current/${amiarc}/hvm/ebs-gp2/ami-id"
 #                                                                                                                                                        
-echo "using amipath=$amipath"
-if $(curl -s -m 5 http://169.254.169.254/latest/dynamic/instance-identity/document | grep -q availabilityZone) ; then
-    auth="--region $region"
-else
-    auth="--profile ${profile_name} --region $region"
-fi
+# echo "using amipath=$amipath"
+# if $(curl -s -m 5 http://169.254.169.254/latest/dynamic/instance-identity/document | grep -q availabilityZone) ; then
+#     auth="--region $region"
+# else
+#     auth="--profile ${profile_name} --region $region"
+# fi
 
-AMI=$(aws ssm get-parameters --names $amipath \
-          --query 'Parameters[0].[Value]' \
-          --output text $auth )
+# AMI=$(aws ssm get-parameters --names $amipath \
+#           --query 'Parameters[0].[Value]' \
+#           --output text $auth )
 
+AMI="ami-0a9a32d9e4269d746"  #ubuntu22-ecs-nginx-s3mount
 echo "using AMI-ID=$AMI"
-export AwsImageId=$AMI  #Ubuntu latest
-
+export AwsImageId=$AMI
 
 export AwsInstanceType="t3.small"
+if [ "$ENV" == "prod" ]; then
+    export AwsInstanceType="t3.medium"
+fi
 export EbsVolumeSize=20
 #----------
      
@@ -110,6 +115,7 @@ export ecsTaskTemplate=
 #ecs service params
 export ecsContainerPort=1337 #The port on the container to associate with the load balancer
 export ecsDesiredCount=0
+export ecsHealthTime=60
 export ecsServiceTemplate=template/ecs-ec2-service-template.json
 
 #---------------Github Parameters------------------
@@ -158,7 +164,7 @@ setup_ecs=false
 source ${scriptDir}/ecs_params.sh
 
 #create ECR repo
-export create_ecr_repo=false
+export create_ecr_repo=true
 
 #ECS parameters
 export ecr_repo_name=${root_name}

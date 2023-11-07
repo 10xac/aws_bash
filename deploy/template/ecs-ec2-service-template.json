@@ -6,7 +6,7 @@
                 {
                     "targetGroupArn": "$targetGroupArn",
                     "containerName": "${app_container_name}",
-                    "containerPort": ${ecsContainerPort}
+                    "containerPort": 443
                 }
             ],
     "launchType": "$ECSLaunchType", 
@@ -15,7 +15,7 @@
                 "minimumHealthyPercent": 0
             },
     "desiredCount": ${ecsDesiredCount},
-    "healthCheckGracePeriodSeconds": 600,
+    "healthCheckGracePeriodSeconds": ${ecsHealthTime},
     "schedulingStrategy": "REPLICA",
     "enableECSManagedTags": false,
     "propagateTags": "TASK_DEFINITION"    

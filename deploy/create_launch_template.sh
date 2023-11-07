@@ -239,7 +239,7 @@ cp config.json $home/.aws
 EOF
 fi
 
-if ${copy_ssl_cert_froms3} ; then
+if ${copy_ssl_cert_froms3:-true} ; then
 cat <<EOF >>  $fnameuserdata
 
 echo ""
@@ -278,7 +278,7 @@ done
 EOF
 fi
 
-if ${setup_nginx:-${copy_ssl_cert_froms3}} ; then
+if ${setup_nginx:-${copy_ssl_cert_froms3:-true}} ; then
 cat <<EOF >>  $fnameuserdata
 echo ""
 echo "============================================"
@@ -312,7 +312,7 @@ cat <<'EOF' >>  $fnameuserdata
 
 EOF
 #---------
-if ${copy_ssl_cert_froms3} ; then
+if ${copy_ssl_cert_froms3:-true} ; then
 cat <<EOF >>  $fnameuserdata
 server {
     listen 443 ssl;
@@ -381,7 +381,7 @@ if (( ${#extrauserdata[@]} )); then
         fi
     done
 
-if ${setup_nginx:-$copy_ssl_cert_froms3} ; then    
+if ${setup_nginx:-$copy_ssl_cert_froms3:-true} ; then    
 cat <<EOF >>  $fnameuserdata
 systemctl restart nginx
 

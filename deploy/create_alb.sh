@@ -29,7 +29,7 @@ if [ -z $targetGroupArn ]; then
               --health-check-protocol HTTP \
               --health-check-port 80 \
               --health-check-timeout-seconds 5 \
-              --health-check-interval-seconds 60 \
+              --health-check-interval-seconds 15 \
               --health-check-path / \
               --target-type instance \
               --vpc-id $vpcId \

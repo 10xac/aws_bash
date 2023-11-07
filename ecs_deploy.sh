@@ -79,8 +79,13 @@ fi
 ##------------------------------------------------------#
 
 if $create_launch_template ; then
-    echo "Creating and setting up Launch Template  ..."      
-    source create_launch_template.sh "" #returns AsgId variables
+    if [[ $AwsImageId == $AwsImageOurs ]]; then
+        echo "Updating Launch Template from pre-made AMI ..."          
+        source update_launch_template.sh ""    
+    else
+        echo "Creating and setting up Launch Template  ..."      
+        source create_launch_template.sh "" #returns AsgId variables
+    fi
 fi
 
 if $create_and_setup_asg && [ $ECSLaunchType == "EC2" ]; then

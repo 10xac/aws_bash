@@ -10,37 +10,37 @@ cd $deployDir
 
 #---------------Basic Parameters------------------
 #load the right vpc parameters
-source ${scriptDir}/vpc_useast1_10academy.sh
+source ${scriptDir}/vpc_aiqem.sh
 
 #aws cli profile
 export region="us-east-1"
-export profile_name="tenac"
-export email="yabebal@10academy.org"
+export profile_name="aiqem"
+export email="yabebal@gmail.org"
 #
-export ssmgittoken="git_token_tenx"
-export gituname="10xac"
+export ssmgittoken="git/token/yabi"
+export gituname="AiQeM-Tech"
 #
-export sshKeyName="devops-tenx-useast1-keypair"
-export s3bucket="s3://all-tenx-system"
+export sshKeyName="dsde-aiqem-key-pair"
+export s3bucket="s3://aiqem-team"
 export s3MountBucket=
-export s3_authorized_keys_path="s3://10ac-team/credentials/bereket/authorized_keys"
+export s3_authorized_keys_path=""
 #
 echo "profile=$profile_name"
 
 #extra user_data for ec2
 export extrauserdata="user_data/install_ecs_agent.sh"
-export ec2launch_install_docker=true
+export ec2launch_install_docker=false
 
 #application and proxy names
-export ENV=${ENV:-dev}
+export ENV=${ENV:-prod}
 
-export repo_name="tenx_saas_application" #used to check out git repo
+export repo_name="tgad-polling" #used to check out git repo
 export repo_branch="$ENV"
 
-export root_name="tenx-apply" #name you give to your project in ecs env
-export rootdns=10academy.org
+export root_name="tgad" #name you give to your project in ecs env
+export rootdns=aiqem.tech
 
-export dnsprefix=apply
+export dnsprefix=tgad
 if [ "$ENV" == "prod" ]; then
     export dnsprefix="${dnsprefix}"
     export root_name="prod-$root_name"
@@ -59,10 +59,10 @@ export dns_namespace="${dnsprefix}.${rootdns}"  ##This should be your domain
 
 #---------------SSL Parameters------------------
 # pregenerated ssl certificate path 
-export s3certpath="s3://all-tenx-system/ssl-certs/sectigo"  #path to live/ folder 
+export s3certpath="s3://aiqem-team/ssl-certs/tgadb"  #path to live/ folder 
 
 # parameters in nginx.conf
-export ssldnsname= #what is in letsencrypt/live/<ssldnsname>
+export ssldnsname="tgadb.aiqem.tech" #what is in letsencrypt/live/<ssldnsname>
 export nginxservername=${dns_namespace}  #what is in nginx conf
 
 # existing SSL certificate will be copied when an instance starts.
@@ -70,10 +70,11 @@ export copy_ssl_cert_froms3=true
 
 # The nginx will be enabled with the ssl configration and the ec2 instance
 # can be accessed securely.
-export setup_nginx=true
+export setup_nginx=false
 
 # used in the ssl generation script as well as to insert an A record in R53 
-export dns_ssl_list="tenx.${rootdns} dev-tenx.${rootdns} stage-tenx.${rootdns} prompts.${rootdns} dev-prompts.${rootdns} apply.${rootdns} dev-apply.${rootdns} agent.${rootdns} dev-agent.${rootdns}"  ##gen ssl 
+export dns_namespace="${rootdns}"  ##This should be your domain - DNS name of the server 
+export dns_ssl_list="tgadb.${rootdns} adb.${rootdns} eth.${rootdns} dev-tgadb.${rootdns} dev-adb.${rootdns} dev-eth.${rootdns} laq.${rootdns} dev-laq.${rootdns} laqb.${rootdns} dev-laqb.${rootdns}"  ##gen ssl 
 
 #-------------- EC2 Instance Params --------------------
 export app_name="${root_name}"  #-app
@@ -99,7 +100,7 @@ amiarc="amd64"    #
 #           --query 'Parameters[0].[Value]' \
 #           --output text $auth )
 
-export AwsImageOurs="ami-0a47704035ec5db19"
+export AwsImageOurs="ami-0ba12efa21d226167"
 export AMI=$AwsImageOurs  #ubuntu22-ecs-nginx-s3mount
 echo "using AMI-ID=$AMI"
 export AwsImageId=$AMI  #Ubuntu latest
@@ -111,12 +112,14 @@ fi
 export EbsVolumeSize=20
 #----------
      
-export ecsTaskPortMapList=5173  #all ports to expose
+export ecsTaskPortMapList=5000  #all ports to expose
 export ecsTaskFromTemplate=False
 export ecsTaskTemplate=
+export ecsExistingTaskName="tgad-app-ecs-task:4"
+export ecsExistingContainerName="server"
 
 #ecs service params
-export ecsContainerPort=5173 #The port on the container to associate with the load balancer
+export ecsContainerPort=443 #The port on the container to associate with the load balancer
 export ecsDesiredCount=1
 export ecsHealthTime=30
 export ecsServiceTemplate=template/ecs-ec2-service-template.json
@@ -150,7 +153,7 @@ source ${scriptDir}/ec2_params.sh
 export alb="ecs-${root_name}-alb"
 export AsgName="ecs-${root_name}-asg"
 export AsgMinSize=1
-export AsgMaxSize=1
+export AsgMaxSize=2
 export AsgDesiredSize=1
 export AsgTemplateName="${root_name}-launch-template"
 export AsgTemplateVersion=1
@@ -168,21 +171,20 @@ source ${scriptDir}/ecs_params.sh
 
 #create ECR repo
 export create_ecr_repo=false
-export aws_ecr_repository_url_app=070096167435.dkr.ecr.us-east-1.amazonaws.com/dev-tenx-apply:latest
 
 #ECS parameters
 export ecr_repo_name=${root_name}
 export ecs_cluster_name="ecs-${root_name}-cluster"                      
-export app_container_name="${root_name}-container"  #-app
+export app_container_name=${ecsExistingContainerName:-"${root_name}-container"}  #-app
 #export proxy_container_name="${root_name}-proxy-container"
-export task_name="ecs-${root_name}-task"
+export task_name=${ecsExistingTaskName:-"ecs-${root_name}-task"}
 export service_name="ecs-${root_name}-service"
 export ECSLaunchType="EC2"  #"FARGATE"
 
 
 #ECS task execution IAM role
 export ecsTaskExecutionRoleArn="arn:aws:iam::$account:role/ECSTaskExecutionRole"
-export ecsTaskRoleArn="arn:aws:iam::$account:role/ECSTaskRole"
+export ecsTaskRoleArn="arn:aws:iam::$account:role/ECSTaskExecutionRole"
 
 export params_file="$scriptDir/$0"
 
