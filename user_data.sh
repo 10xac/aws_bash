@@ -74,6 +74,7 @@ echo "current director: `pwd`"
 echo "config git email and name .."
 git config --global user.email "yabebal@gmail.com"
 git config --global user.name "Yabebal Fantaye"
+git config --global core.fileMode false
 
 #----------get git packages
 ssmgittoken=

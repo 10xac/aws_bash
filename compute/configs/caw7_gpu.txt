@@ -13,7 +13,7 @@ CRED_FOLDERS=""
 
 
 ###jupyter notebook folder
-NOTEBOOK_FOLDER="$BUCKET/notebooks"
+NOTEBOOK_FOLDER="/home"
 
 ###features to install or setup
 mounts3=true
