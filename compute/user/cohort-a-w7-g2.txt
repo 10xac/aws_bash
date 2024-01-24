@@ -5,3 +5,4 @@ eyaya_eneyew,root
 abdulhamid_mussa,root
 meron_muche,root
 rediet_girma,root
+melat_tadesse,root
