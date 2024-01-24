@@ -27,8 +27,8 @@ export s3_authorized_keys_path="s3://10ac-team/credentials/bereket/authorized_ke
 #
 echo "profile=$profile_name"
 
-#extra user_data for ec2
-export extrauserdata="user_data/mount-s3fs.sh user_data/install_ecs_agent.sh"
+#extra user_data for ec2 user_data/mount-s3fs.sh 
+export extrauserdata="user_data/install_ecs_agent.sh"
 export ec2launch_install_docker=true
 
 #application and proxy names
@@ -101,7 +101,7 @@ echo "using AMI-ID=$AMI"
 export AwsImageId=$AMI  #Ubuntu latest
 
 
-export AwsInstanceType="t3.small"
+export AwsInstanceType="t3.medium"
 export EbsVolumeSize=20
 #----------
      
@@ -111,7 +111,7 @@ export ecsTaskTemplate=
 
 #ecs service params
 export ecsContainerPort=3000 #The port on the container to associate with the load balancer
-export ecsDesiredCount=0
+export ecsDesiredCount=1
 export ecsServiceTemplate=template/ecs-ec2-service-template.json
 
 #---------------Github Parameters------------------
@@ -143,7 +143,7 @@ source ${scriptDir}/ec2_params.sh
 export alb="ecs-${root_name}-alb"
 export AsgName="ecs-${root_name}-asg"
 export AsgMinSize=1
-export AsgMaxSize=1
+export AsgMaxSize=2
 export AsgDesiredSize=1
 export AsgTemplateName="${root_name}-launch-template"
 export AsgTemplateVersion=1
