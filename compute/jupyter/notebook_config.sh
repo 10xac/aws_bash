@@ -20,7 +20,7 @@ PYTHON_DIR=${PYTHON_DIR:-/opt/miniconda}
 
 # extract BUCKET and FOLDER to mount from NOTEBOOK_DIR
 NOTEBOOK_DIR=${NOTEBOOK_FOLDER:-"notebooks"}
-if '/home' in "$NOTEBOOK_DIR"; then
+if [[ $NOTEBOOK_DIR = *home* ]]; then
     NOTEBOOK_DIR="${home}/"
 else
     NOTEBOOK_DIR="/mnt/${NOTEBOOK_DIR%/}/"

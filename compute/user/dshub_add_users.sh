@@ -33,10 +33,10 @@ fi
 BUCKET="${BUCKET:-10ac-batch-6}"
 CREDROOTFOLDER="${CRED_ROOT_FOLDER:-$BUCKET/credentials}"
 NOTEBOOKFOLDER="${NOTEBOOK_FOLDER:-notebook}"
-if '/home' in "$NOTEBOOK_DIR"; then
+if [[ $NOTEBOOKFOLDER = *home* ]]; then
     NOTEBOOKFOLDER="${home}/"
 else
-    NOTEBOOKFOLDER="/mnt/${NOTEBOOK_DIR%/}/"
+    NOTEBOOKFOLDER="/mnt/${NOTEBOOKFOLDER%/}/"
 fi
 
 CREDFOLDERS="${CRED_FOLDERS:-aws}"
