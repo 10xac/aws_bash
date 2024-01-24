@@ -60,13 +60,14 @@ function copy_user_creds(){
         fi        
     done
 
-    if [ -f /mnt/$CREDROOTFOLDER/ssh/${n}_authorized_keys ]; then
-        echo "copy ssh key from /mnt/$CREDROOTFOLDER/ssh/${n}_* .."
-        cp /mnt/$CREDROOTFOLDER/ssh/${n}_authorized_keys $HOME/.ssh/authorized_keys
-    elif [ -f /mnt/$CREDROOTFOLDER/${n}/authorized_keys ]; then
-        echo "copy from /mnt/$CREDROOTFOLDER/${n} .."
-        cp /mnt/$CREDROOTFOLDER/${n}/authorized_keys $HOME/.ssh/authorized_keys
-    else
+    try:
+        try:
+            aws s3 cp s3://$CREDROOTFOLDER/$n/authorized_keys $HOME/.ssh/authorized_keys
+            echo "successfully copied from /mnt/$CREDROOTFOLDER/${n}!"
+        except:
+            aws s3 cp s3://$CREDROOTFOLDER/ssh/${n}_authorized_keys $HOME/.ssh/authorized_keys
+            echo "successfully copied ssh key from /mnt/$CREDROOTFOLDER/ssh/${n}_authorized_keys!"
+    except:
         echo "WARNING:/mnt/$CREDROOTFOLDER/ssh/${n}_* or /mnt/$CREDROOTFOLDER/${n}/* NOT FOUND!! USING GENERIC PUBLIC KEY"
         if [ -f /mnt/$CREDROOTFOLDER/ssh/authorized_keys ]; then
             echo "copy from /mnt/$CREDROOTFOLDER/ssh/authorized_keys .."
