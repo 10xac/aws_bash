@@ -60,11 +60,20 @@ function copy_user_creds(){
         fi        
     done
 
+    akdone=false
     if $( aws s3 cp "s3://$CREDROOTFOLDER/$n/authorized_keys" "$HOME/.ssh/authorized_keys" ) ; then
         echo "successfully copied from /mnt/$CREDROOTFOLDER/${n}!"
-    elif $( aws s3 cp "s3://$CREDROOTFOLDER/ssh/${n}_authorized_keys" "$HOME/.ssh/authorized_keys" ) ; then
-        echo "successfully copied ssh key from /mnt/$CREDROOTFOLDER/ssh/${n}_authorized_keys!"
-    else
+        akdone=true
+    fi
+
+    if ! akdone ;  then
+        if $( aws s3 cp "s3://$CREDROOTFOLDER/ssh/${n}_authorized_keys" "$HOME/.ssh/authorized_keys" ) ; then
+            echo "successfully copied ssh key from /mnt/$CREDROOTFOLDER/ssh/${n}_authorized_keys!"
+            akdone=true
+        fi
+    fi
+
+    if ! akdone
         echo "WARNING:/mnt/$CREDROOTFOLDER/ssh/${n}_* or /mnt/$CREDROOTFOLDER/${n}/* NOT FOUND!!"         
         if [[ -f /mnt/$CREDROOTFOLDER/ssh/authorized_keys ]]; then
             echo "copy from /mnt/$CREDROOTFOLDER/ssh/authorized_keys .."
