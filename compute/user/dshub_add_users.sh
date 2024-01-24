@@ -60,15 +60,12 @@ function copy_user_creds(){
         fi        
     done
 
-    try:
-        try:
-            aws s3 cp s3://$CREDROOTFOLDER/$n/authorized_keys $HOME/.ssh/authorized_keys
-            echo "successfully copied from /mnt/$CREDROOTFOLDER/${n}!"
-        except:
-            aws s3 cp s3://$CREDROOTFOLDER/ssh/${n}_authorized_keys $HOME/.ssh/authorized_keys
-            echo "successfully copied ssh key from /mnt/$CREDROOTFOLDER/ssh/${n}_authorized_keys!"
-    except:
-        echo "WARNING:/mnt/$CREDROOTFOLDER/ssh/${n}_* or /mnt/$CREDROOTFOLDER/${n}/* NOT FOUND!! USING GENERIC PUBLIC KEY"
+    if $(aws s3 cp s3://$CREDROOTFOLDER/$n/authorized_keys $HOME/.ssh/authorized_keys) ; then
+        echo "successfully copied from /mnt/$CREDROOTFOLDER/${n}!"
+    elif $(aws s3 cp s3://$CREDROOTFOLDER/ssh/${n}_authorized_keys $HOME/.ssh/authorized_keys) ; then
+        echo "successfully copied ssh key from /mnt/$CREDROOTFOLDER/ssh/${n}_authorized_keys!"
+    else
+        echo "WARNING:/mnt/$CREDROOTFOLDER/ssh/${n}_* or /mnt/$CREDROOTFOLDER/${n}/* NOT FOUND!! 
         if [ -f /mnt/$CREDROOTFOLDER/ssh/authorized_keys ]; then
             echo "copy from /mnt/$CREDROOTFOLDER/ssh/authorized_keys .."
             cp /mnt/$CREDROOTFOLDER/ssh/authorized_keys $HOME/.ssh/authorized_keys
@@ -76,7 +73,7 @@ function copy_user_creds(){
             echo "copy from /mnt/$CREDROOTFOLDER/authorized_keys .."
             cp /mnt/$CREDROOTFOLDER/authorized_keys $HOME/.ssh/authorized_keys
         fi
-    fi==
+    fi
 }
 
 function allow_user_sudo() {
