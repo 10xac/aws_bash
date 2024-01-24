@@ -73,7 +73,7 @@ function copy_user_creds(){
         fi
     fi
 
-    if ! akdone
+    if ! akdone ; then
         echo "WARNING:/mnt/$CREDROOTFOLDER/ssh/${n}_* or /mnt/$CREDROOTFOLDER/${n}/* NOT FOUND!!"         
         if [[ -f /mnt/$CREDROOTFOLDER/ssh/authorized_keys ]]; then
             echo "copy from /mnt/$CREDROOTFOLDER/ssh/authorized_keys .."
