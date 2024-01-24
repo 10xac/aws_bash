@@ -65,11 +65,11 @@ function copy_user_creds(){
     elif $(aws s3 cp s3://$CREDROOTFOLDER/ssh/${n}_authorized_keys $HOME/.ssh/authorized_keys) ; then
         echo "successfully copied ssh key from /mnt/$CREDROOTFOLDER/ssh/${n}_authorized_keys!"
     else
-        echo "WARNING:/mnt/$CREDROOTFOLDER/ssh/${n}_* or /mnt/$CREDROOTFOLDER/${n}/* NOT FOUND!! 
-        if [ -f /mnt/$CREDROOTFOLDER/ssh/authorized_keys ]; then
+        echo "WARNING:/mnt/$CREDROOTFOLDER/ssh/${n}_* or /mnt/$CREDROOTFOLDER/${n}/* NOT FOUND!!"         
+        if [[ -f /mnt/$CREDROOTFOLDER/ssh/authorized_keys ]]; then
             echo "copy from /mnt/$CREDROOTFOLDER/ssh/authorized_keys .."
             cp /mnt/$CREDROOTFOLDER/ssh/authorized_keys $HOME/.ssh/authorized_keys
-        elif [ -f /mnt/$CREDROOTFOLDER/authorized_keys ]; then
+        elif [[ -f /mnt/$CREDROOTFOLDER/authorized_keys ]]; then
             echo "copy from /mnt/$CREDROOTFOLDER/authorized_keys .."
             cp /mnt/$CREDROOTFOLDER/authorized_keys $HOME/.ssh/authorized_keys
         fi
