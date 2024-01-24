@@ -3,7 +3,4 @@ mickiyas_kinfemichael,root
 naol_lamesa,root
 fanuel_abebe,root
 elias_assamnew,root
-natnael_melese,root
-rehmet_yeshanew,root
-emtinan_osman,root
-fikerte_alemayheu,root
+lillian_assefa,root

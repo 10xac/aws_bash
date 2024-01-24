@@ -16,12 +16,12 @@ CRED_FOLDERS=""
 NOTEBOOK_FOLDER="/home"
 
 ###features to install or setup
-mounts3=true
+mounts3=false
 addusers=true
-setupconda=true
-setupjhub=true
-setupjnb=true
-setupdocker=true
-setupnvidea=true
+setupconda=false
+setupjhub=false
+setupjnb=false
+setupdocker=false
+setupnvidea=false
 
 
