@@ -138,8 +138,8 @@ cat $userfile | while read line; do
         copy_user_creds $n
     fi
     
-    if [ ! -d "/mnt/$NOTEBOOKFOLDER/$n" ]; then
-        mkdir "/mnt/$NOTEBOOKFOLDER/$n"
+    if [ ! -d "$NOTEBOOKFOLDER/$n" ]; then
+        mkdir -p "$NOTEBOOKFOLDER/$n"
     fi
 
     if [ -f "/home/$n/.ssh/authorized_keys" ]; then
