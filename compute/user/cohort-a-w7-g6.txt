@@ -1,3 +1,3 @@
-nasrallah_,root
-misganaw_,root
-yoftahe_,root
+nasrallah_hassan,root
+misganaw,root
+yoftahe_gizaw,root
