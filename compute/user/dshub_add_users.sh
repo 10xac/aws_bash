@@ -76,7 +76,7 @@ function copy_user_creds(){
             echo "copy from /mnt/$CREDROOTFOLDER/authorized_keys .."
             cp /mnt/$CREDROOTFOLDER/authorized_keys $HOME/.ssh/authorized_keys
         fi
-    fi
+    fi==
 }
 
 function allow_user_sudo() {
