@@ -11,6 +11,17 @@ from botocore.exceptions import ClientError
 
 region_name = "eu-west-1"
 
+def is_running_in_ec2_instance():
+    try:
+        # Send an HTTP request to the EC2 instance metadata service
+        response = requests.get("http://169.254.169.254/latest/meta-data/instance-id", timeout=2)
+        
+        # If the request is successful (status code 200), it's running inside an EC2 instance
+        return response.status_code == 200
+    except requests.exceptions.RequestException:
+        # If an exception is raised, it's not running inside an EC2 instance
+        return False
+    
 def init_aws_session():
     # Create a Secrets Manager client
     # Create a Secrets Manager client
