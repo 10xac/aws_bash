@@ -9,14 +9,14 @@ home=$HOME
 if command -v apt-get >/dev/null; then
     apt-get update -y
     apt-get upgrade -y
-    apt-get install -y git emacs htop jq unzip
+    apt-get install -y git emacs htop jq unzip net-tools
     if [ -d /home/ubuntu ]; then
         home=/home/ubuntu
     fi
 else    
     yum update -y
     yum upgrade -y
-    yum install -y git emacs htop jq unzip
+    yum install -y git emacs htop jq unzip net-tools
     if [ -d /home/centos ]; then
         home=/home/centos
     fi

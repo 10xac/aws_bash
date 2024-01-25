@@ -58,12 +58,14 @@ if command -v apt-get >/dev/null; then
    apt -qq install git -y
    apt -qq install jq -y
    apt -qq install unzip -y
+   apt -qq install net-tools -y 
 else
    yum -qq update -y
    yum -qq install fuse -y
    yum -qq install git -y
    yum -qq install jq -y 
    yum -qq install unzip -y
+   yum -qq install net-tools -y
 fi
 
 #write aws config file
