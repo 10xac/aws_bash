@@ -145,10 +145,9 @@ cat $userfile | while read line; do
             allow_user_sudo $n
         fi
         
-        #from mounted disk copy and create
-        if [ -d "/mnt/$BUCKET" ]; then
-            copy_user_creds $n
-        fi
+        #from mounted disk copy and create        
+        copy_user_creds $n
+        
         
         if [ ! -d "$NOTEBOOKFOLDER/$n" ]; then
             mkdir -p "$NOTEBOOKFOLDER/$n"
