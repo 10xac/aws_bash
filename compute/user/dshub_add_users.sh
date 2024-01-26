@@ -61,7 +61,11 @@ function copy_user_creds(){
     done
 
     akdone=false
-    if $( aws s3 cp "s3://$CREDROOTFOLDER/$n/authorized_keys" "$HOME/.ssh/authorized_keys" ) ; then
+    if [[ -f $HOME/.ssh/authorized_keys ]]; then
+        if $2 ; then
+            aws s3 cp "s3://$CREDROOTFOLDER/$n/authorized_keys" "$HOME/.ssh/authorized_keys"
+        fi
+    elif $( aws s3 cp "s3://$CREDROOTFOLDER/$n/authorized_keys" "$HOME/.ssh/authorized_keys" ) ; then
         echo "successfully copied from /mnt/$CREDROOTFOLDER/${n}!"
         akdone=true
     fi
@@ -137,30 +141,34 @@ cat $userfile | while read line; do
         #cat root bashrc to user bashrc
         cat /root/.bashrc >> /home/$n/.bashrc
         
-    else
+    elif $2 ; then
         echo "user $n exists ..  passing to the folder check"    	
-    fi
 
-    # specified to have root access - allow sudo
-    if [ "$nflag" == "root" ]; then
-        allow_user_sudo $n
+        # specified to have root access - allow sudo
+        if [ "$nflag" == "root" ]; then
+            allow_user_sudo $n
+        fi
+        
+        #from mounted disk copy and create
+        if [ -d "/mnt/$BUCKET" ]; then
+            copy_user_creds $n
+        fi
+        
+        if [ ! -d "$NOTEBOOKFOLDER/$n" ]; then
+            mkdir -p "$NOTEBOOKFOLDER/$n"
+        fi
+
+        if [ -f "/home/$n/.ssh/authorized_keys" ]; then
+            chmod 600 /home/$n/.ssh/authorized_keys || echo "~/.ssh/authorized_keys does not exist"
+        fi
+
+        if [ -d "/home/$n" ]; then
+            chown -R $n:$n /home/$n
+        fi
+    else
+        echo "user $n exists ..  skipping"
+        continue
     fi
     
-    #from mounted disk copy and create
-    if [ -d "/mnt/$BUCKET" ]; then
-        copy_user_creds $n
-    fi
-    
-    if [ ! -d "$NOTEBOOKFOLDER/$n" ]; then
-        mkdir -p "$NOTEBOOKFOLDER/$n"
-    fi
-
-    if [ -f "/home/$n/.ssh/authorized_keys" ]; then
-        chmod 600 /home/$n/.ssh/authorized_keys || echo "~/.ssh/authorized_keys does not exist"
-    fi
-
-    if [ -d "/home/$n" ]; then
-        chown -R $n:$n /home/$n
-    fi
 done
 
