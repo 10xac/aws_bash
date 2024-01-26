@@ -61,7 +61,7 @@ function copy_user_creds(){
     done
 
     akdone=false
-    if $( aws s3 cp "s3://$CREDROOTFOLDER/$n/authorized_keys" "$HOME/.ssh/authorized_keys" ) ; then
+    if $((aws s3 cp "s3://$CREDROOTFOLDER/$n/authorized_keys" "$HOME/.ssh/authorized_keys")) ; then
         echo "successfully copied to $HOME/.ssh/authorized_keys!"
         akdone=true
     fi
