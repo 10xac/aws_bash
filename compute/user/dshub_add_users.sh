@@ -62,7 +62,7 @@ function copy_user_creds(){
 
     akdone=false
     if [[ -f $HOME/.ssh/authorized_keys ]]; then
-        if $2 ; then
+        if [[ $2 == "new" ]] ; then
             aws s3 cp "s3://$CREDROOTFOLDER/$n/authorized_keys" "$HOME/.ssh/authorized_keys"
         fi
     elif $( aws s3 cp "s3://$CREDROOTFOLDER/$n/authorized_keys" "$HOME/.ssh/authorized_keys" ) ; then
@@ -135,14 +135,14 @@ cat $userfile | while read line; do
         
         #add to docker group
         if command -v docker >/dev/null; then
-	    usermod -a -G docker $n
+	    usermod -a -G docker $nx
         fi
         
         #cat root bashrc to user bashrc
         cat /root/.bashrc >> /home/$n/.bashrc
         
-    elif $2 ; then
-        echo "user $n exists ..  passing to the folder check"    	
+    elif [[ $2 != *new* ]] ; then
+        echo "user $n exists but requested for config files update .."    	
 
         # specified to have root access - allow sudo
         if [ "$nflag" == "root" ]; then
