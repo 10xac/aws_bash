@@ -29,7 +29,7 @@ echo "profile=$profile_name"
 
 #extra user_data for ec2
 export extrauserdata="user_data/run_build.sh"
-export ec2launch_install_docker=false
+export ec2launch_install_docker=true
 
 #application and proxy names
 export ENV=${ENV:-prod}

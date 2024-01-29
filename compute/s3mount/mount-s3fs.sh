@@ -14,6 +14,10 @@ if [ -z $BUCKET ]; then
     BUCKET="${BUCKET:-10ac-batch-4}"
 fi
 
+if [ -z $MOUNTROOT ]; then
+    MOUNTROOT="${MOUNTROOT:-/mnt}"
+fi
+
 if [ -d $home ]; then
     homeUser=$(basename $home)
 else
@@ -84,8 +88,8 @@ if [ $# -gt 0 ]; then
     if [ $1 == "unmount" ]; then	
 	#https://stackoverflow.com/questions/24966676/transport-endpoint-is-not-connected
 	#https://dausruddin.com/fusermount-failed-to-unmount-path-device-or-resource-busy/
-	#sudo /usr/local/bin/fusermount -uz /mnt/$BUCKET
-	sudo umount -l /mnt/$BUCKET
+	#sudo /usr/local/bin/fusermount -uz ${MOUNTROOT}/$BUCKET
+	sudo umount -l ${MOUNTROOT}/$BUCKET
 	pkill  s3fs
     else
 	install_s3fs
@@ -112,15 +116,15 @@ fi
 
 if [ -f /usr/local/bin/s3fs ]; then
     sudo su -c 'echo user_allow_other >> /etc/fuse.conf'
-    mkdir -p /mnt/s3fs-cache
+    mkdir -p ${MOUNTROOT}/s3fs-cache
 fi
 
 function mount_bucket(){
 
     if [[ ! -z $1 ]]; then
-        mkdir -p /mnt/$BUCKET
+        mkdir -p ${MOUNTROOT}/$BUCKET
         
-        /usr/local/bin/s3fs $1 /mnt/$1 -o allow_other -o $pval \
+        /usr/local/bin/s3fs $1 ${MOUNTROOT}/$1 -o allow_other -o $pval \
 	                -o umask=0 -o url=https://s3.amazonaws.com  -o no_check_certificate \
 	                -o cipher_suites=AESGCM \
 	                -o max_background=1000 \
@@ -129,7 +133,7 @@ function mount_bucket(){
 	                -o parallel_count=30 \
 	                -o multireq_max=30 \
 	                -o dbglevel=warn \
-	                -o enable_noobj_cache -o use_cache=/mnt/s3fs-cache
+	                -o enable_noobj_cache -o use_cache=${MOUNTROOT}/s3fs-cache
     
         echo "mounting $1 done"
     else
@@ -155,5 +159,5 @@ fi
 
 #-o kernel_cache 
 
-#sudo chmod 777 -R /mnt || echo "unable to change /mnt permission"
-#sudo chown $homeUser:$homeUser -R /mnt || echo "unable to change /mnt ownership"
+#sudo chmod 777 -R ${MOUNTROOT} || echo "unable to change ${MOUNTROOT} permission"
+#sudo chown $homeUser:$homeUser -R ${MOUNTROOT} || echo "unable to change ${MOUNTROOT} ownership"
