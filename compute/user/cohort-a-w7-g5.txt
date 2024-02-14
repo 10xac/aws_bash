@@ -1,5 +1,4 @@
 habtamu_feyera,root
-abraham_tesfaye,root
 daniel_geda,root
 aron_sinkie,root
 hussein_ali,root

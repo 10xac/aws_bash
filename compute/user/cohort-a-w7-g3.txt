@@ -1,4 +1,4 @@
 abel_bekele,root
-mubarek_hussen,root
 kerod_beyene,root
 ekram_kedir,root
+abraham_tesfaye,root

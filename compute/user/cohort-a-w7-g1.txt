@@ -1,6 +1,6 @@
 biniyam_ajaw,root
 mickiyas_kinfemichael,root
-naol_lamesa,root
 fanuel_abebe,root
 elias_assamnew,root
 lillian_assefa,root
+rodolphe_segbedji,root

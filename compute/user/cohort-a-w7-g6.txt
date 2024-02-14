@@ -1,5 +1,4 @@
 nasrallah_hassan,root
-misganaw,root
 yoftahe_gizaw,root
-abamitchew_tomas,root
-aaron_gebremariam,root
+diriba_bekele,root
+abdelrahman,root
