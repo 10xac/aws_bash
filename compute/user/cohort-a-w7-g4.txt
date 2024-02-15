@@ -1,3 +1,4 @@
+nasrallah_hassan,root
 mubarek_hussen,root
 misganaw,root
 aaron_gebremariam,root
