@@ -7,7 +7,7 @@ function awscli_install(){
     fi
     
     #curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-    unzip awscliv2.zip
+    unzip -q awscliv2.zip
     sudo ./aws/install
     if [ -f /usr/bin/aws]; then
         sudo rm /usr/bin/aws || echo "unable to remove aws"
