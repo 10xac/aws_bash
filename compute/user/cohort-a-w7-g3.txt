@@ -2,3 +2,4 @@ abel_bekele,root
 kerod_beyene,root
 ekram_kedir,root
 abraham_tesfaye,root
+birehan_anteneh,root

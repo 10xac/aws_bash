@@ -37,7 +37,7 @@ amiarc="amd64" #"arm64"    #nvidea
 amios="ubuntu"
 amifordocker=false
 
-TYPE="g5.2xlarge"   # GPU 1/24GB CPU 16/64GB
+TYPE="g4dn.2xlarge"   # GPU 1/24GB CPU 16/64GB
 
 
 # == security
