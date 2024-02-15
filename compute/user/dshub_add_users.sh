@@ -115,7 +115,7 @@ cat $userfile | while read line; do
     echo "---------processing line: $line ---------"
     echo ""
     
-    
+    isnew=false
     if [ ! -d "/home/$n" ]; then
 	
         echo "user $n does not exist .. creating it"
@@ -142,9 +142,13 @@ cat $userfile | while read line; do
         
         #cat root bashrc to user bashrc
         cat /root/.bashrc >> /home/$n/.bashrc
-        
-    elif [[ $2 != *new* ]] ; then
-        echo "user $n exists but requested for config files update .."    	
+
+        isnew=true
+
+    fi
+    
+    if [[ $2 != *new* ]] || $isnew ; then
+        echo "updating config files for user=$n .."    	
 
         # specified to have root access - allow sudo
         if [ "$nflag" == "root" ]; then
