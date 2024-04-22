@@ -1,6 +1,10 @@
 
 ##Export region and account
 export AccountId="070096167435"
+
+#
+export HOSTEDZONEID="Z034028834IXN0CQEMHZ9"
+
 #AccountId=$(aws sts get-caller-identity --query Account --output text --profile ${profile_name})  
 export AWS_REGION="us-east-1" # <- Your AWS Region
 export account=$AccountId

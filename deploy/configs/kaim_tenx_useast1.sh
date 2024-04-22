@@ -35,19 +35,19 @@ export ecrimage="070096167435.dkr.ecr.us-east-1.amazonaws.com/prod-u2j-tenx:late
 export appkey=$(echo $RANDOM$RANDOM$RANDOM$RANDOM | base64 | head -c 30; echo)
 export appkeysalt=$(echo $RANDOM$RANDOM$RANDOM$RANDOM | base64 | head -c 30; echo)
           
-export dockerenv="--env DATABASE_HOST=u2jdb.cluster-crlafpfc5g5y.us-east-1.rds.amazonaws.com -v /mnt/all-tenx-system/src-dev-u2jcms:/opt/app/src -v /mnt/all-tenx-system/public-dev-u2jcms:/opt/app/public --env appkey=$appkey --env appkeysalt=$appkeysalt --env APP_KEYS=${appkey},${appkeysalt} --env API_TOKEN_SALT=$appkeysalt --env ADMIN_JWT_SECRET=$appkey"
+export dockerenv=
 export ec2launch_install_docker=true
 
 #application and proxy names
 export ENV=${ENV:-prod}
 
 export repo_name="tenx-app" #used to check out git repo
-export repo_branch="u2j"
+export repo_branch="kaim"
 
-export root_name="u2j-tenx" #name you give to your project in ecs env
+export root_name="kaim-tenx" #name you give to your project in ecs env
 export rootdns=10academy.org
 
-export dnsprefix=u2jtenx
+export dnsprefix=kaimtenx
 if [ "$ENV" == "dev" ]; then
     export dnsprefix="dev-${dnsprefix}"
     export root_name="dev-$root_name"
@@ -171,7 +171,7 @@ source ${scriptDir}/ecs_params.sh
 
 #create ECR repo
 export create_ecr_repo=false
-export aws_ecr_repository_url_app=070096167435.dkr.ecr.us-east-1.amazonaws.com/prod-tenx-u2j:latest
+export aws_ecr_repository_url_app=$ecrimage
 
 #ECS parameters
 export ecr_repo_name=${root_name}

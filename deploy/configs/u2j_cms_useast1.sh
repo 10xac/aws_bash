@@ -30,12 +30,10 @@ echo "profile=$profile_name"
 #extra user_data for ec2
 #export extrauserdata="user_data/mount-s3fs.sh user_data/run_build.sh"
 export extrauserdata="user_data/mount-s3fs.sh user_data/install_ecs_agent.sh user_data/docker_run_ecr.sh"
-export ecrimage="070096167435.dkr.ecr.us-east-1.amazonaws.com/dev-u2j-cms:latest"
 
 export appkey=$(echo $RANDOM$RANDOM$RANDOM$RANDOM | base64 | head -c 30; echo)
 export appkeysalt=$(echo $RANDOM$RANDOM$RANDOM$RANDOM | base64 | head -c 30; echo)
           
-export dockerenv="--env DATABASE_HOST=u2jdb.cluster-crlafpfc5g5y.us-east-1.rds.amazonaws.com -v /mnt/all-tenx-system/src-dev-u2jcms:/opt/app/src -v /mnt/all-tenx-system/public-dev-u2jcms:/opt/app/public --env appkey=$appkey --env appkeysalt=$appkeysalt --env APP_KEYS=${appkey},${appkeysalt} --env API_TOKEN_SALT=$appkeysalt --env ADMIN_JWT_SECRET=$appkey"
 export ec2launch_install_docker=true
 
 #application and proxy names
@@ -48,14 +46,23 @@ export root_name="u2jcms" #name you give to your project in ecs env
 export rootdns=10academy.org
 
 export dnsprefix=u2jcms
+export ecrimage="070096167435.dkr.ecr.us-east-1.amazonaws.com/prod-u2j-cms:latest"
+export dockerenv="-p 1337:1337 --env DATABASE_HOST=u2jdb.cluster-crlafpfc5g5y.us-east-1.rds.amazonaws.com -v /mnt/all-tenx-system/src-prod-u2j-cms:/opt/app/src -v /mnt/all-tenx-system/public-prod-u2j-cms:/opt/app/public --env appkey=$appkey --env appkeysalt=$appkeysalt --env APP_KEYS=${appkey},${appkeysalt} --env API_TOKEN_SALT=$appkeysalt --env ADMIN_JWT_SECRET=$appkey"
+
 if [ "$ENV" == "dev" ]; then
     export dnsprefix="dev-${dnsprefix}"
     export root_name="dev-$root_name"
-    export repo_branch="applydev"    
+    export repo_branch="applydev"
+    export ecrimage="070096167435.dkr.ecr.us-east-1.amazonaws.com/dev-u2j-cms:latest"
+    export dockerenv="-p 1337:1337 --env DATABASE_HOST=u2jdb.cluster-crlafpfc5g5y.us-east-1.rds.amazonaws.com -v /mnt/all-tenx-system/src-dev-u2j-cms:/opt/app/src -v /mnt/all-tenx-system/public-dev-u2j-cms:/opt/app/public --env appkey=$appkey --env appkeysalt=$appkeysalt --env APP_KEYS=${appkey},${appkeysalt} --env API_TOKEN_SALT=$appkeysalt --env ADMIN_JWT_SECRET=$appkey"
+    
 elif [ "$ENV" == "stage" ]; then
     export dnsprefix="dev-${dnsprefix}"
     export root_name="dev-$root_name"
     export repo_branch="applystage"
+    export ecrimage="070096167435.dkr.ecr.us-east-1.amazonaws.com/stage-u2j-cms:latest"
+    export dockerenv="-p 1337:1337 --env DATABASE_HOST=u2jdb.cluster-crlafpfc5g5y.us-east-1.rds.amazonaws.com -v /mnt/all-tenx-system/src-dev-u2j-cms:/opt/app/src -v /mnt/all-tenx-system/public-dev-u2j-cms:/opt/app/public --env appkey=$appkey --env appkeysalt=$appkeysalt --env APP_KEYS=${appkey},${appkeysalt} --env API_TOKEN_SALT=$appkeysalt --env ADMIN_JWT_SECRET=$appkey"
+    
 fi
 
 export dns_namespace="${dnsprefix}.${rootdns}"  ##This should be your domain 
@@ -119,7 +126,7 @@ export ecsTaskTemplate=
 
 #ecs service params
 export ecsContainerPort=1337 #The port on the container to associate with the load balancer
-export ecsDesiredCount=0
+export ecsDesiredCount=1
 export ecsHealthTime=60
 export ecsServiceTemplate=template/ecs-ec2-service-template.json
 
@@ -159,7 +166,7 @@ export AsgTemplateVersion=1
 
 #---------------Route53 Parameters------------------
 #Route53 record setting
-export create_route53_record=False
+export create_route53_record=true
 export route53RecordTemplate=template/r53-record-set-template.json
 
 #-----------------ECS Parameters---------------

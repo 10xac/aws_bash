@@ -8,6 +8,20 @@ else
     fout=$1
 fi
 
+cat <<'EOF' >>  $fout
+
+if [ -d /home/ubuntu/s3mount.sh ]; then
+   echo ""
+   echo "============================================"
+   echo "           Run home/ubuntu/s3mount        "
+   echo "============================================"
+   echo ""
+
+   bash  /home/ubuntu/s3mount.sh
+
+else
+
+EOF
 cat <<EOF >>  $fout
 
 BUCKET="${s3bucket:-BUCKET}"
@@ -134,5 +148,7 @@ scriptpath=$DIR_PATH/$(basename “${BASH_SOURCE:-$0}”)
 
 echo " adding $scriptpath to crontab .."
 (crontab -l 2>/dev/null; echo "@reboot  BUCKET=$BUCKET /bin/bash ${scriptpath}") | crontab -
+
+fi
 
 EOF

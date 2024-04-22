@@ -29,33 +29,40 @@ echo "profile=$profile_name"
 
 #extra user_data for ec2
 #export extrauserdata="user_data/mount-s3fs.sh user_data/run_build.sh"
-export extrauserdata="user_data/install_ecs_agent.sh"
-export ecrimage="070096167435.dkr.ecr.us-east-1.amazonaws.com/prod-u2j-tenx:latest"
+export extrauserdata="user_data/mount-s3fs.sh user_data/install_ecs_agent.sh user_data/docker_run_ecr.sh"
 
 export appkey=$(echo $RANDOM$RANDOM$RANDOM$RANDOM | base64 | head -c 30; echo)
 export appkeysalt=$(echo $RANDOM$RANDOM$RANDOM$RANDOM | base64 | head -c 30; echo)
           
-export dockerenv="--env DATABASE_HOST=u2jdb.cluster-crlafpfc5g5y.us-east-1.rds.amazonaws.com -v /mnt/all-tenx-system/src-dev-u2jcms:/opt/app/src -v /mnt/all-tenx-system/public-dev-u2jcms:/opt/app/public --env appkey=$appkey --env appkeysalt=$appkeysalt --env APP_KEYS=${appkey},${appkeysalt} --env API_TOKEN_SALT=$appkeysalt --env ADMIN_JWT_SECRET=$appkey"
 export ec2launch_install_docker=true
 
 #application and proxy names
 export ENV=${ENV:-prod}
 
-export repo_name="tenx-app" #used to check out git repo
-export repo_branch="u2j"
+export repo_name="tenx-cms" #used to check out git repo
+export repo_branch="kaimprod"
 
-export root_name="u2j-tenx" #name you give to your project in ecs env
+export root_name="kaimcms" #name you give to your project in ecs env
 export rootdns=10academy.org
 
-export dnsprefix=u2jtenx
+export dnsprefix=kaimcms
+export ecrimage="070096167435.dkr.ecr.us-east-1.amazonaws.com/prod-u2j-cms:latest"
+export dockerenv="-p 1337:1337 --env DATABASE_NAME kaimprod --env DATABASE_HOST=u2jdb.cluster-crlafpfc5g5y.us-east-1.rds.amazonaws.com -v /mnt/all-tenx-system/src-prod-kaim-cms:/opt/app/src -v /mnt/all-tenx-system/public-prod-kaim-cms:/opt/app/public --env appkey=$appkey --env appkeysalt=$appkeysalt --env APP_KEYS=${appkey},${appkeysalt} --env API_TOKEN_SALT=$appkeysalt --env ADMIN_JWT_SECRET=$appkey"
+
 if [ "$ENV" == "dev" ]; then
     export dnsprefix="dev-${dnsprefix}"
     export root_name="dev-$root_name"
-    export repo_branch="applydev"    
+    export repo_branch="kaimdev"
+    export ecrimage="070096167435.dkr.ecr.us-east-1.amazonaws.com/dev-u2j-cms:latest"
+    export dockerenv="-p 1337:1337 --env DATABASE_NAME kaimdev --env DATABASE_HOST=u2jdb.cluster-crlafpfc5g5y.us-east-1.rds.amazonaws.com -v /mnt/all-tenx-system/src-dev-kaim-cms:/opt/app/src -v /mnt/all-tenx-system/public-dev-kaim-cms:/opt/app/public --env appkey=$appkey --env appkeysalt=$appkeysalt --env APP_KEYS=${appkey},${appkeysalt} --env API_TOKEN_SALT=$appkeysalt --env ADMIN_JWT_SECRET=$appkey"
+    
 elif [ "$ENV" == "stage" ]; then
     export dnsprefix="dev-${dnsprefix}"
     export root_name="dev-$root_name"
-    export repo_branch="applystage"
+    export repo_branch="kaimstage"
+    export ecrimage="070096167435.dkr.ecr.us-east-1.amazonaws.com/stage-u2j-cms:latest"
+    export dockerenv="-p 1337:1337 --env DATABASE_NAME kaimstage --env DATABASE_HOST=u2jdb.cluster-crlafpfc5g5y.us-east-1.rds.amazonaws.com -v /mnt/all-tenx-system/src-dev-kaim-cms:/opt/app/src -v /mnt/all-tenx-system/public-dev-kaim-cms:/opt/app/public --env appkey=$appkey --env appkeysalt=$appkeysalt --env APP_KEYS=${appkey},${appkeysalt} --env API_TOKEN_SALT=$appkeysalt --env ADMIN_JWT_SECRET=$appkey"
+    
 fi
 
 export dns_namespace="${dnsprefix}.${rootdns}"  ##This should be your domain 
@@ -113,12 +120,12 @@ fi
 export EbsVolumeSize=20
 #----------
      
-export ecsTaskPortMapList=3000  #all ports to expose
+export ecsTaskPortMapList=1337  #all ports to expose
 export ecsTaskFromTemplate=False
 export ecsTaskTemplate=
 
 #ecs service params
-export ecsContainerPort=3000 #The port on the container to associate with the load balancer
+export ecsContainerPort=1337 #The port on the container to associate with the load balancer
 export ecsDesiredCount=1
 export ecsHealthTime=60
 export ecsServiceTemplate=template/ecs-ec2-service-template.json
@@ -162,16 +169,14 @@ export AsgTemplateVersion=1
 export create_route53_record=true
 export route53RecordTemplate=template/r53-record-set-template.json
 
-
 #-----------------ECS Parameters---------------
-setup_ecs=true
+setup_ecs=false
 
 #now load the common ec2 params
 source ${scriptDir}/ecs_params.sh
 
 #create ECR repo
 export create_ecr_repo=false
-export aws_ecr_repository_url_app=070096167435.dkr.ecr.us-east-1.amazonaws.com/prod-tenx-u2j:latest
 
 #ECS parameters
 export ecr_repo_name=${root_name}

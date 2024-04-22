@@ -10,6 +10,16 @@ if [ ! -z "$1" ]; then
 fi
 
 #--------------------------------------------------------#
+###-------- Get the id of the hosted zone-------##
+##------------------------------------------------------#
+
+host_zone_id=$(aws route53 list-hosted-zones-by-name --dns-name $rootdns | jq '.HostedZones| .[] | . | .Id' | xargs basename)
+echo "Extracted hosted_zone_id for $rootdns is: $HOSTZONEID"
+HOSTZONEID=${HOSTZONEID:-$host_zone_id}
+echo "Using host_zone_id=$HOSTZONEID"
+
+
+#--------------------------------------------------------#
 ###-------- Determine what type of record to set -------##
 ##------------------------------------------------------#
 
@@ -121,7 +131,7 @@ if $elbdnsalias; then
     
 cat <<EOF >> $fout
         "AliasTarget": {
-          "HostedZoneId": "$ELBHZNID",
+          "HostedZoneId": "${HOSTZONEID}",
           "DNSName": "$DNSName",
           "EvaluateTargetHealth": false
         }
@@ -148,6 +158,9 @@ echo "Setting the following Route53 DNS Record:"
 cat $fout
 echo "-------------end conf file written------------"
 
+if [ -z $HOSTZONEID ]; then
+    echo "HOSTZONEID is empty - can't create a record!"
+fi
 
 #----------------------------------------#
 ###-------- Create a record set---------##

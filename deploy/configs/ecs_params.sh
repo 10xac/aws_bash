@@ -6,8 +6,8 @@ elif [ $AwsInstanceType == "t3.small" ]; then
    export ecsTaskCpuUnit=1024
    export ecsTaskMemoryUnit=1024   
 elif [ $AwsInstanceType == "t3.medium" ]; then
-    export ecsTaskCpuUnit=2048
-    export ecsTaskMemoryUnit=2048
+    export ecsTaskCpuUnit=1024
+    export ecsTaskMemoryUnit=1024
 else
     export ecsTaskCpuUnit=2048
     export ecsTaskMemoryUnit=2048
