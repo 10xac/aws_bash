@@ -30,7 +30,7 @@ echo "profile=$profile_name"
 #extra user_data for ec2
 #export extrauserdata="user_data/mount-s3fs.sh user_data/run_build.sh"
 export extrauserdata="user_data/install_ecs_agent.sh"
-export ecrimage="070096167435.dkr.ecr.us-east-1.amazonaws.com/prod-u2j-tenx:latest"
+export ecrimage="070096167435.dkr.ecr.us-east-1.amazonaws.com/prod-kaim-tenx:latest"
 
 export appkey=$(echo $RANDOM$RANDOM$RANDOM$RANDOM | base64 | head -c 30; echo)
 export appkeysalt=$(echo $RANDOM$RANDOM$RANDOM$RANDOM | base64 | head -c 30; echo)

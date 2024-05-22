@@ -39,33 +39,37 @@ export ec2launch_install_docker=true
 #application and proxy names
 export ENV=${ENV:-prod}
 
+export root_name="kaim-cms" #name you give to your project in ecs env
+export rootdns=10academy.org
+
 export repo_name="tenx-cms" #used to check out git repo
 export repo_branch="kaimprod"
 
-export root_name="kaimcms" #name you give to your project in ecs env
-export rootdns=10academy.org
-
-export dnsprefix=kaimcms
+export dnsprefix="kaimcms"
+export src_public_suffix="prod-kaim-cms"
+export dbname="kaimprod"   #used in the strapi/config/*.js files
+export emailsender="kifya_ai@10academy.org"
 export ecrimage="070096167435.dkr.ecr.us-east-1.amazonaws.com/prod-u2j-cms:latest"
-export dockerenv="-p 1337:1337 --env DATABASE_NAME kaimprod --env DATABASE_HOST=u2jdb.cluster-crlafpfc5g5y.us-east-1.rds.amazonaws.com -v /mnt/all-tenx-system/src-prod-kaim-cms:/opt/app/src -v /mnt/all-tenx-system/public-prod-kaim-cms:/opt/app/public --env appkey=$appkey --env appkeysalt=$appkeysalt --env APP_KEYS=${appkey},${appkeysalt} --env API_TOKEN_SALT=$appkeysalt --env ADMIN_JWT_SECRET=$appkey"
 
 if [ "$ENV" == "dev" ]; then
-    export dnsprefix="dev-${dnsprefix}"
     export root_name="dev-$root_name"
     export repo_branch="kaimdev"
-    export ecrimage="070096167435.dkr.ecr.us-east-1.amazonaws.com/dev-u2j-cms:latest"
-    export dockerenv="-p 1337:1337 --env DATABASE_NAME kaimdev --env DATABASE_HOST=u2jdb.cluster-crlafpfc5g5y.us-east-1.rds.amazonaws.com -v /mnt/all-tenx-system/src-dev-kaim-cms:/opt/app/src -v /mnt/all-tenx-system/public-dev-kaim-cms:/opt/app/public --env appkey=$appkey --env appkeysalt=$appkeysalt --env APP_KEYS=${appkey},${appkeysalt} --env API_TOKEN_SALT=$appkeysalt --env ADMIN_JWT_SECRET=$appkey"
-    
+
+    export dnsprefix="dev-${dnsprefix}"    
+    export dbname="kaimdev"
+    export src_public_suffix="dev-kaim-cms"    
 elif [ "$ENV" == "stage" ]; then
-    export dnsprefix="dev-${dnsprefix}"
     export root_name="dev-$root_name"
     export repo_branch="kaimstage"
-    export ecrimage="070096167435.dkr.ecr.us-east-1.amazonaws.com/stage-u2j-cms:latest"
-    export dockerenv="-p 1337:1337 --env DATABASE_NAME kaimstage --env DATABASE_HOST=u2jdb.cluster-crlafpfc5g5y.us-east-1.rds.amazonaws.com -v /mnt/all-tenx-system/src-dev-kaim-cms:/opt/app/src -v /mnt/all-tenx-system/public-dev-kaim-cms:/opt/app/public --env appkey=$appkey --env appkeysalt=$appkeysalt --env APP_KEYS=${appkey},${appkeysalt} --env API_TOKEN_SALT=$appkeysalt --env ADMIN_JWT_SECRET=$appkey"
-    
+
+    export dnsprefix="dev-${dnsprefix}"    
+    export dbname="kaimstage"
+    export src_public_suffix="dev-kaim-cms"    
 fi
 
 export dns_namespace="${dnsprefix}.${rootdns}"  ##This should be your domain 
+
+export dockerenv="-p 1337:1337 --env REDIRECT_URL=https://${dns_namespace} --env EMAIL_SENDER=${emailsender} --env DATABASE_NAME=${dbname} --env DATABASE_HOST=u2jdb.cluster-crlafpfc5g5y.us-east-1.rds.amazonaws.com -v /mnt/all-tenx-system/src-${src_public_suffix}:/opt/app/src -v /mnt/all-tenx-system/public-${src_public_suffix}:/opt/app/public --env appkey=$appkey --env appkeysalt=$appkeysalt --env APP_KEYS=${appkey},${appkeysalt} --env API_TOKEN_SALT=$appkeysalt --env ADMIN_JWT_SECRET=$appkey"
 
 #---------------SSL Parameters------------------
 # pregenerated ssl certificate path 

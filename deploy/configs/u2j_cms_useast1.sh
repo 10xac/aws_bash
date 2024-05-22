@@ -46,26 +46,31 @@ export root_name="u2jcms" #name you give to your project in ecs env
 export rootdns=10academy.org
 
 export dnsprefix=u2jcms
+export src_public_suffix="prod-u2j-cms"
+export dbname="u2jprod"   #used in the strapi/config/*.js files
+export emailsender="u2j@10academy.org"
 export ecrimage="070096167435.dkr.ecr.us-east-1.amazonaws.com/prod-u2j-cms:latest"
-export dockerenv="-p 1337:1337 --env DATABASE_HOST=u2jdb.cluster-crlafpfc5g5y.us-east-1.rds.amazonaws.com -v /mnt/all-tenx-system/src-prod-u2j-cms:/opt/app/src -v /mnt/all-tenx-system/public-prod-u2j-cms:/opt/app/public --env appkey=$appkey --env appkeysalt=$appkeysalt --env APP_KEYS=${appkey},${appkeysalt} --env API_TOKEN_SALT=$appkeysalt --env ADMIN_JWT_SECRET=$appkey"
+
 
 if [ "$ENV" == "dev" ]; then
-    export dnsprefix="dev-${dnsprefix}"
     export root_name="dev-$root_name"
     export repo_branch="applydev"
-    export ecrimage="070096167435.dkr.ecr.us-east-1.amazonaws.com/dev-u2j-cms:latest"
-    export dockerenv="-p 1337:1337 --env DATABASE_HOST=u2jdb.cluster-crlafpfc5g5y.us-east-1.rds.amazonaws.com -v /mnt/all-tenx-system/src-dev-u2j-cms:/opt/app/src -v /mnt/all-tenx-system/public-dev-u2j-cms:/opt/app/public --env appkey=$appkey --env appkeysalt=$appkeysalt --env APP_KEYS=${appkey},${appkeysalt} --env API_TOKEN_SALT=$appkeysalt --env ADMIN_JWT_SECRET=$appkey"
-    
+
+    export dnsprefix="dev-${dnsprefix}"    
+    export src_public_suffix="dev-u2j-cms"
+    export dbname="u2jdev"   #used in the strapi/config/*.js files
 elif [ "$ENV" == "stage" ]; then
-    export dnsprefix="dev-${dnsprefix}"
     export root_name="dev-$root_name"
     export repo_branch="applystage"
-    export ecrimage="070096167435.dkr.ecr.us-east-1.amazonaws.com/stage-u2j-cms:latest"
-    export dockerenv="-p 1337:1337 --env DATABASE_HOST=u2jdb.cluster-crlafpfc5g5y.us-east-1.rds.amazonaws.com -v /mnt/all-tenx-system/src-dev-u2j-cms:/opt/app/src -v /mnt/all-tenx-system/public-dev-u2j-cms:/opt/app/public --env appkey=$appkey --env appkeysalt=$appkeysalt --env APP_KEYS=${appkey},${appkeysalt} --env API_TOKEN_SALT=$appkeysalt --env ADMIN_JWT_SECRET=$appkey"
-    
+
+    export dnsprefix="dev-${dnsprefix}"    
+    export src_public_suffix="stage-u2j-cms"
+    export dbname="u2jstage"   #used in the strapi/config/*.js files
 fi
 
 export dns_namespace="${dnsprefix}.${rootdns}"  ##This should be your domain 
+
+export dockerenv="-p 1337:1337 --env REDIRECT_URL=https://${dns_namespace} --env EMAIL_SENDER=${emailsender} --env DATABASE_NAME=${dbname} --env DATABASE_HOST=u2jdb.cluster-crlafpfc5g5y.us-east-1.rds.amazonaws.com -v /mnt/all-tenx-system/src-${src_public_suffix}:/opt/app/src -v /mnt/all-tenx-system/public-${src_public_suffix}:/opt/app/public --env appkey=$appkey --env appkeysalt=$appkeysalt --env APP_KEYS=${appkey},${appkeysalt} --env API_TOKEN_SALT=$appkeysalt --env ADMIN_JWT_SECRET=$appkey"
 
 #---------------SSL Parameters------------------
 # pregenerated ssl certificate path 
