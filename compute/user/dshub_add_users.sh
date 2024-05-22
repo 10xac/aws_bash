@@ -123,7 +123,7 @@ cat $userfile | while read line; do
         #https://www.baeldung.com/linux/passwd-shell-script
         #https://askubuntu.com/questions/94060/run-adduser-non-interactively
         
-        p=$(python3 -c 'import crypt; print(crypt.crypt("$n"))')
+        p=$(python3 -c 'import shacrypt512 as crypt; print(crypt.crypt("$n"))')
         useradd -m -p $p -s /bin/bash $n
 
         echo "$n:$n" | chpasswd
