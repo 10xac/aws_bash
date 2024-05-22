@@ -1,3 +1,7 @@
 bethelhem_mebratu,root
 grace_ogundaini,root
 jabez_kassa,root
+tewodros_cheru,root
+samson_leul,root
+emtinan_osman,root
+natnael_melese,root

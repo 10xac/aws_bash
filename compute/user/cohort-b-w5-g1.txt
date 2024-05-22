@@ -2,3 +2,6 @@ yohanes_kebede,root
 mistir_nigusse,root
 getachew_abebe,root
 abdelrahman_ahmed,root
+fatai_abdusalam,root
+emtinan_osman,root
+natnael_melese,root

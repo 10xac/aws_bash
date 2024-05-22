@@ -1,2 +1,5 @@
 dereje_senbatu,root
 daisy_cherono,root
+sheila_murugi,root
+emtinan_osman,root
+natnael_melese,root
