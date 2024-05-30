@@ -37,7 +37,7 @@ amiarc="arm64" #"arm64"    #nvidea
 amios="ubuntu"
 amifordocker=false
 
-TYPE="c7g.4xlarge"   # instance type
+TYPE="c7g.2xlarge"   # instance type
 
 
 # == security

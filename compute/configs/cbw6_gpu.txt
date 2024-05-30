@@ -22,5 +22,5 @@ setupconda=true
 setupjhub=true
 setupjnb=true
 setupdocker=true
-setupnvidea={gpu_instance}
+setupnvidea=true
 
