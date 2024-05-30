@@ -1,0 +1,12 @@
+version: "3"
+services:
+  ec2monitor:
+    container_name: ec2monitor
+    build: .
+    image: ec2monitor:latest
+    restart: unless-stopped
+    expose:
+      - 6000 
+    ports:
+      - "6000:6000"
+
