@@ -28,7 +28,7 @@ export s3_authorized_keys_path="s3://10ac-team/credentials/bereket/authorized_ke
 echo "profile=$profile_name"
 
 #extra user_data for ec2
-export extrauserdata="user_data/mount-s3fs.sh user_data/run_build.sh"
+export extrauserdata="user_data/mount-s3fs.sh user_data/docker_run_ecr.sh"
 #"user_data/mount-s3fs.sh user_data/install_ecs_agent.sh user_data/run_build.sh""
 
 export ec2launch_install_docker=true
@@ -97,7 +97,7 @@ amipath="/aws/service/canonical/ubuntu/server/focal/stable/current/${amiarc}/hvm
 #           --query 'Parameters[0].[Value]' \
 #           --output text $auth )
 
-AMI="ami-0a9a32d9e4269d746"  #ubuntu22-ecs-nginx-s3mount
+AMI="ami-0a47704035ec5db19"  #ubuntu22-ecs-nginx-s3mount
 echo "using AMI-ID=$AMI"
 export AwsImageId=$AMI
 

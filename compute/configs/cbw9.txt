@@ -1,0 +1,26 @@
+
+####where conda is installed
+PYTHON_DIR=/opt/miniconda
+
+####root bucket
+BUCKET="10ac-cohort-b"
+
+####credential root folder
+CRED_ROOT_FOLDER="$BUCKET/credentials"
+
+####credential folders to copy
+CRED_FOLDERS=""
+
+
+###jupyter notebook folder
+NOTEBOOK_FOLDER="/home"
+
+###features to install or setup
+mounts3=true
+addusers=true
+setupconda=true
+setupjhub=true
+setupjnb=true
+setupdocker=true
+setupnvidea=false
+
