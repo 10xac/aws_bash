@@ -118,9 +118,9 @@ fout=$configoutputdir//r53_record.json
 
 cat <<EOF > $fout
 {
-  "Comment": "CREATE a record ",
+  "Comment": "CREATE/UPDATE a record ",
   "Changes": [{
-  "Action": "CREATE",
+  "Action": "UPSERT",
               "ResourceRecordSet": {
                   "Name": "$dns_namespace",
                   "Type": "A",
