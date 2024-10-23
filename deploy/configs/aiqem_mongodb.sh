@@ -10,73 +10,59 @@ cd $deployDir
 
 #---------------Basic Parameters------------------
 #load the right vpc parameters
-source ${scriptDir}/vpc_useast1_10academy.sh
+source ${scriptDir}/vpc_aiqem.sh
 
 #aws cli profile
 export region="us-east-1"
-export profile_name="ustenac"
-export email="yabebal@10academy.org"
+export profile_name="aiqem"
+export email="yabebal@gmail.org"
 #
-export ssmgittoken="git_token_tenx"
-export gituname="10xac"
+export ssmgittoken="git/token/yabi"
+export gituname="AiQeM-Tech"
 #
-export sshKeyName="devops-tenx-useast1-keypair"
-export s3bucket="s3://all-tenx-system"
+export sshKeyName="dsde-aiqem-key-pair"
+export s3bucket="s3://aiqem-team"
 export s3MountBucket=
-export s3_authorized_keys_path="s3://10ac-team/credentials/bereket/authorized_keys"
+export s3_authorized_keys_path=""
 #
 echo "profile=$profile_name"
 
 #extra user_data for ec2
-#export extrauserdata="user_data/mount-s3fs.sh user_data/run_build.sh"
-export extrauserdata="user_data/mount-s3fs.sh user_data/install_ecs_agent.sh user_data/docker_run_ecr.sh"
-
-export appkey=$(echo $RANDOM$RANDOM$RANDOM$RANDOM | base64 | head -c 30; echo)
-export appkeysalt=$(echo $RANDOM$RANDOM$RANDOM$RANDOM | base64 | head -c 30; echo)
-          
-export ec2launch_install_docker=true
+export extrauserdata="user_data/install_mongodb_ubuntu.sh"
+export ec2launch_install_docker=false
 
 #application and proxy names
 export ENV=${ENV:-prod}
 
-export root_name="kaim-cms" #name you give to your project in ecs env
-export rootdns=10academy.org
+export repo_name="tgad-polling" #used to check out git repo
+export repo_branch="$ENV"
 
-export repo_name="tenx-cms" #used to check out git repo
-export repo_branch="kaimprod"
+export root_name="mongodb" #name you give to your project in ecs env
+export rootdns=aiqem.tech
 
-export dnsprefix="kaimcms"
-export src_public_suffix="prod-kaim-cms"
-export dbname="kaimprod"   #used in the strapi/config/*.js files
-export emailsender="kifya_ai@10academy.org"
-export ecrimage="070096167435.dkr.ecr.us-east-1.amazonaws.com/prod-u2j-cms:latest"
-
-if [ "$ENV" == "dev" ]; then
+export dnsprefix=eth
+if [ "$ENV" == "prod" ]; then
+    export dnsprefix="${dnsprefix}"
+    export root_name="prod-$root_name"
+    export repo_branch="prod"    
+elif [ "$ENV" == "dev" ]; then
+    export dnsprefix="dev-${dnsprefix}"
     export root_name="dev-$root_name"
-    export repo_branch="kaimdev"
-
-    export dnsprefix="dev-${dnsprefix}"    
-    export dbname="kaimdev"
-    export src_public_suffix="dev-kaim-cms"    
+    export repo_branch="dev"    
 elif [ "$ENV" == "stage" ]; then
-    export root_name="dev-$root_name"
-    export repo_branch="kaimstage"
-
-    export dnsprefix="dev-${dnsprefix}"    
-    export dbname="kaimstage"
-    export src_public_suffix="dev-kaim-cms"    
+    export dnsprefix="stage-${dnsprefix}"
+    export root_name="stage-$root_name"
+    export repo_branch="stage"
 fi
 
 export dns_namespace="${dnsprefix}.${rootdns}"  ##This should be your domain 
 
-export dockerenv="-p 1337:1337 --env REDIRECT_URL=https://${dns_namespace} --env EMAIL_SENDER=${emailsender} --env DATABASE_NAME=${dbname} --env DATABASE_HOST=u2jdb.cluster-crlafpfc5g5y.us-east-1.rds.amazonaws.com -v /mnt/all-tenx-system/src-${src_public_suffix}:/opt/app/src -v /mnt/all-tenx-system/public-${src_public_suffix}:/opt/app/public --env appkey=$appkey --env appkeysalt=$appkeysalt --env APP_KEYS=${appkey},${appkeysalt} --env API_TOKEN_SALT=$appkeysalt --env ADMIN_JWT_SECRET=$appkey"
-
 #---------------SSL Parameters------------------
 # pregenerated ssl certificate path 
-export s3certpath="s3://all-tenx-system/ssl-certs/sectigo"  #path to live/ folder 
+export s3certpath="s3://aiqem-team/ssl-certs/tgadb"  #path to live/ folder 
 
 # parameters in nginx.conf
-export ssldnsname= #what is in letsencrypt/live/<ssldnsname>
+export ssldnsname="tgadb.aiqem.tech" #what is in letsencrypt/live/<ssldnsname>
 export nginxservername=${dns_namespace}  #what is in nginx conf
 
 # existing SSL certificate will be copied when an instance starts.
@@ -84,10 +70,11 @@ export copy_ssl_cert_froms3=true
 
 # The nginx will be enabled with the ssl configration and the ec2 instance
 # can be accessed securely.
-export setup_nginx=true
+export setup_nginx=false
 
 # used in the ssl generation script as well as to insert an A record in R53 
-export dns_ssl_list="tenx.${rootdns} dev-tenx.${rootdns} stage-tenx.${rootdns} prompts.${rootdns} dev-prompts.${rootdns} apply.${rootdns} dev-apply.${rootdns} agent.${rootdns} dev-agent.${rootdns}"  ##gen ssl 
+export dns_namespace="${rootdns}"  ##This should be your domain - DNS name of the server 
+export dns_ssl_list="tgadb.${rootdns} adb.${rootdns} eth.${rootdns} dev-tgadb.${rootdns} dev-adb.${rootdns} dev-eth.${rootdns} laq.${rootdns} dev-laq.${rootdns} laqb.${rootdns} dev-laqb.${rootdns}"  ##gen ssl 
 
 #-------------- EC2 Instance Params --------------------
 export app_name="${root_name}"  #-app
@@ -99,9 +86,9 @@ echo "dns=$dns_namespace"
 
 #check this for diff TLS 1.2 vs TLS 1.3 https://bidhankhatri.com.np/system/enable-tls-1.3/
 amiarc="amd64"    #
-echo "Fetching latest Ubuntu AMI of type ${amiarc} .."
-amipath="/aws/service/canonical/ubuntu/server/focal/stable/current/${amiarc}/hvm/ebs-gp2/ami-id"
-#                                                                                                                                                        
+# echo "Fetching latest Ubuntu AMI of type ${amiarc} .."
+# amipath="/aws/service/canonical/ubuntu/server/focal/stable/current/${amiarc}/hvm/ebs-gp2/ami-id"
+# #                                                                                                                                                        
 # echo "using amipath=$amipath"
 # if $(curl -s -m 5 http://169.254.169.254/latest/dynamic/instance-identity/document | grep -q availabilityZone) ; then
 #     auth="--region $region"
@@ -113,25 +100,28 @@ amipath="/aws/service/canonical/ubuntu/server/focal/stable/current/${amiarc}/hvm
 #           --query 'Parameters[0].[Value]' \
 #           --output text $auth )
 
-AMI="ami-0a47704035ec5db19"  #ubuntu22-ecs-nginx-s3mount
+export AwsImageOurs="ami-0ba12efa21d226167"
+export AMI=$AwsImageOurs  #ubuntu22-ecs-nginx-s3mount
 echo "using AMI-ID=$AMI"
-export AwsImageId=$AMI
+export AwsImageId=$AMI  #Ubuntu latest
 
-export AwsInstanceType="t3.small"
+export AwsInstanceType="t3.micro"
 if [ "$ENV" == "prod" ]; then
-    export AwsInstanceType="t3.medium"
+    export AwsInstanceType="t3.micro"
 fi
 export EbsVolumeSize=20
 #----------
      
-export ecsTaskPortMapList=1337  #all ports to expose
+export ecsTaskPortMapList=27017  #all ports to expose
 export ecsTaskFromTemplate=False
 export ecsTaskTemplate=
+export ecsExistingTaskName="tgad-app-ecs-task:4"
+export ecsExistingContainerName="server"
 
 #ecs service params
-export ecsContainerPort=1337 #The port on the container to associate with the load balancer
+export ecsContainerPort=443 #The port on the container to associate with the load balancer
 export ecsDesiredCount=1
-export ecsHealthTime=60
+export ecsHealthTime=30
 export ecsServiceTemplate=template/ecs-ec2-service-template.json
 
 #---------------Github Parameters------------------
@@ -170,7 +160,7 @@ export AsgTemplateVersion=1
 
 #---------------Route53 Parameters------------------
 #Route53 record setting
-export create_route53_record=true
+export create_route53_record=False
 export route53RecordTemplate=template/r53-record-set-template.json
 
 #-----------------ECS Parameters---------------
@@ -185,16 +175,16 @@ export create_ecr_repo=false
 #ECS parameters
 export ecr_repo_name=${root_name}
 export ecs_cluster_name="ecs-${root_name}-cluster"                      
-export app_container_name="${root_name}-container"  #-app
+export app_container_name=${ecsExistingContainerName:-"${root_name}-container"}  #-app
 #export proxy_container_name="${root_name}-proxy-container"
-export task_name="ecs-${root_name}-task"
+export task_name=${ecsExistingTaskName:-"ecs-${root_name}-task"}
 export service_name="ecs-${root_name}-service"
 export ECSLaunchType="EC2"  #"FARGATE"
 
 
 #ECS task execution IAM role
 export ecsTaskExecutionRoleArn="arn:aws:iam::$account:role/ECSTaskExecutionRole"
-export ecsTaskRoleArn="arn:aws:iam::$account:role/ECSTaskRole"
+export ecsTaskRoleArn="arn:aws:iam::$account:role/ECSTaskExecutionRole"
 
 export params_file="$scriptDir/$0"
 
