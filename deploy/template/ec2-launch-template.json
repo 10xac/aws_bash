@@ -25,7 +25,9 @@
         "NetworkInterfaces": [
             {
                 "AssociatePublicIpAddress": true,
-                "SubnetId": $subnet
+                "DeviceIndex": 0,
+                "SubnetId": "$subnet",
+                "Groups": ["$sgserver"]
             }
         ],
         "TagSpecifications": [
@@ -44,6 +46,9 @@
             }
         ],
         "SecurityGroupIds": [
+            "$sgserver"
+        ],
+        "SecurityGroups": [
             "$sgserver"
         ]
     }
