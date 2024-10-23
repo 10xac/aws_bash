@@ -137,7 +137,7 @@ cat $userfile | while read line; do
         
         #add to docker group
         if command -v docker >/dev/null; then
-	    usermod -a -G docker $nx
+	    usermod -aG docker $nx
         fi
         
         #cat root bashrc to user bashrc
