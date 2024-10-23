@@ -14,7 +14,14 @@
 	# For initating the MongoDB replica set after configuration: https://gist.github.com/Maria-UET/af4332f6dd9e57f2d0f6141dbb8dd447
 
 
+if [ -z "$1" ]; then
+    echo "user_data: path to file to append user data must be passed!"
+    exit 1
+else
+    fout=$1
+fi
 
+cat <<'EOF' >>  $fout
 
 # Add an appropriate username for your MongoDB user
 USR="admin"
@@ -103,3 +110,5 @@ mongo -u $USR -p $PASS
 
 
 echo "You can connect to this db from remote client using: mongo --username $USR --password $PASS ipaddress:27017/db_name --authenticationDatabase $DB"
+
+EOF

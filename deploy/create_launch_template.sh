@@ -403,6 +403,11 @@ userdata=$(base64 -i $fnameuserdata)
 #replace line userdata in template
 ftemplate=$configoutputdir/${root_name}-launch-template.json
 
+EbsDeleteOnTermination=${EbsDeleteOnTermination:-true}
+EbsVolumeSize=${EbsVolumeSize:-20}
+EbsVolumeType=${EbsVolumeType:-gp3}
+subnet=${subnet1:-$public_subnet1}
+
 #if [ ! -f $ftemplate ]; then
 #check https://docs.aws.amazon.com/cli/latest/reference/ec2/create-launch-template.html
 if [ -f template/${root_name}-launch-template.json ]; then
