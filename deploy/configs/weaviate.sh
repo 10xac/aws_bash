@@ -94,7 +94,7 @@ export AwsImageId=$AMI  #Ubuntu latest
 
 
 export AwsInstanceType="t3.small"
-export EbsVolumeSize=20
+export EbsVolumeSize=30
      
 export ecsTaskPortMapList=8080  #all ports to expose
 export ecsTaskFromTemplate=False

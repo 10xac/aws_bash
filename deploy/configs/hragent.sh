@@ -14,7 +14,7 @@ source ${scriptDir}/vpc_useast1_10academy.sh
 
 #aws cli profile
 export region="us-east-1"
-export profile_name="ustenac"
+export profile_name="tenac"
 export email="yabebal@10academy.org"
 #
 export ssmgittoken="git_token_tenx"
@@ -28,50 +28,32 @@ export s3_authorized_keys_path="s3://10ac-team/credentials/bereket/authorized_ke
 echo "profile=$profile_name"
 
 #extra user_data for ec2
-#export extrauserdata="user_data/mount-s3fs.sh user_data/install_ecs_agent.sh user_data/run_build.sh"
-export extrauserdata="user_data/mount-s3fs.sh user_data/install_ecs_agent.sh user_data/docker_run_ecr.sh"
+export extrauserdata="user_data/install_ecs_agent.sh"
+#"user_data/mount-s3fs.sh user_data/install_ecs_agent.sh user_data/docker_run_ecr.sh user_data/run_build.sh""
 
-export appkey=$(echo $RANDOM$RANDOM$RANDOM$RANDOM | base64 | head -c 30; echo)
-export appkeysalt=$(echo $RANDOM$RANDOM$RANDOM$RANDOM | base64 | head -c 30; echo)
-          
 export ec2launch_install_docker=true
 
 #application and proxy names
-export ENV=${ENV:-prod}
+export ENV=${ENV:-"prod"}
 
-export repo_name="tenx-cms" #used to check out git repo
+export repo_name="tenx_ipersona" #used to check out git repo
 export repo_branch="prod"
 
-export root_name="cms" #name you give to your project in ecs env
+export root_name="hragent" #name you give to your project in ecs env
 export rootdns=10academy.org
 
-export dnsprefix="cms"
-export src_public_suffix="cms"
-export dbname="strapiprod"   #used in the strapi/config/*.js files
-export emailsender="train@10academy.org"
-export ecrimage="070096167435.dkr.ecr.us-east-1.amazonaws.com/prod-cms:latest"
-
-
+export dnsprefix="hragent"  #used to create dns name
 if [ "$ENV" == "dev" ]; then
+    export dnsprefix="dev-${dnsprefix}"
     export root_name="dev-$root_name"
-    export repo_branch="dev"
-
-    export dnsprefix="dev-${dnsprefix}"    
-    export src_public_suffix="dev-cms"
-    export dbname="strapidev"   #used in the strapi/config/*.js files
+    export repo_branch="dev"    
 elif [ "$ENV" == "stage" ]; then
-    export root_name="stage-$root_name"
-    export repo_branch="staging"
-
-    export dnsprefix="dev-${dnsprefix}"    
-    export src_public_suffix="stage-cms"
-    export dbname="strapistage"   #used in the strapi/config/*.js files
+    export dnsprefix="dev-${dnsprefix}"
+    export root_name="dev-$root_name"
+    export repo_branch="stage"
 fi
 
 export dns_namespace="${dnsprefix}.${rootdns}"  ##This should be your domain 
-export database_host="strapi-cms-v2.cygrqui64set.eu-west-1.rds.amazonaws.com"
-
-export dockerenv="-p 1337:1337 --env REDIRECT_URL=https://${dns_namespace} --env EMAIL_SENDER=${emailsender} --env DATABASE_NAME=${dbname} --env DATABASE_HOST=${database_host} -v /mnt/all-tenx-system/src-${src_public_suffix}:/opt/app/src -v /mnt/all-tenx-system/public-${src_public_suffix}:/opt/app/public --env appkey=$appkey --env appkeysalt=$appkeysalt --env APP_KEYS=${appkey},${appkeysalt} --env API_TOKEN_SALT=$appkeysalt --env ADMIN_JWT_SECRET=$appkey"
 
 #---------------SSL Parameters------------------
 # pregenerated ssl certificate path 
@@ -121,17 +103,17 @@ export AwsImageId=$AMI
 
 export AwsInstanceType="t3.small"
 if [ "$ENV" == "prod" ]; then
-    export AwsInstanceType="t3.medium"
+    export AwsInstanceType="t3.small"
 fi
-export EbsVolumeSize=20
+export EbsVolumeSize=30
 #----------
      
-export ecsTaskPortMapList=1337  #all ports to expose
+export ecsTaskPortMapList=4500  #all ports to expose
 export ecsTaskFromTemplate=False
 export ecsTaskTemplate=
 
 #ecs service params
-export ecsContainerPort=1337 #The port on the container to associate with the load balancer
+export ecsContainerPort=4500 #The port on the container to associate with the load balancer
 export ecsDesiredCount=1
 export ecsHealthTime=60
 export ecsServiceTemplate=template/ecs-ec2-service-template.json
@@ -176,13 +158,13 @@ export create_route53_record=true
 export route53RecordTemplate=template/r53-record-set-template.json
 
 #-----------------ECS Parameters---------------
-setup_ecs=false
+setup_ecs=true
 
 #now load the common ec2 params
 source ${scriptDir}/ecs_params.sh
 
 #create ECR repo
-export create_ecr_repo=false
+export create_ecr_repo=true
 
 #ECS parameters
 export ecr_repo_name=${root_name}

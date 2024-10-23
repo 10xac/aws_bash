@@ -1,0 +1,60 @@
+{
+    "LaunchTemplateName": "EC2ContainerService-EcsOptAMI2-t3med",
+    "VersionDescription": "test description",
+    "LaunchTemplateData": {
+        "EbsOptimized": false,
+        "IamInstanceProfile": {
+            "Arn": "$IamInstanceProfile"
+        },
+        "BlockDeviceMappings": [
+            {
+                "DeviceName": "/dev/sda1",
+                "Ebs": {
+                    "VolumeType": "gp3",
+                    "DeleteOnTermination": true, 
+                    "SnapshotId": "snap-0a2a8bbf9d6736ede",
+                    "VolumeSize": $EbsVolumeSize
+                }
+            }    
+        ],               
+        "ImageId": "$AwsImageId", 
+        "InstanceType": "$AwsInstanceType",
+        "KeyName": "$sshKeyName",
+        "Monitoring": {
+            "Enabled": true
+        },
+        "UserData": "",
+        "TagSpecifications": [
+            {
+                "ResourceType": "instance",
+                "Tags": [
+                    {
+                        "Key": "team",
+                        "Value": "datascience"
+                    },
+                    {
+                        "Key": "name",
+                        "Value": "ds-team-instance"
+                    }
+                ]
+            },
+            {
+                "ResourceType": "volume",
+                "Tags": [
+                    {
+                        "Key": "team",
+                        "Value": "datascience"
+                    },
+                    {
+                        "Key": "name",
+                        "Value": "weaviate-permanent-volume"
+                    }
+                ]
+            }
+            
+        ],
+        "SecurityGroupIds": [
+            "$sgserver"
+        ]
+    }
+}

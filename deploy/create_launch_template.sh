@@ -405,9 +405,13 @@ ftemplate=$configoutputdir/${root_name}-launch-template.json
 
 #if [ ! -f $ftemplate ]; then
 #check https://docs.aws.amazon.com/cli/latest/reference/ec2/create-launch-template.html
+echo "Checking if custom template/${root_name}-launch-template.json exists ..."
 if [ -f template/${root_name}-launch-template.json ]; then
-    cp ./template/${root_name}-launch-template.json $ftemplate        
+    echo "****** Using custom launch template! ********"
+    ec2LaunchTemplate="./template/${root_name}-launch-template.json"
+    envsubst <${ec2LaunchTemplate}>$ftemplate
 else
+    echo "***** Using generic launch template! ********"
     envsubst <${ec2LaunchTemplate}>$ftemplate    
 fi
 #fi
@@ -470,25 +474,32 @@ res=$(aws ec2 create-launch-template \
           --region $region \
           --profile ${profile_name})
 
-echo $res > $logoutputdir/output-create-launch-template.json     
+exit_status=$?
+
+if [ $exit_status -eq 0 ]; then
+    echo $res > $logoutputdir/output-create-launch-template.json     
 
 
-res=$(aws ec2 describe-launch-template-versions \
-          --launch-template-name $AsgTemplateName \
-          --versions '$Latest' \
-          --region $region --profile ${profile_name}
-   )
-echo $res > $logoutputdir/output-describe-launch-template-latest.json
-
-AsgTemplateId=$(echo $res | jq -r '.LaunchTemplateVersions[0].LaunchTemplateId')
-
-#to file
-echo "export AsgTemplateId=$AsgTemplateId" > $logoutputdir/clt_output_params.sh
-source $logoutputdir/clt_output_params.sh
-
-#info
-echo "ASG Launch template_name=$AsgTemplateName, template_id=$AsgTemplateId"
-
-#update asg if template has been updated
-source create_asg.sh ""
+    res=$(aws ec2 describe-launch-template-versions \
+              --launch-template-name $AsgTemplateName \
+              --versions '$Latest' \
+              --region $region --profile ${profile_name}
+       )
+    echo $res > $logoutputdir/output-describe-launch-template-latest.json
+    
+    AsgTemplateId=$(echo $res | jq -r '.LaunchTemplateVersions[0].LaunchTemplateId')
+    
+    #to file
+    echo "export AsgTemplateId=$AsgTemplateId" > $logoutputdir/clt_output_params.sh
+    source $logoutputdir/clt_output_params.sh
+    
+    #info
+    echo "ASG Launch template_name=$AsgTemplateName, template_id=$AsgTemplateId"
+    
+    #update asg if template has been updated
+    
+    source create_asg.sh ""
+else
+    echo "Encountered error in creating launch template! Fix error and try again!"
+fi
 
