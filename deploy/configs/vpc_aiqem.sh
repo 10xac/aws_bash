@@ -14,6 +14,7 @@ export private_subnet1="subnet-0a35b25907dfb4697" #us-east-1a (NOT private)
 export private_subnet2="subnet-0089bdf2ddb817e5e" #us-east-1c (NOT private
 export public_subnet1="subnet-01287a3d04bca8ad0" #us-east-1b (public)
 export public_subnet2="subnet-0075aa43311423738" #us-east-1d (public)
+export subnet1=$public_subnet1
 export sgserver="sg-0874cece70fab479e" #allow connection from ALBs and SSH only
 export sg=$sgserver
 export sgalb="sg-0874cece70fab479e"   ##allow connection from  ssh/http/https All 0.0.0.0/0

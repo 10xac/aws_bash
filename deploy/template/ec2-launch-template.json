@@ -25,8 +25,7 @@
         "NetworkInterfaces": [
             {
                 "AssociatePublicIpAddress": true,
-                "DeviceIndex": 0,
-                "SubnetId": "$subnet"
+                "SubnetId": $subnet
             }
         ],
         "TagSpecifications": [
