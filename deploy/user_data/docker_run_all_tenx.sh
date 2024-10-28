@@ -5,16 +5,9 @@ else
     fout=$1
 fi
 
-cat <<EOF >>  $fout
-
-
+cat <<'EOF' >>  $fout
 #!/bin/bash
 
-# Ensure required environment variables are set
-if [ -z "$region" ] || [ -z "$emailsender" ] || [ -z "$appkey" ] || [ -z "$appkeysalt" ] || [ -z "$src_public_suffix_apply" ] || [ -z "$src_public_suffix" ]; then
-    echo "Please set all required environment variables before running the script."
-    exit 1
-fi
 
 # AWS ECR Login
 region="us-east-1"
@@ -33,15 +26,20 @@ docker pull $cms_image
 docker pull $tenx_image
 
 # DNS and Database variables
-dns1="pai.apply-cms.10academy.org"
-dns2="pai.apply.10academy.org"
-dns3="pai.cms.10academy.org"
-dns4="pai.tenx.10academy.org"
+dns1="pai-apply-cms.10academy.org"
+dns2="pai-apply.10academy.org"
+dns3="pai-cms.10academy.org"
+dns4="pai.10academy.org"
 
 port1="1337"
 port2="5173"
 port3="5000"
 port4="3000"
+
+port11="1337"
+port22="5173"
+port33="1337"
+port44="3000"
 
 dbname_apply="paiapply"
 dbname_tenx="paiprod"
@@ -56,25 +54,32 @@ s3bucket="s3://all-tenx-system"
 
 
 # Docker environment configurations
-dockerenv1="-p $port1:$port1 --env REDIRECT_URL=https://${dns1} --env EMAIL_SENDER=${emailsender} --env DATABASE_NAME=${dbname_apply} --env DATABASE_HOST=u2jdb.cluster-crlafpfc5g5y.us-east-1.rds.amazonaws.com -v /mnt/all-tenx-system/src-${src_public_suffix_apply}:/opt/app/src -v /mnt/all-tenx-system/public-${src_public_suffix_apply}:/opt/app/public --env appkey=$appkey --env appkeysalt=$appkeysalt --env APP_KEYS=${appkey},${appkeysalt} --env API_TOKEN_SALT=$appkeysalt --env ADMIN_JWT_SECRET=$appkey"
+dockerenv1="-p $port1:$port11 --env REDIRECT_URL=https://${dns1} --env EMAIL_SENDER=${emailsender} --env DATABASE_NAME=${dbname_apply} --env DATABASE_HOST=u2jdb.cluster-crlafpfc5g5y.us-east-1.rds.amazonaws.com -v /mnt/all-tenx-system/src-${src_public_suffix_apply}:/opt/app/src -v /mnt/all-tenx-system/public-${src_public_suffix_apply}:/opt/app/public --env appkey=$appkey --env appkeysalt=$appkeysalt --env APP_KEYS=${appkey},${appkeysalt} --env API_TOKEN_SALT=$appkeysalt --env ADMIN_JWT_SECRET=$appkey"
 
-dockerenv2="-p $port2:$port2 --env REDIRECT_URL=https://${dns2} --env EMAIL_SENDER=${emailsender} --env DATABASE_NAME=${dbname_apply} --env DATABASE_HOST=u2jdb.cluster-crlafpfc5g5y.us-east-1.rds.amazonaws.com -v /mnt/all-tenx-system/src-${src_public_suffix_apply}:/opt/app/src -v /mnt/all-tenx-system/public-${src_public_suffix_apply}:/opt/app/public --env appkey=$appkey --env appkeysalt=$appkeysalt --env APP_KEYS=${appkey},${appkeysalt} --env API_TOKEN_SALT=$appkeysalt --env ADMIN_JWT_SECRET=$appkey"
+dockerenv2="-p $port2:$port22 --env REDIRECT_URL=https://${dns2} --env EMAIL_SENDER=${emailsender} --env DATABASE_NAME=${dbname_apply} --env DATABASE_HOST=u2jdb.cluster-crlafpfc5g5y.us-east-1.rds.amazonaws.com -v /mnt/all-tenx-system/src-${src_public_suffix_apply}:/opt/app/src -v /mnt/all-tenx-system/public-${src_public_suffix_apply}:/opt/app/public --env appkey=$appkey --env appkeysalt=$appkeysalt --env APP_KEYS=${appkey},${appkeysalt} --env API_TOKEN_SALT=$appkeysalt --env ADMIN_JWT_SECRET=$appkey"
 
-dockerenv3="-p $port3:$port3 --env REDIRECT_URL=https://${dns3} --env EMAIL_SENDER=${emailsender} --env DATABASE_NAME=${dbname_tenx} --env DATABASE_HOST=u2jdb.cluster-crlafpfc5g5y.us-east-1.rds.amazonaws.com -v /mnt/all-tenx-system/src-${src_public_suffix}:/opt/app/src -v /mnt/all-tenx-system/public-${src_public_suffix}:/opt/app/public --env appkey=$appkey --env appkeysalt=$appkeysalt --env APP_KEYS=${appkey},${appkeysalt} --env API_TOKEN_SALT=$appkeysalt --env ADMIN_JWT_SECRET=$appkey"
+dockerenv3="-p $port3:$port33 --env REDIRECT_URL=https://${dns3} --env EMAIL_SENDER=${emailsender} --env DATABASE_NAME=${dbname_tenx} --env DATABASE_HOST=u2jdb.cluster-crlafpfc5g5y.us-east-1.rds.amazonaws.com -v /mnt/all-tenx-system/src-${src_public_suffix}:/opt/app/src -v /mnt/all-tenx-system/public-${src_public_suffix}:/opt/app/public --env appkey=$appkey --env appkeysalt=$appkeysalt --env APP_KEYS=${appkey},${appkeysalt} --env API_TOKEN_SALT=$appkeysalt --env ADMIN_JWT_SECRET=$appkey"
 
-dockerenv4="-p $port4:$port4 --env REDIRECT_URL=https://${dns4} --env EMAIL_SENDER=${emailsender} --env DATABASE_NAME=${dbname_tenx} --env DATABASE_HOST=u2jdb.cluster-crlafpfc5g5y.us-east-1.rds.amazonaws.com -v /mnt/all-tenx-system/src-${src_public_suffix}:/opt/app/src -v /mnt/all-tenx-system/public-${src_public_suffix}:/opt/app/public --env appkey=$appkey --env appkeysalt=$appkeysalt --env APP_KEYS=${appkey},${appkeysalt} --env API_TOKEN_SALT=$appkeysalt --env ADMIN_JWT_SECRET=$appkey"
-
-# Run Docker containers
-docker run $dockerenv1 --name ${dns1::-14} -d $apply_cms_image
-docker run $dockerenv2 --name ${dns2::-14} -d $apply_tenx_image
-docker run $dockerenv3 --name ${dns3::-14} -d $cms_image
-docker run $dockerenv4 --name ${dns4::-14} -d $tenx_image
-
-EOF
-
-cat <<'EOF' >>  $fout 
+dockerenv4="-p $port4:$port44 --env REDIRECT_URL=https://${dns4} --env EMAIL_SENDER=${emailsender} --env DATABASE_NAME=${dbname_tenx} --env DATABASE_HOST=u2jdb.cluster-crlafpfc5g5y.us-east-1.rds.amazonaws.com -v /mnt/all-tenx-system/src-${src_public_suffix}:/opt/app/src -v /mnt/all-tenx-system/public-${src_public_suffix}:/opt/app/public --env appkey=$appkey --env appkeysalt=$appkeysalt --env APP_KEYS=${appkey},${appkeysalt} --env API_TOKEN_SALT=$appkeysalt --env ADMIN_JWT_SECRET=$appkey"
 
 
+echo ""
+echo "============================================"
+echo "       Install COPY SSL CERT & SSH KEYS     "
+echo "============================================"
+echo ""
+
+#copy cert  
+aws s3 cp s3://all-tenx-system/ssl-certs/sectigo ./cert --recursive #| echo "ERROR: can not copy cert folder from s3"
+mkdir -p /etc/ssl
+
+if [ -d ./cert ]; then
+   cp -r ./cert/* /etc/ssl/
+fi
+
+
+
+# Generate NGINX conf files
 cat <<'EOF2' > /etc/nginx/conf.d/apply_cms.conf
 server {
        listen 80;
@@ -228,7 +233,6 @@ EOF2
 
 
 # sed replace server name with the correct server name
-
 sed -i "s/apply.10academy.org/${dns1}/g" /etc/nginx/conf.d/apply_cms.conf
 sed -i "s/apply.10academy.org/${dns2}/g" /etc/nginx/conf.d/apply.conf
 sed -i "s/apply.10academy.org/${dns3}/g" /etc/nginx/conf.d/tenx_cms.conf
@@ -242,5 +246,26 @@ sed -i "s/5173/${port4}/g" /etc/nginx/conf.d/tenx.conf
 # Restart Nginx
 systemctl daemon-reload
 systemctl restart nginx
+
+
+
+echo ""
+echo "============================================"
+echo "       Remove Old Containers and Start New    "
+echo "============================================"
+echo ""
+
+# Stop and Remove all running containers
+rlist=$(docker ps -aq)
+if [[ ! -z $rlist ]]; then
+   docker stop $rlist; docker rm $rlist
+fi
+
+# Run Docker containers
+docker run $dockerenv1 --name ${dns1::-14} -d $apply_cms_image
+docker run $dockerenv2 --name ${dns2::-14} -d $apply_tenx_image
+docker run $dockerenv3 --name ${dns3::-14} -d $cms_image
+docker run $dockerenv4 --name ${dns4::-14} -d $tenx_image
+
 
 EOF
