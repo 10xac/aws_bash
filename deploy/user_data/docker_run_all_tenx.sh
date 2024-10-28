@@ -21,7 +21,7 @@ region="us-east-1"
 aws ecr get-login-password --region ${region} | docker login --username AWS --password-stdin 070096167435.dkr.ecr.${region}.amazonaws.com
 
 # Define Docker images
-apply_cms_image="070096167435.dkr.ecr.us-east-1.amazonaws.com/dev-apply-cms"
+apply_cms_image="070096167435.dkr.ecr.us-east-1.amazonaws.com/prod-apply-cms"
 apply_tenx_image="070096167435.dkr.ecr.us-east-1.amazonaws.com/dev-tenx-apply"
 cms_image="070096167435.dkr.ecr.us-east-1.amazonaws.com/prod-u2j-cms"
 tenx_image="070096167435.dkr.ecr.us-east-1.amazonaws.com/prod-u2j-tenx"
@@ -33,7 +33,7 @@ docker pull $cms_image
 docker pull $tenx_image
 
 # DNS and Database variables
-dns1="pai.applycms.10academy.org"
+dns1="pai.apply-cms.10academy.org"
 dns2="pai.apply.10academy.org"
 dns3="pai.cms.10academy.org"
 dns4="pai.tenx.10academy.org"
@@ -65,10 +65,10 @@ dockerenv3="-p $port3:$port3 --env REDIRECT_URL=https://${dns3} --env EMAIL_SEND
 dockerenv4="-p $port4:$port4 --env REDIRECT_URL=https://${dns4} --env EMAIL_SENDER=${emailsender} --env DATABASE_NAME=${dbname_tenx} --env DATABASE_HOST=u2jdb.cluster-crlafpfc5g5y.us-east-1.rds.amazonaws.com -v /mnt/all-tenx-system/src-${src_public_suffix}:/opt/app/src -v /mnt/all-tenx-system/public-${src_public_suffix}:/opt/app/public --env appkey=$appkey --env appkeysalt=$appkeysalt --env APP_KEYS=${appkey},${appkeysalt} --env API_TOKEN_SALT=$appkeysalt --env ADMIN_JWT_SECRET=$appkey"
 
 # Run Docker containers
-docker run $dockerenv1 -d $apply_cms_image
-docker run $dockerenv2 -d $apply_tenx_image
-docker run $dockerenv3 -d $cms_image
-docker run $dockerenv4 -d $tenx_image
+docker run $dockerenv1 --name ${dns1::-14} -d $apply_cms_image
+docker run $dockerenv2 --name ${dns2::-14} -d $apply_tenx_image
+docker run $dockerenv3 --name ${dns3::-14} -d $cms_image
+docker run $dockerenv4 --name ${dns4::-14} -d $tenx_image
 
 EOF
 
