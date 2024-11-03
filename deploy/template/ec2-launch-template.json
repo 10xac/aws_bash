@@ -10,8 +10,9 @@
             {
                 "DeviceName": "/dev/sda1",
                 "Ebs": {
-                    "VolumeSize": $EbsVolumeSize,
-                    "DeleteOnTermination": $EbsDeleteOnTermination
+                    "VolumeType": "gp3",
+                    "DeleteOnTermination": $EbsDeleteOnTermination,
+                    "VolumeSize": $EbsVolumeSize
                 }
             }    
         ],               
@@ -35,9 +36,22 @@
                         "Value": "ds-team-instance"
                     }                    
                 ]
-            }
+            },
+            {
+                "ResourceType": "volume",
+                "Tags": [
+                    {
+                        "Key": "team",
+                        "Value": "datascience"
+                    },
+                    {
+                        "Key": "name",
+                        "Value": "ds-team-instance"
+                    }
+                ]
+            }            
         ],
-        "SecurityGroups": [
+        "SecurityGroupIds": [
             "$sgserver"
         ]
     }
