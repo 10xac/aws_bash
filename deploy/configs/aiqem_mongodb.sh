@@ -70,7 +70,7 @@ export copy_ssl_cert_froms3=true
 
 # The nginx will be enabled with the ssl configration and the ec2 instance
 # can be accessed securely.
-export setup_nginx=false
+export setup_nginx=true
 
 # used in the ssl generation script as well as to insert an A record in R53 
 export dns_namespace="${rootdns}"  ##This should be your domain - DNS name of the server 
