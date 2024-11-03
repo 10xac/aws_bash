@@ -85,29 +85,32 @@ echo "root_name=$root_name"
 echo "dns=$dns_namespace"
 
 #check this for diff TLS 1.2 vs TLS 1.3 https://bidhankhatri.com.np/system/enable-tls-1.3/
-amiarc="amd64"    #
-# echo "Fetching latest Ubuntu AMI of type ${amiarc} .."
-# amipath="/aws/service/canonical/ubuntu/server/focal/stable/current/${amiarc}/hvm/ebs-gp2/ami-id"
-# #                                                                                                                                                        
-# echo "using amipath=$amipath"
-# if $(curl -s -m 5 http://169.254.169.254/latest/dynamic/instance-identity/document | grep -q availabilityZone) ; then
-#     auth="--region $region"
-# else
-#     auth="--profile ${profile_name} --region $region"
-# fi
+#amiarc="amd64"    #
 
-# AMI=$(aws ssm get-parameters --names $amipath \
-#           --query 'Parameters[0].[Value]' \
-#           --output text $auth )
+amiarc="arm64"
+echo "Fetching latest Ubuntu AMI of type ${amiarc} .."
+amipath="/aws/service/canonical/ubuntu/server/focal/stable/current/${amiarc}/hvm/ebs-gp2/ami-id"
+#                                                                                                                                                        
+echo "using amipath=$amipath"
+if $(curl -s -m 5 http://169.254.169.254/latest/dynamic/instance-identity/document | grep -q availabilityZone) ; then
+    auth="--region $region"
+else
+    auth="--profile ${profile_name} --region $region"
+fi
 
-export AwsImageOurs="ami-0ba12efa21d226167"
-export AMI=$AwsImageOurs  #ubuntu22-ecs-nginx-s3mount
+AMI=$(aws ssm get-parameters --names $amipath \
+          --query 'Parameters[0].[Value]' \
+          --output text $auth )
+
+# export AwsImageOurs="ami-0ba12efa21d226167"
+# export AMI=$AwsImageOurs  #ubuntu22-ecs-nginx-s3mount
+
 echo "using AMI-ID=$AMI"
 export AwsImageId=$AMI  #Ubuntu latest
 
-export AwsInstanceType="t3.micro"
+export AwsInstanceType="t4g.micro"
 if [ "$ENV" == "prod" ]; then
-    export AwsInstanceType="t3.micro"
+    export AwsInstanceType="t4g.micro"
 fi
 export EbsVolumeSize=20
 #----------
