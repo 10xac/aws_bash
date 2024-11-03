@@ -22,14 +22,6 @@
             "Enabled": true
         },
         "UserData": "",
-        "NetworkInterfaces": [
-            {
-                "AssociatePublicIpAddress": true,
-                "DeviceIndex": 0,
-                "SubnetId": "$subnet",
-                "Groups": ["$sgserver"]
-            }
-        ],
         "TagSpecifications": [
             {
                 "ResourceType": "instance",
