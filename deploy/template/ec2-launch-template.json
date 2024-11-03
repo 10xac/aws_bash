@@ -37,9 +37,6 @@
                 ]
             }
         ],
-        "SecurityGroupIds": [
-            "$sgserver"
-        ],
         "SecurityGroups": [
             "$sgserver"
         ]
