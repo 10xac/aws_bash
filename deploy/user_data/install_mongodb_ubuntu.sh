@@ -22,15 +22,13 @@ else
 fi
 
 cat <<'EOF' >>  $fout
-
-
 # Add an appropriate username for your MongoDB user
 # Add an appropriate password for your MongoDB user. 
 # Password should be ideally read from a config.ini file, 
 # keeping passwords in bash scripts is not secure.
 USR="admin"
 PASS="test@admin"
-DB="AuthDB"
+DB="admin"
 DBDATA="AiQEMAd"
 ROLE="root"
 BIND_IP=0.0.0.0
@@ -41,12 +39,15 @@ function restore_latest_backup {
         backup_filename=$(basename $KEY)
         echo "=============STARTING RESTORE=================="
         echo "Getting latest backup from s3 $BUCKET/$KEY .."
-        aws s3 cp $BUCKET/$KEY ./ --recursive
-
+        aws s3 cp $BUCKET/$KEY ./ 
+        mkdir -p backup & cd backup
+	unzip $BUCKET/$KEY
+	cd ../
         echo "Restoring $DB "
-        mongorestore --gzip --archive=$backup_filename --nsInclude="$DBDATA.*" --drop
+        #mongorestore --gzip --archive=$backup_filename --nsInclude="$DBDATA.*" --drop
+	mongorestore -u $USR -p $PASS --authenticationDatabase $DB --drop --dir backup/
         echo "Done Restoring!"
-		echo "=============RESTORE COMPLETED=================="
+	echo "=============RESTORE COMPLETED=================="
 }
 
 
@@ -71,29 +72,20 @@ EOFF
 echo ""
 echo "Setting up the cron job to backup the mongodb database"
 chmod +x $HOME/mongodb_backup.sh
-(crontab -l 2>/dev/null; echo "0 0/6 * * * $HOME/mongodb_backup.sh") | crontab -
+#(crontab -l 2>/dev/null; echo "0 0/6 * * * $HOME/mongodb_backup.sh") | crontab -
 
-
-
-echo ""
-echo "installing mongodb dependencies"
-apt-get -y install gnupg wget apt-transport-https ca-certificates software-properties-common
-
-echo ""
-echo "Adding the MongoDB GPG key to your system"
-wget -qO- https://www.mongodb.org/static/pgp/server-8.0.asc | gpg --dearmor | tee /usr/share/keyrings/mongodb-server-8.0.gpg >/dev/null
 
 
 echo ""
 echo "Creating a deb list file for MongoDB"
-
-echo "deb [ arch=amd64,arm64 signed-by=/usr/share/keyrings/mongodb-server-8.0.gpg ] https://repo.mongodb.org/apt/ubuntu $(lsb_release -cs)/mongodb-org/8.0 multiverse" | tee /etc/apt/sources.list.d/mongodb-org-8.0.list
+echo "deb [ arch=amd64,arm64 signed-by=/usr/share/keyrings/mongodb-server-8.0.gpg ] https://repo.mongodb.org/apt/ubuntu $(lsb_release -cs)/mongodb-org/8.0 multiverse" \
+	| tee /etc/apt/sources.list.d/mongodb-org-8.0.list
 
 
 echo ""
 echo "Installing MongoDB"
 apt-get -y update 
-apt-get -y --force-yes install mongodb-org mongodb-org-database \
+apt-get -y install mongodb-org mongodb-org-database \
 				  mongodb-org-server mongodb-mongosh \
 				  mongodb-org-mongos mongodb-org-tools
 
@@ -123,7 +115,7 @@ restore_latest_backup
 
 echo ""
 echo "Creating a user with name=$USR and role=$ROLE:"
-mongo admin --eval "db.createUser({'user':'$USR', 'pwd':'$PASS', 'roles':[{'role':'$ROLE', 'db':'$DB'}]})"
+mongosh admin --eval "db.createUser({'user':'$USR', 'pwd':'$PASS', 'roles':[{'role':'$ROLE', 'db':'$DB'}]})"
 
 
 systemctl stop mongod
@@ -159,14 +151,14 @@ mongod --bind_ip $BIND_IP --fork --logpath /var/log/mongodb.log
 
 
 echo "Starting the mongo shell with following parameters:"
-echo "mongo -u $USR -p $PASS"
-mongo -u $USR -p $PASS 
+echo "mongosh -u $USR -p $PASS"
+mongosh -u $USR -p $PASS 
 
 chown -R mongodb:mongodb /var/lib/mongodb
 chown mongodb:mongodb /tmp/mongodb-27017.sock
 service mongod restart
 
 
-echo "You can connect to this db from remote client using: mongo --username $USR --password $PASS ipaddress:27017/db_name --authenticationDatabase $DB"
+echo "You can connect to this db from remote client using: mongosh --username $USR --password $PASS 127.0.0.1:27017/$DBDATA --authenticationDatabase $DB"
 
 EOF
