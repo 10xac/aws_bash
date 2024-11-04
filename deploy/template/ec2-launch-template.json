@@ -24,6 +24,9 @@
             {
                 "AssociatePublicIpAddress": true,
                 "DeviceIndex": 0,
+                "Groups": [
+                    "$sgserver"
+                ],                
                 "SubnetId": "$subnet"
             }
         ],
