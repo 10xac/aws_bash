@@ -70,10 +70,7 @@
                     }                     
                 ]
             }            
-        ],
-        "SecurityGroups": [
-            "$sgserver"
-        ],        
+        ],      
         "SecurityGroupIds": [
             "$sgserver"
         ]
