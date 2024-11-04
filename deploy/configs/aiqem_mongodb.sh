@@ -27,9 +27,14 @@ export s3_authorized_keys_path=""
 #
 echo "profile=$profile_name"
 
+export eip_allocation_id="eipalloc-01b1df3cbc87512eb"
+
 #extra user_data for ec2
-export extrauserdata="user_data/install_mongodb_ubuntu.sh"
+export extrauserdata="user_data/install_mongodb_ubuntu.sh user_data/associate_free_eip.sh"
 export ec2launch_install_docker=false
+
+#----------------
+export cost_tag="mongodb"
 
 #application and proxy names
 export ENV=${ENV:-prod}
@@ -112,7 +117,12 @@ export AwsInstanceType="t4g.micro"
 if [ "$ENV" == "prod" ]; then
     export AwsInstanceType="t4g.micro"
 fi
+
+
+#----------------
 export EbsVolumeSize=20
+export EbsSnapshotId=""
+
 #----------
      
 export ecsTaskPortMapList=27017  #all ports to expose

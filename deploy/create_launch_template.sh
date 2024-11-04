@@ -435,6 +435,13 @@ if [ -f $ftemplate ] ; then
     echo "writing launch template file: $ftemplate"
     sed $SEDOPTION "s|\"LaunchTemplateName.*|\"LaunchTemplateName\":\"$AsgTemplateName\",|" "$ftemplate"
     sed $SEDOPTION "s|.*ds-team-instance.*|\"Value\": \"${root_name}-host\"|" "$ftemplate"
+    sed $SEDOPTION "s|.*cost-center-tag.*|\"Value\": \"${cost_tag:-${root_name}}\"|" "$ftemplate"    
+    sed $SEDOPTION "s|.*env-tag.*|\"Value\": \"${ENV:-${root_name}}\"|" "$ftemplate"   
+    if [ -z $EbsSnapshotId ]; then
+        sed $SEDOPTION "s|\"SnapshotId.*|\"SnapshotId\":\"$EbsSnapshotId\",|" "$ftemplate"
+    else
+        sed $SEDOPTION "s|\"SnapshotId.*||" "$ftemplate"
+    fi   
     sed $SEDOPTION "s|\"UserData.*|\"UserData\":\"$userdata\",|" "$ftemplate"
 else
     echo "ERROR: $ftemplate does not exist!"
