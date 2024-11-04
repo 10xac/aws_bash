@@ -10,10 +10,15 @@ echo "region=$region"
 
 ##Export key networking constructs
 #Subsitute these values with your VPC subnet ids
-export private_subnet1="subnet-0a35b25907dfb4697" #us-east-1a (NOT private)
-export private_subnet2="subnet-0089bdf2ddb817e5e" #us-east-1c (NOT private
-export public_subnet1="subnet-01287a3d04bca8ad0" #us-east-1b (public)
-export public_subnet2="subnet-0075aa43311423738" #us-east-1d (public)
+export public_subnet1="subnet-0a35b25907dfb4697" #us-east-1a (public)
+export public_subnet2="subnet-01287a3d04bca8ad0" #us-east-1b (public)
+export public_subnet3="subnet-0089bdf2ddb817e5e" #us-east-1c (public)
+export public_subnet4="subnet-0300bd07096751c19" #us-east-1d (public)
+#
+export private_subnet1="subnet-0075aa43311423738" #us-east-1d (public)
+export private_subnet2="subnet-054b152048a317e21" #us-east-1d (public)
+
+
 export subnet1=$public_subnet1
 export sgserver="sg-0874cece70fab479e" #allow connection from ALBs and SSH only
 export sg=$sgserver
