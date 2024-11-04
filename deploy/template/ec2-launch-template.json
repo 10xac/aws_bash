@@ -20,16 +20,6 @@
         "MetadataOptions": {
             "HttpTokens": "required"                 
         },
-        "NetworkInterfaces": [
-            {
-                "AssociatePublicIpAddress": true,
-                "DeviceIndex": 0,
-                "Groups": [
-                    "$sgserver"
-                ],                
-                "SubnetId": "$subnet"
-            }
-        ],
         "ImageId": "$AwsImageId", 
         "InstanceType": "$AwsInstanceType",
         "KeyName": "$sshKeyName",

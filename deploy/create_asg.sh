@@ -25,6 +25,7 @@ if $asgexist ; then
     res=$(aws autoscaling update-auto-scaling-group \
               --auto-scaling-group-name $AsgName \
               --launch-template LaunchTemplateName=$AsgTemplateName,Version='$Latest' \
+              --vpc-zone-identifier "$public_subnet1,$public_subnet2" \
               --min-size $AsgMinSize \
               --max-size $AsgMaxSize \
               --desired-capacity $AsgDesiredSize \
@@ -35,6 +36,7 @@ else
     res=$(aws autoscaling create-auto-scaling-group \
               --auto-scaling-group-name $AsgName \
               --launch-template LaunchTemplateName=$AsgTemplateName,Version='$Latest' \
+              --vpc-zone-identifier "$public_subnet1,$public_subnet2" \              
               --target-group-arns $targetGroupArn \
               --health-check-type EC2 \
               --health-check-grace-period 60 \
