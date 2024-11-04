@@ -20,12 +20,18 @@ res=$(aws autoscaling describe-auto-scaling-groups \
 
 asgexist=$(echo $res | jq -r '.AutoScalingGroups | length>0')
 
+vpc_identifier=""
+for x in $public_subnet1 $public_subnet2 $public_subnet3 $public_subnet4; do
+    if [ ! -z $x ]; then
+        vpc_identifier="$vpc_identifier,$x"
+    fi
+done
+
 if $asgexist ; then
     echo "updating asg .."    
     res=$(aws autoscaling update-auto-scaling-group \
               --auto-scaling-group-name $AsgName \
               --launch-template LaunchTemplateName=$AsgTemplateName,Version='$Latest' \
-              --vpc-zone-identifier "$public_subnet1,$public_subnet2" \
               --min-size $AsgMinSize \
               --max-size $AsgMaxSize \
               --desired-capacity $AsgDesiredSize \
@@ -33,10 +39,11 @@ if $asgexist ; then
     echo $res > $logoutputdir/output-update-auto-scaling-group.json    
 else
     echo "creating asg .."
+    echo "Available subnets for ASG: $vpc_identifier"
     res=$(aws autoscaling create-auto-scaling-group \
               --auto-scaling-group-name $AsgName \
               --launch-template LaunchTemplateName=$AsgTemplateName,Version='$Latest' \
-              --vpc-zone-identifier "$public_subnet1,$public_subnet2" \              
+              --vpc-zone-identifier $vpc_identifier \              
               --target-group-arns $targetGroupArn \
               --health-check-type EC2 \
               --health-check-grace-period 60 \
