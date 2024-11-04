@@ -24,7 +24,7 @@
             {
                 "AssociatePublicIpAddress": true,
                 "DeviceIndex": 0,
-                "SubnetId": $subnet
+                "SubnetId": "$subnet"
             }
         ],
         "ImageId": "$AwsImageId", 
