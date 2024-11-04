@@ -40,9 +40,9 @@ function restore_latest_backup {
         echo "=============STARTING RESTORE=================="
         echo "Getting latest backup from s3 $BUCKET/$KEY .."
         aws s3 cp $BUCKET/$KEY ./ 
-        mkdir -p backup & cd backup
-	unzip $BUCKET/$KEY
-	cd ../
+        mkdir -p backup  
+        unzip $backup_filename -d backup/
+        
         echo "Restoring $DB "
         #mongorestore --gzip --archive=$backup_filename --nsInclude="$DBDATA.*" --drop
 	mongorestore -u $USR -p $PASS --authenticationDatabase $DB --drop --dir backup/

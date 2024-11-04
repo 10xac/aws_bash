@@ -254,10 +254,10 @@ ssldirname=$(basename $s3certpath)
 
 #copy cert  
 aws s3 cp $s3certpath ./cert --recursive #| echo "ERROR: can not copy cert folder from s3"
-mkdir -p /etc/ssl
+mkdir -p /etc/ssl/letsencrypt
 
 if [ -d ./cert ]; then
-   cp -r ./cert/* /etc/ssl/
+   cp -r ./cert/* /etc/ssl/letsencrypt/
 fi
 
 #copy ssh key

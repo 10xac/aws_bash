@@ -132,7 +132,7 @@ export ecsExistingTaskName="tgad-app-ecs-task:4"
 export ecsExistingContainerName="server"
 
 #ecs service params
-export ecsContainerPort=443 #The port on the container to associate with the load balancer
+export ecsContainerPort=27017 #The port on the container to associate with the load balancer
 export ecsDesiredCount=1
 export ecsHealthTime=30
 export ecsServiceTemplate=template/ecs-ec2-service-template.json
